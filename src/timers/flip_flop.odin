@@ -6,13 +6,13 @@ Flip_Flop :: struct {
 	is_on:            bool,
 }
 
-init :: proc(flip_flop: ^Flip_Flop, frames_per_phase: int) {
+flip_flop_init :: proc(flip_flop: ^Flip_Flop, frames_per_phase: int) {
 	flip_flop.frames_per_phase = frames_per_phase
 	flip_flop.counter = 0
 	flip_flop.is_on = false
 }
 
-tick :: proc(flip_flop: ^Flip_Flop) {
+flip_flop_tick :: proc(flip_flop: ^Flip_Flop) {
 	flip_flop.counter += 1
 	if flip_flop.counter >= flip_flop.frames_per_phase {
 		flip_flop.is_on = !flip_flop.is_on
@@ -20,7 +20,7 @@ tick :: proc(flip_flop: ^Flip_Flop) {
 	}
 }
 
-reset :: proc(flip_flop: ^Flip_Flop) {
+flip_flop_reset :: proc(flip_flop: ^Flip_Flop) {
 	flip_flop.is_on = false
 	flip_flop.counter = 0
 }

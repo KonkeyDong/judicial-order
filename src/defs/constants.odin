@@ -3,6 +3,7 @@ package defs
 import rl "vendor:raylib"
 
 TILE_SIZE :: 24
+TILES_DIR :: "assets/tiles"
 WORLD_MAP_SPRITE_SIZE :: 24
 MAX_BUCKET_SIZE :: 4
 MAX_OCCUPANT_SIZE :: 2
@@ -164,6 +165,9 @@ Paths :: struct {
 	frame_data:       string,
 	placeholder_png:  string,
 	placeholder_json: string,
+	tiles:            string,
+	grass_tile:       string,
+	forest_tile:      string,
 }
 
 PATHS :: Paths {
@@ -177,4 +181,10 @@ PATHS :: Paths {
 	frame_data       = "FrameData.json",
 	placeholder_png  = "assets/sprites/weasel_lawyer.png",
 	placeholder_json = "assets/sprites/weasel_lawyer.json",
+	tiles            = TILES_DIR,
+	grass_tile       = TILES_DIR + "/" + FILES.grass_tile,
+	forest_tile      = TILES_DIR + "/" + FILES.forest_tile,
 }
+
+// Process-lifetime backing store for Grid.range_tint. Slice this; do not delete the slice.
+range_tint_levels := ANIMATIONS.range_tint_levels

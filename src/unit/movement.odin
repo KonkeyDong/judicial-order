@@ -51,7 +51,7 @@ update_movement :: proc(unit: ^Unit, delta_time: f32) {
 	unit.world_position =
 		unit.start_world_position +
 		(unit.target_world_position - unit.start_world_position) * progress
-	timers.tick(&unit.movement_flip_flop)
+	timers.flip_flop_tick(&unit.movement_flip_flop)
 
 	if progress >= 1.0 {
 		stop_movement(unit)

@@ -1,16 +1,21 @@
-package game
+package defs
 
 import rl "vendor:raylib"
 
 TILE_SIZE :: 24
 WORLD_MAP_SPRITE_SIZE :: 24
-MAX_BUCKET_SIZE :: 4 // items or spell families
+MAX_BUCKET_SIZE :: 4
+MAX_OCCUPANT_SIZE :: 2
+UNARMED_INDEX :: -1
+WALK_FRAME_COUNT :: 2
+MAX_STATUS_EFFECTS :: 4
+STATUS_DURATION_PERMANENT :: max(int)
 
 Debug :: struct {
 	color:                       rl.Color,
 	font_size:                   int,
 	spacing:                     int,
-	battle_grid_logical_spacing: int, // screen step = value * scale
+	battle_grid_logical_spacing: int,
 	battle_grid_color:           rl.Color,
 }
 
@@ -23,8 +28,8 @@ DEBUG :: Debug {
 }
 
 Window :: struct {
-	width:  int, // pixels
-	height: int, // pixels
+	width:  i32,
+	height: i32,
 	scale:  f32,
 }
 
@@ -34,17 +39,27 @@ WINDOW :: Window {
 	scale  = 3.0,
 }
 
+Files :: struct {
+	grass_tile:  string,
+	forest_tile: string,
+}
+
+FILES :: Files {
+	grass_tile  = "grass.png",
+	forest_tile = "forest.png",
+}
+
 Animations :: struct {
-	highlight_transition_speed: f32, // lower = slower
+	highlight_transition_speed: f32,
 	range_tint_frame_delay:     int,
 	countdown_timer_delay:      int,
-	movement_duration:          f32, // seconds
+	movement_duration:          f32,
 	flip_flop_delay:            int,
 	blink_delay:                int,
 	idle_delay:                 int,
-	attack_delay:               int, // frames
-	jitter_offset:              int, // pixels
-	artillery_tick_delay:       int, // frames
+	attack_delay:               int,
+	jitter_offset:              int,
+	artillery_tick_delay:       int,
 	switch_state_countdown:     int,
 	range_tint_levels:          [4]rl.Color,
 	dissolve:                   struct {
@@ -97,8 +112,8 @@ TEXTURES :: Textures {
 }
 
 Status_Effects :: struct {
-	poison_damage_denominator: int, // max HP / this
-	sleep_duration:            int, // 1 to 3 turns
+	poison_damage_denominator: int,
+	sleep_duration:            int,
 }
 
 STATUS_EFFECTS :: Status_Effects {
@@ -136,4 +151,30 @@ MESSAGE_NOTICE :: Message_Notice {
 	no_magic  = "No magic",
 	no_item   = "No Item",
 	no_target = "No target",
+}
+
+Paths :: struct {
+	assets:           string,
+	sprites:          string,
+	force_members:    string,
+	monsters:         string,
+	overworld:        string,
+	promoted:         string,
+	unpromoted:       string,
+	frame_data:       string,
+	placeholder_png:  string,
+	placeholder_json: string,
+}
+
+PATHS :: Paths {
+	assets           = "assets",
+	sprites          = "assets/sprites",
+	force_members    = "assets/sprites/force",
+	monsters         = "assets/sprites/monsters",
+	overworld        = "overworld",
+	promoted         = "promoted",
+	unpromoted       = "unpromoted",
+	frame_data       = "FrameData.json",
+	placeholder_png  = "assets/sprites/weasel_lawyer.png",
+	placeholder_json = "assets/sprites/weasel_lawyer.json",
 }

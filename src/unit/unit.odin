@@ -142,7 +142,7 @@ init :: proc(unit: ^Unit, data: Unit_Data) {
 		unit.known_spell_counts[i] = 0
 	}
 
-	timers.init(&unit.movement_flip_flop, defs.ANIMATIONS.flip_flop_delay / 7)
+	timers.flip_flop_init(&unit.movement_flip_flop, defs.ANIMATIONS.flip_flop_delay / 7)
 	load_walk_animations(unit)
 
 	log.infof(

@@ -99,14 +99,6 @@ renderer_draw_info_box_text :: proc(text: string, pos: rl.Vector2, font_size: in
 	)
 }
 
-info_box_max_f32 :: proc(a, b: f32) -> f32 {
-	if a > b {
-		return a
-	}
-
-	return b
-}
-
 renderer_draw_battle_menu_message :: proc(scale: f32, text: string, text_pos: rl.Vector2) {
 	font_size := int(8 * scale)
 	text_size := renderer_measure_text(text, font_size)
@@ -137,7 +129,7 @@ renderer_draw_spell_info_box :: proc(
 	size_left := renderer_measure_text(line3_left, font_size)
 	size_right := renderer_measure_text(line3_right, font_size)
 
-	content_width := info_box_max_f32(size1.x, info_box_max_f32(size2.x, size_left.x + size_right.x + 20))
+	content_width := max(size1.x, size2.x, size_left.x + size_right.x + 20)
 	content_height := size1.y + size2.y + size_left.y + f32(4 * 2)
 
 	metrics := renderer_draw_info_box_frame(scale, position, content_width, content_height)
@@ -186,7 +178,7 @@ renderer_draw_unit_info_box :: proc(
 	size2 := renderer_measure_text(line2, font_size)
 	size3 := renderer_measure_text(line3, font_size)
 
-	content_width := info_box_max_f32(size1.x, info_box_max_f32(size2.x, size3.x))
+	content_width := max(size1.x, size2.x, size3.x)
 	content_height := size1.y + size2.y + size3.y + f32(4 * 2)
 
 	metrics := renderer_draw_info_box_frame(scale, position, content_width, content_height)
@@ -225,7 +217,7 @@ renderer_draw_item_info_box :: proc(
 	size2 := renderer_measure_text(size2_src, font_size)
 	size3 := renderer_measure_text(size3_src, font_size)
 
-	content_width := info_box_max_f32(size1.x, info_box_max_f32(size2.x, size3.x))
+	content_width := max(size1.x, size2.x, size3.x)
 	content_height := size1.y + size2.y + size3.y + f32(4 * 2)
 
 	metrics := renderer_draw_info_box_frame(scale, position, content_width, content_height)
@@ -270,7 +262,7 @@ renderer_draw_equip_weapon_info_box :: proc(
 	size2 := renderer_measure_text(line2, font_size)
 	size3 := renderer_measure_text(size3_src, font_size)
 
-	content_width := info_box_max_f32(size1.x, info_box_max_f32(size2.x, size3.x))
+	content_width := max(size1.x, size2.x, size3.x)
 	content_height := size1.y + size2.y + size3.y + f32(4 * 2)
 
 	metrics := renderer_draw_info_box_frame(scale, position, content_width, content_height)
@@ -308,9 +300,9 @@ renderer_draw_equip_stats_box :: proc(
 	for i in 0 ..< len(labels) {
 		label_size := renderer_measure_text(labels[i], font_size)
 		value_size := renderer_measure_text(values[i], font_size)
-		max_label_width = info_box_max_f32(max_label_width, label_size.x)
-		max_value_width = info_box_max_f32(max_value_width, value_size.x)
-		line_height = info_box_max_f32(line_height, label_size.y)
+		max_label_width = max(max_label_width, label_size.x)
+		max_value_width = max(max_value_width, value_size.x)
+		line_height = max(line_height, label_size.y)
 	}
 
 	content_width := max_label_width + value_gap + max_value_width
@@ -348,13 +340,13 @@ renderer_draw_trade_prompt_box :: proc(
 	receiver_name_size := renderer_measure_text(receiver_name, font_size)
 
 	icon_pixel := f32(icon_logical) * scale
-	left_col_width := info_box_max_f32(giver_name_size.x, icon_pixel)
-	right_col_width := info_box_max_f32(receiver_name_size.x, icon_pixel)
-	content_width := info_box_max_f32(action_size.x, left_col_width + column_gap + right_col_width)
+	left_col_width := max(giver_name_size.x, icon_pixel)
+	right_col_width := max(receiver_name_size.x, icon_pixel)
+	content_width := max(action_size.x, left_col_width + column_gap + right_col_width)
 	content_height :=
 		action_size.y +
 		name_to_icon_gap +
-		info_box_max_f32(giver_name_size.y, receiver_name_size.y) +
+		max(giver_name_size.y, receiver_name_size.y) +
 		name_to_icon_gap +
 		icon_pixel
 
@@ -376,7 +368,7 @@ renderer_draw_trade_prompt_box :: proc(
 		metrics.font_size,
 	)
 
-	y += info_box_max_f32(giver_name_size.y, receiver_name_size.y) + name_to_icon_gap
+	y += max(giver_name_size.y, receiver_name_size.y) + name_to_icon_gap
 
 	icon_y_logical := y / scale
 	left_icon_x_logical := f32(left_col_left) / scale

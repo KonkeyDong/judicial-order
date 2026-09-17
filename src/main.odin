@@ -35,11 +35,10 @@ main :: proc() {
 	defer game_destroy(&game)
 	program_apply_debug_draw(&game)
 
-	hale, judy := program_add_test_units(&game)
-	hale.friendly = true
-	judy.friendly = false
+	hale, judy, bellweather := program_add_test_units(&game)
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
+	defer unit_pkg.destroy(bellweather)
 	state_enter(&game)
 
 	for !rl.WindowShouldClose() {

@@ -237,3 +237,58 @@ renderer_ease_in_out :: proc(progress: f32) -> f32 {
 	remainder := -2 * progress + 2
 	return 1 - (remainder * remainder) / 2
 }
+
+renderer_vector_lerp :: proc(start, finish: rl.Vector2, amount: f32) -> rl.Vector2 {
+	t := clamp(amount, 0, 1)
+	return start + (finish - start) * t
+}
+
+renderer_draw_battle_ground :: proc(scale: f32, alpha: int) {
+	pos := defs.BATTLE.positions.foreground
+	rect := rl.Rectangle {
+		pos.x * scale,
+		pos.y * scale,
+		f32(defs.WINDOW.width) * scale,
+		f32(defs.TILE_SIZE) * scale,
+	}
+	color := defs.TEXTURES.dark_orange
+	color.a = renderer_alpha_u8(alpha)
+	rl.DrawRectangleRec(rect, color)
+}
+
+renderer_draw_battle_standin :: proc(
+	scale: f32,
+	unit: ^unit_pkg.Unit,
+	position: rl.Vector2,
+	alpha := 255,
+	jitter := 0,
+) {
+	if unit == nil {
+		return
+	}
+
+	draw_pos := position
+	draw_pos.x += f32(jitter)
+	size := f32(defs.TILE_SIZE) * 1.5
+	dest := rl.Rectangle{draw_pos.x * scale, draw_pos.y * scale, size * scale, size * scale}
+	fill := defs.TEXTURES.blue if unit.friendly else defs.TEXTURES.dark_red
+	fill.a = renderer_alpha_u8(alpha)
+	rl.DrawRectangleRec(dest, fill)
+	rl.DrawRectangleLinesEx(dest, max(1, scale), defs.TEXTURES.off_white)
+
+	sprite := unit_pkg.facing_sprite(unit, unit.facing_direction)
+	if sprite.texture.id != 0 {
+		renderer_draw(scale, sprite, draw_pos, alpha, false)
+	}
+
+	label := defs.name_display(unit.name)
+	font_size := f32(int(8 * scale))
+	rl.DrawTextEx(
+		rl.GetFontDefault(),
+		strings.clone_to_cstring(label, context.temp_allocator),
+		{dest.x, dest.y - font_size - 2},
+		font_size,
+		1,
+		defs.TEXTURES.off_white,
+	)
+}

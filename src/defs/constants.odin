@@ -197,12 +197,12 @@ PATHS :: Paths {
 }
 
 Give :: struct {
-	trade_prompt_column_gap:      f32,
+	trade_prompt_column_gap:       f32,
 	trade_prompt_name_to_icon_gap: f32,
 }
 
 GIVE :: Give {
-	trade_prompt_column_gap      = 24,
+	trade_prompt_column_gap       = 24,
 	trade_prompt_name_to_icon_gap = 6,
 }
 

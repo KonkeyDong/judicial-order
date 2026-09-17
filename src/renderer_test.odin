@@ -51,14 +51,14 @@ test_renderer_info_box_content_height :: proc(test: ^testing.T) {
 test_renderer_artillery_frame_index :: proc(test: ^testing.T) {
 	not_started := timers.Sequence_Timer {
 		start_delay_frames_remaining = 3,
-		current_index = 2,
+		current_index                = 2,
 	}
 	frame_index, draw := renderer_artillery_frame_index(not_started, 4)
 	testing.expect_value(test, draw, false)
 	testing.expect_value(test, frame_index, 0)
 
 	complete := timers.Sequence_Timer {
-		is_complete = true,
+		is_complete   = true,
 		current_index = 2,
 	}
 	frame_index, draw = renderer_artillery_frame_index(complete, 4)

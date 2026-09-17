@@ -56,7 +56,13 @@ main :: proc() {
 		scale := defs.WINDOW.scale
 		renderer_draw_background(scale, &game.grid, 255, game.renderer.debug_draw)
 		renderer_draw_range(scale, &game.grid, game.renderer.debug_draw)
-		renderer_draw_units(scale, game.units[:], game.flip_flop.is_on, 255, game.renderer.debug_draw)
+		renderer_draw_units(
+			scale,
+			game.units[:],
+			game.flip_flop.is_on,
+			255,
+			game.renderer.debug_draw,
+		)
 		renderer_draw_highlight_rectangle(scale, game.highlight_current_position)
 		rl.EndDrawing()
 

@@ -6,6 +6,7 @@ TILE_SIZE :: 24
 TILES_DIR :: "assets/tiles"
 WORLD_MAP_SPRITE_SIZE :: 24
 MAX_BUCKET_SIZE :: 4
+MAX_CONTEXT_TARGETS :: 64
 MAX_OCCUPANT_SIZE :: 2
 UNARMED_INDEX :: -1
 WALK_FRAME_COUNT :: 2
@@ -199,11 +200,38 @@ PATHS :: Paths {
 Give :: struct {
 	trade_prompt_column_gap:       f32,
 	trade_prompt_name_to_icon_gap: f32,
+	trade_prompt_yes_no_y_factor:  f32,
+	positions:                     struct {
+		recipient_info_box:         rl.Vector2,
+		recipient_inventory_center: rl.Vector2,
+		trade_inventory_center:     rl.Vector2,
+		trade_prompt_box:           rl.Vector2,
+	},
 }
 
 GIVE :: Give {
-	trade_prompt_column_gap       = 24,
+	trade_prompt_column_gap = 24,
 	trade_prompt_name_to_icon_gap = 6,
+	trade_prompt_yes_no_y_factor = 0.82,
+	positions = {
+		recipient_info_box = {200, 160},
+		recipient_inventory_center = {200, 110},
+		trade_inventory_center = {128, 168},
+		trade_prompt_box = {72, 70},
+	},
+}
+
+Battle :: struct {
+	transition_frames: int,
+	positions:         struct {
+		unfriendly_stats: rl.Vector2,
+		friendly_stats:   rl.Vector2,
+	},
+}
+
+BATTLE :: Battle {
+	transition_frames = 60,
+	positions = {unfriendly_stats = {15, 180}, friendly_stats = {200, 15}},
 }
 
 // Process-lifetime backing store for Grid.range_tint. Slice this; do not delete the slice.

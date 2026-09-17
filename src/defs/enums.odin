@@ -203,6 +203,38 @@ Prompt_Action :: enum {
 	TradeItem,
 }
 
+Command_Icon :: enum {
+	Yes,
+	No,
+	Talk,
+	Magic,
+	Item,
+	Search,
+	Attack,
+	Stay,
+	Use,
+	Give,
+	Equip,
+	Drop,
+	Map,
+	Speed,
+	Message,
+	Quit,
+	Save,
+	Cure,
+	Raise,
+	Promote,
+	Buy,
+	Deals,
+	Sell,
+	Repair,
+}
+
+Use_Mode :: enum {
+	Consumable,
+	SpellItem,
+}
+
 // Battle states only. Mirrors src/state/state.odin Kind.
 State_Kind :: enum {
 	UnitMoving,

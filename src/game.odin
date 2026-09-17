@@ -47,6 +47,13 @@ Game :: struct {
 	highlight_target_position:    rl.Vector2,
 	highlight_animation_complete: bool,
 	state:                        defs.State_Kind,
+	attack_context:               Attack_Context,
+	item_context:                 Item_Context,
+	magic_context:                Magic_Context,
+	window:                       Window_View,
+	state_scratch:                State_Scratch,
+	magic_ui:                     Magic_UI,
+	item_ui:                      Item_UI,
 }
 
 give_reset :: proc(give: ^Give_Context) {
@@ -84,12 +91,21 @@ game_init :: proc(game: ^Game, width, height: int) {
 	give_reset(&game.give)
 	prompt_reset(&game.prompt)
 	message_notice_reset(&game.message_notice)
+	attack_context_reset(&game.attack_context)
+	item_context_reset(&game.item_context)
+	magic_context_reset(&game.magic_context)
 	game.first_unit_died_from_poison = false
 	game.unit_that_died_from_poison = nil
 	game.state = .CalculateUnitMovementRange
 	game.highlight_current_position = {}
 	game.highlight_target_position = {}
 	game.highlight_animation_complete = false
+	game.window = window_view_from_scale(defs.WINDOW.scale)
+	state_scratch_init(&game.state_scratch)
+	magic_ui_reset(&game.magic_ui)
+	magic_ui_reset_layout_center(game)
+	item_ui_reset(&game.item_ui)
+	item_ui_reset_layout_center(game)
 }
 
 game_destroy :: proc(game: ^Game) {

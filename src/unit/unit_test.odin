@@ -18,6 +18,7 @@ test_data_hale :: proc() -> Unit_Data {
 		friendly = true,
 		level = 1,
 		default_job = {.Swordsman},
+		attack_effect = .NormalAttack,
 	}
 }
 
@@ -34,6 +35,7 @@ test_data_judy :: proc() -> Unit_Data {
 		friendly = true,
 		level = 1,
 		default_job = {.Mage},
+		attack_effect = .NormalAttack,
 	}
 }
 

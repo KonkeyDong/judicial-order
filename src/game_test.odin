@@ -1,11 +1,48 @@
 package game
 
+import "core:log"
 import "core:testing"
 
+import "catalog"
 import "data"
 import "defs"
 import unit_pkg "unit"
 import rl "vendor:raylib"
+
+GAME_TEST_ROLL_CAP :: 8
+
+@(thread_local)
+game_test_roll_buf: [GAME_TEST_ROLL_CAP]int
+@(thread_local)
+game_test_rolls: []int
+@(thread_local)
+game_test_roll_i: int
+
+game_combat_random_from_script :: proc(lo, hi: int) -> int {
+	if game_test_roll_i >= len(game_test_rolls) {
+		log.errorf("game_combat_random_from_script: no scripted roll left (lo=%d hi=%d).", lo, hi)
+		return lo
+	}
+
+	value := game_test_rolls[game_test_roll_i]
+	game_test_roll_i += 1
+	return value
+}
+
+game_test_install_rolls :: proc(rolls: []int) {
+	count := len(rolls)
+	if count > GAME_TEST_ROLL_CAP {
+		count = GAME_TEST_ROLL_CAP
+	}
+
+	for i in 0 ..< count {
+		game_test_roll_buf[i] = rolls[i]
+	}
+
+	game_test_rolls = game_test_roll_buf[:count]
+	game_test_roll_i = 0
+	unit_pkg.combat_set_random(game_combat_random_from_script)
+}
 
 test_game_full :: proc() -> Game {
 	game: Game
@@ -28,6 +65,15 @@ test_game_init_owns_grid :: proc(test: ^testing.T) {
 	testing.expect_value(test, game.battle_screen_mode, defs.Battle_Screen_Mode.Combat)
 	testing.expect_value(test, game.give.giver_slot_index, -1)
 	testing.expect_value(test, game.prompt.return_state_on_no, defs.State_Kind.BattleActionMenu)
+	testing.expect_value(test, game.attack_context.active, false)
+	testing.expect_value(test, game.item_context.active, false)
+	testing.expect_value(test, game.magic_context.active, false)
+	testing.expect_value(test, game.item_context.target_count, 0)
+	testing.expect_value(test, game.magic_context.target_count, 0)
+	testing.expect_value(test, game.window.scale, f32(defs.WINDOW.scale))
+	testing.expect_value(test, game.window.width, i32(768))
+	testing.expect_value(test, game.window.height, i32(672))
+	testing.expect_value(test, game.grid.block_size, 72)
 }
 
 @(test)
@@ -390,4 +436,83 @@ test_highlight_off_map :: proc(test: ^testing.T) {
 	context.logger = old_logger
 	testing.expect_value(test, game.highlight_current_position, before)
 	testing.expect(test, !hale.on_map)
+}
+
+@(test)
+test_attack_context_hale_normal_effect :: proc(test: ^testing.T) {
+	data.init()
+	catalog.init()
+	game := test_game_full()
+	defer game_destroy(&game)
+	hale := data.make_unit(.Hale)
+	judy := data.make_unit(.Judy)
+	defer unit_pkg.destroy(hale)
+	defer unit_pkg.destroy(judy)
+	defer unit_pkg.combat_set_random(nil)
+
+	judy.friendly = false
+	game_test_install_rolls({1, 100})
+	attack_context_init(&game.attack_context, hale, judy)
+	testing.expect(test, game.attack_context.active)
+	testing.expect_value(test, game.attack_context.effect, defs.Attack_Effect.NormalAttack)
+	testing.expect_value(test, game.attack_context.damage_apply_frame, 0)
+	testing.expect(test, game.attack_context.hit)
+	testing.expect_value(test, attack_context_monster(&game.attack_context), judy)
+	testing.expect_value(test, attack_context_force_member(&game.attack_context), hale)
+}
+
+@(test)
+test_item_context_self_and_party :: proc(test: ^testing.T) {
+	data.init()
+	catalog.init()
+	game := test_game_full()
+	defer game_destroy(&game)
+	hale := data.make_unit(.Hale)
+	judy := data.make_unit(.Judy)
+	defer unit_pkg.destroy(hale)
+	defer unit_pkg.destroy(judy)
+
+	item_context_init(&game.item_context, hale, {hale}, &game.grid, 0)
+	testing.expect(test, item_context_is_self_target(&game.item_context))
+	testing.expect(test, !item_context_is_party_wide(&game.item_context))
+	testing.expect_value(test, item_context_target(&game.item_context), hale)
+	testing.expect(test, game.item_context.grid == &game.grid)
+
+	item_context_init(&game.item_context, hale, {hale, judy}, &game.grid, 0)
+	testing.expect(test, item_context_is_party_wide(&game.item_context))
+	testing.expect(test, !item_context_is_self_target(&game.item_context))
+	testing.expect_value(test, item_context_target(&game.item_context), hale)
+	testing.expect_value(test, game.item_context.target_count, 2)
+}
+
+@(test)
+test_item_context_use_item_empty_slot :: proc(test: ^testing.T) {
+	data.init()
+	catalog.init()
+	game := test_game_full()
+	defer game_destroy(&game)
+	hale := data.make_unit(.Hale)
+	defer unit_pkg.destroy(hale)
+
+	item_context_init(&game.item_context, hale, {hale}, &game.grid, 0)
+	old_logger := context.logger
+	context.logger = {}
+	item_context_use_item(&game.item_context)
+	context.logger = old_logger
+	testing.expect(test, game.item_context.active)
+	testing.expect(test, unit_pkg.item_slot_is_empty(unit_pkg.item_at(hale, 0)))
+}
+
+@(test)
+test_game_contexts_reset_on_init :: proc(test: ^testing.T) {
+	game := test_game_full()
+	defer game_destroy(&game)
+
+	testing.expect_value(test, game.attack_context.active, false)
+	testing.expect_value(test, game.item_context.active, false)
+	testing.expect_value(test, game.magic_context.active, false)
+	testing.expect_value(test, game.item_context.target_count, 0)
+	testing.expect_value(test, game.magic_context.target_count, 0)
+	testing.expect_value(test, game.item_context.targets[0], nil)
+	testing.expect_value(test, game.magic_context.targets[0], nil)
 }

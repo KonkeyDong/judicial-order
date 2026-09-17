@@ -1,8 +1,137 @@
 package unit
 
 import "core:log"
+import "core:math/rand"
 
 import "../defs"
+
+Combat_Random_Inclusive :: #type proc(lo, hi: int) -> int
+
+combat_random_inclusive_default :: proc(lo, hi: int) -> int {
+	if hi < lo {
+		log.errorf("combat_random_inclusive: hi (%d) < lo (%d).", hi, lo)
+		return lo
+	}
+
+	span := hi - lo + 1
+	return lo + rand.int_max(span)
+}
+
+@(thread_local)
+combat_random_override: Combat_Random_Inclusive
+
+combat_random_inclusive :: proc(lo, hi: int) -> int {
+	if combat_random_override != nil {
+		return combat_random_override(lo, hi)
+	}
+
+	return combat_random_inclusive_default(lo, hi)
+}
+
+combat_set_random :: proc(random_proc: Combat_Random_Inclusive) {
+	combat_random_override = random_proc
+}
+
+combat_chance :: proc(denominator: int) -> bool {
+	if denominator <= 1 {
+		log.errorf("CombatSystem::Chance(): denominator must be greater than 1.")
+		return false
+	}
+
+	result := combat_random_inclusive(0, denominator - 1)
+	log.infof("CombatSystem::Chance() roll: [%d] (need 0 of %d).", result, denominator)
+	return result == 0
+}
+
+combat_miss :: proc() -> bool {
+	return combat_chance(16)
+}
+
+combat_apply_amount_variance :: proc(base_amount: int) -> int {
+	log.infof("  Base amount: [%d].", base_amount)
+	variance := combat_random_inclusive(75, 125)
+	variant_amount := (base_amount * variance) / 100
+	log.infof("  Variant amount: [%d].", variant_amount)
+	return variant_amount
+}
+
+Combat_Attack_Result :: struct {
+	hit, crit: bool,
+	damage:    int,
+}
+
+combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result) {
+	if defender == nil || !result.hit {
+		return
+	}
+
+	take_damage(defender, result.damage)
+}
+
+combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Attack_Result {
+	result: Combat_Attack_Result
+	if attacker == nil || defender == nil {
+		log.errorf("combat_calculate_attack_outcome: attacker or defender is nil.")
+		return result
+	}
+
+	if combat_miss() {
+		log.info("   Attack missed!")
+		return result
+	}
+
+	result.hit = true
+	log.warn("Critical hit not implemented.")
+	result.crit = false
+	log.info("   Attack hits!")
+
+	base := total_offense(attacker) - defender.defense
+	if base <= 0 {
+		log.infof(
+			"%s's attack [%d] is less than or equal to %s's defense [%d]. Minimum damage is 1",
+			defs.name_display(attacker.name),
+			total_offense(attacker),
+			defs.name_display(defender.name),
+			defender.defense,
+		)
+		result.damage = 1
+		combat_apply_attack_damage(defender, result)
+		return result
+	}
+
+	variant := combat_apply_amount_variance(base)
+	result.damage = max(variant, 1)
+	combat_apply_attack_damage(defender, result)
+	return result
+}
+
+combat_magic_attack :: proc(
+	attacker, defender: ^Unit,
+	base_damage: int,
+	magic_type: defs.Magic_Type,
+) {
+	if attacker == nil || defender == nil {
+		log.errorf("combat_magic_attack: attacker or defender is nil.")
+		return
+	}
+
+	log.infof(
+		"%s performs a %v magic attack upon %s.",
+		defs.name_display(attacker.name),
+		magic_type,
+		defs.name_display(defender.name),
+	)
+	variant := combat_apply_amount_variance(base_damage)
+	take_damage(defender, max(variant, 1))
+}
+
+combat_attack_effect_for :: proc(unit: ^Unit) -> defs.Attack_Effect {
+	if unit == nil {
+		return .NormalAttack
+	}
+
+	return unit.attack_effect
+}
 
 take_damage :: proc(unit: ^Unit, amount: int) {
 	log.debugf("Unit::TakeDamage(%d)", amount)

@@ -36,9 +36,13 @@ cache: Sprite_Cache
 
 init :: proc() {
 	cache.textures = make(map[string]rl.Texture2D)
+	item_icons_init()
+	magic_icons_init()
 }
 
 destroy :: proc() {
+	item_icons_destroy()
+	magic_icons_destroy()
 	for _, tex in cache.textures {
 		rl.UnloadTexture(tex)
 	}

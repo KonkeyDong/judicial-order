@@ -3,6 +3,7 @@ package game
 import "core:log"
 import "core:testing"
 
+import "catalog"
 import "data"
 import "defs"
 import unit_pkg "unit"
@@ -90,16 +91,54 @@ test_program_add_test_units_hale_judy :: proc(test: ^testing.T) {
 	data.init()
 	game := test_game_full()
 	defer game_destroy(&game)
-	hale, judy := program_add_test_units(&game)
+	hale, judy, bellweather := program_add_test_units(&game)
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
+	defer unit_pkg.destroy(bellweather)
 
-	testing.expect_value(test, len(game.units), 2)
+	testing.expect_value(test, len(game.units), 3)
 	testing.expect(test, game_current_unit(&game) == hale)
 	testing.expect_value(test, hale.grid_x, 3)
 	testing.expect_value(test, hale.grid_y, 1)
-	testing.expect_value(test, judy.grid_x, 3)
-	testing.expect_value(test, judy.grid_y, 2)
+	testing.expect_value(test, judy.grid_x, 2)
+	testing.expect_value(test, judy.grid_y, 1)
+	testing.expect_value(test, bellweather.grid_x, 3)
+	testing.expect_value(test, bellweather.grid_y, 2)
+	testing.expect(test, !bellweather.friendly)
+	testing.expect(test, unit_pkg.has_spells(judy))
+}
+
+@(test)
+test_item_get_register_stats :: proc(test: ^testing.T) {
+	herb := catalog.item_get(.HealingSeed)
+	testing.expect_value(test, herb.effect_value, 20)
+	testing.expect_value(test, herb.effect_type, defs.Item_Effect.Heal)
+	staff := catalog.item_get(.WoodenStaff)
+	testing.expect_value(test, staff.attack, 5)
+	testing.expect_value(test, staff.type, defs.Item_Type.Staff)
+	light := catalog.item_get(.SwordOfLight)
+	testing.expect_value(test, light.attack, 36)
+	testing.expect_value(test, light.spell_name, defs.Magic_Name.Bolt2)
+	testing.expect_value(test, defs.item_name_display(.ShortSword), "Short Sword")
+	testing.expect_value(test, defs.item_name_display(.SwordOfLight), "Sword Of Light")
+}
+
+@(test)
+test_unit_get_force_and_enemy :: proc(test: ^testing.T) {
+	trudy := data.unit_get(.Trudy)
+	testing.expect(test, trudy.friendly)
+	testing.expect_value(test, trudy.default_job, defs.Job{.Mage})
+	foe := data.unit_get(.Bellweather)
+	testing.expect(test, !foe.friendly)
+	testing.expect_value(test, foe.base_hp, 12)
+	testing.expect_value(test, foe.base_attack, 6)
+}
+
+@(test)
+test_battle_slide_amount_bounds :: proc(test: ^testing.T) {
+	testing.expect_value(test, battle_slide_amount(0), f32(0))
+	testing.expect_value(test, battle_slide_amount(0.5), f32(0))
+	testing.expect_value(test, battle_slide_amount(1), f32(1))
 }
 
 @(test)

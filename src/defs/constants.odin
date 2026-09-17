@@ -222,16 +222,29 @@ GIVE :: Give {
 }
 
 Battle :: struct {
-	transition_frames: int,
-	positions:         struct {
-		unfriendly_stats: rl.Vector2,
-		friendly_stats:   rl.Vector2,
+	transition_frames:  int,
+	slide_pixels:       f32,
+	attack_pose_frames: int,
+	positions:          struct {
+		unfriendly_stats:   rl.Vector2,
+		friendly_stats:     rl.Vector2,
+		unfriendly_standin: rl.Vector2,
+		friendly_standin:   rl.Vector2,
+		foreground:         rl.Vector2,
 	},
 }
 
 BATTLE :: Battle {
 	transition_frames = 60,
-	positions = {unfriendly_stats = {15, 180}, friendly_stats = {200, 15}},
+	slide_pixels = 140,
+	attack_pose_frames = 20,
+	positions = {
+		unfriendly_stats = {15, 180},
+		friendly_stats = {200, 15},
+		unfriendly_standin = {50, 75},
+		friendly_standin = {145, 90},
+		foreground = {127, 150},
+	},
 }
 
 // Process-lifetime backing store for Grid.range_tint. Slice this; do not delete the slice.

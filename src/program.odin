@@ -142,12 +142,20 @@ program_load_graphics :: proc() {
 	sprites.magic_icons_load()
 }
 
-program_add_test_units :: proc(game: ^Game) -> (hale, judy: ^unit_pkg.Unit) {
+program_add_test_units :: proc(game: ^Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
+	catalog.init()
+	data.init()
 	hale = data.make_unit(.Hale)
 	judy = data.make_unit(.Judy)
+	bellweather = data.make_unit(.Bellweather)
+	unit_pkg.add_item(hale, .ShortSword, auto_equip_weapon = true)
+	unit_pkg.add_item(hale, .MedicalHerb)
+	unit_pkg.learn_spell(judy, .Heal1)
+	unit_pkg.learn_spell(judy, .Blaze1)
 	game_add_unit(game, hale, 3, 1)
-	game_add_unit(game, judy, 3, 2)
-	return hale, judy
+	game_add_unit(game, judy, 2, 1)
+	game_add_unit(game, bellweather, 3, 2)
+	return hale, judy, bellweather
 }
 
 program_update :: proc(game: ^Game) {

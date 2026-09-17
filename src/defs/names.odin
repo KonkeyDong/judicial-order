@@ -24,18 +24,46 @@ name_base :: proc(name: Name) -> string {
 }
 
 item_name_display :: proc(name: Item_Name) -> string {
-	switch name {
-	case .NoItem:
+	if name == .NoItem {
 		return "NoItem"
-	case .Unarmed:
-		return "Unarmed"
-	case .ShortSword:
-		return "Short Sword"
-	case .MedicalHerb:
-		return "Medical Herb"
 	}
 
-	return reflect.enum_string(name)
+	if name == .Unarmed {
+		return "Unarmed"
+	}
+
+	return spaced_camel(reflect.enum_string(name))
+}
+
+spaced_camel :: proc(raw: string) -> string {
+	if len(raw) == 0 {
+		return raw
+	}
+
+	extra := 0
+	for i in 1 ..< len(raw) {
+		ch := raw[i]
+		if ch >= 'A' && ch <= 'Z' {
+			extra += 1
+		}
+	}
+
+	buf := make([]u8, len(raw) + extra, context.temp_allocator)
+	out := 0
+	buf[out] = raw[0]
+	out += 1
+	for i in 1 ..< len(raw) {
+		ch := raw[i]
+		if ch >= 'A' && ch <= 'Z' {
+			buf[out] = ' '
+			out += 1
+		}
+
+		buf[out] = ch
+		out += 1
+	}
+
+	return string(buf[:out])
 }
 
 magic_family_base :: proc(family: Magic_Family) -> string {

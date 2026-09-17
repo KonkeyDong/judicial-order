@@ -49,8 +49,18 @@ icon_set_load :: proc(set: ^Icon_Set($Key)) {
 	synthesized: [2]Frame_Rect
 	if len(frames) == 0 {
 		// Missing JSON must not panic; placeholder blink needs two weasel-lawyer rects.
-		synthesized[0] = Frame_Rect{x = 0, y = 0, w = 24, h = 24}
-		synthesized[1] = Frame_Rect{x = 24, y = 0, w = 24, h = 24}
+		synthesized[0] = Frame_Rect {
+			x = 0,
+			y = 0,
+			w = 24,
+			h = 24,
+		}
+		synthesized[1] = Frame_Rect {
+			x = 24,
+			y = 0,
+			w = 24,
+			h = 24,
+		}
 		rects = synthesized[:]
 	}
 

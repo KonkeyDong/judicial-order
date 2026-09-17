@@ -10,7 +10,13 @@ Sequence_Timer_Slot :: struct {
 	position: rl.Vector2,
 }
 
-renderer_artillery_frame_index :: proc(timer: timers.Sequence_Timer, frame_count: int) -> (frame_index: int, draw: bool) {
+renderer_artillery_frame_index :: proc(
+	timer: timers.Sequence_Timer,
+	frame_count: int,
+) -> (
+	frame_index: int,
+	draw: bool,
+) {
 	if frame_count <= 0 {
 		return 0, false
 	}
@@ -29,7 +35,11 @@ renderer_artillery_frame_index :: proc(timer: timers.Sequence_Timer, frame_count
 	return frame_index, true
 }
 
-renderer_artillery_slice_bounds :: proc(start, requested_end, slot_count: int) -> (slice_start, slice_end: int) {
+renderer_artillery_slice_bounds :: proc(
+	start, requested_end, slot_count: int,
+) -> (
+	slice_start, slice_end: int,
+) {
 	slice_start = start
 	slice_end = requested_end
 	if slice_end > slot_count {

@@ -94,13 +94,7 @@ renderer_draw_background :: proc(scale: f32, grid: ^Grid, alpha := 255, debug_dr
 		for y in 0 ..< grid.height {
 			block := grid_block_at(grid, x, y)
 			position := rl.Vector2{f32(x * grid.block_size), f32(y * grid.block_size)}
-			rl.DrawTextureEx(
-				block.texture,
-				position,
-				defs.TEXTURES.base_rotation,
-				scale,
-				tint,
-			)
+			rl.DrawTextureEx(block.texture, position, defs.TEXTURES.base_rotation, scale, tint)
 			if debug_draw {
 				// C# hardcoded 16 and White — not DEBUG.color (yellow) / DEBUG.font_size.
 				rl.DrawText(
@@ -119,12 +113,22 @@ renderer_draw_background :: proc(scale: f32, grid: ^Grid, alpha := 255, debug_dr
 		line_thickness := 1.0 * scale
 		for x in 0 ..= grid.width {
 			x_pos := f32(x * grid.block_size)
-			rl.DrawLineEx({x_pos, 0}, {x_pos, f32(grid.height * grid.block_size)}, line_thickness, grid_color)
+			rl.DrawLineEx(
+				{x_pos, 0},
+				{x_pos, f32(grid.height * grid.block_size)},
+				line_thickness,
+				grid_color,
+			)
 		}
 
 		for y in 0 ..= grid.height {
 			y_pos := f32(y * grid.block_size)
-			rl.DrawLineEx({0, y_pos}, {f32(grid.width * grid.block_size), y_pos}, line_thickness, grid_color)
+			rl.DrawLineEx(
+				{0, y_pos},
+				{f32(grid.width * grid.block_size), y_pos},
+				line_thickness,
+				grid_color,
+			)
 		}
 	}
 }

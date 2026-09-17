@@ -10,8 +10,8 @@ import unit_pkg "unit"
 import rl "vendor:raylib"
 
 Info_Box_Metrics :: struct {
-	fill_x, fill_y, fill_w, fill_h: int,
-	text_left_x, text_start_y:      int,
+	fill_x, fill_y, fill_w, fill_h:       int,
+	text_left_x, text_start_y:            int,
 	font_size, line_spacing, left_margin: int,
 }
 
@@ -31,7 +31,13 @@ renderer_draw_info_box_frame :: proc(
 	box_x := int(position.x * scale) - padding
 	box_y := int(position.y * scale) - padding
 
-	rl.DrawRectangle(i32(box_x), i32(box_y), i32(box_width), i32(box_height), defs.TEXTURES.dark_orange)
+	rl.DrawRectangle(
+		i32(box_x),
+		i32(box_y),
+		i32(box_width),
+		i32(box_height),
+		defs.TEXTURES.dark_orange,
+	)
 	rl.DrawRectangle(i32(box_x), i32(box_y), i32(box_width), 3, defs.TEXTURES.light_orange)
 	rl.DrawRectangle(i32(box_x), i32(box_y), 3, i32(box_height), defs.TEXTURES.light_orange)
 
@@ -39,7 +45,13 @@ renderer_draw_info_box_frame :: proc(
 	inner_y := box_y + 3
 	inner_w := box_width - 6
 	inner_h := box_height - 6
-	rl.DrawRectangle(i32(inner_x), i32(inner_y), i32(inner_w), i32(inner_h), defs.TEXTURES.off_white)
+	rl.DrawRectangle(
+		i32(inner_x),
+		i32(inner_y),
+		i32(inner_w),
+		i32(inner_h),
+		defs.TEXTURES.off_white,
+	)
 
 	fill_x := inner_x + 3
 	fill_y := inner_y + 3
@@ -285,7 +297,7 @@ renderer_draw_equip_stats_box :: proc(
 ) {
 	font_size := int(8 * scale)
 	labels := [4]string{"ATTACK", "DEFENSE", "MOVE", "AGILITY"}
-	values := [4]string{
+	values := [4]string {
 		fmt.tprintf("%d", attack),
 		fmt.tprintf("%d", defense),
 		fmt.tprintf("%d", move),
@@ -315,7 +327,11 @@ renderer_draw_equip_stats_box :: proc(
 	for i in 0 ..< len(labels) {
 		renderer_draw_info_box_text(labels[i], {f32(metrics.text_left_x), y}, metrics.font_size)
 		value_size := renderer_measure_text(values[i], metrics.font_size)
-		renderer_draw_info_box_text(values[i], {value_right_x - value_size.x, y}, metrics.font_size)
+		renderer_draw_info_box_text(
+			values[i],
+			{value_right_x - value_size.x, y},
+			metrics.font_size,
+		)
 		y += line_height + f32(metrics.line_spacing)
 	}
 }

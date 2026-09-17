@@ -168,6 +168,11 @@ Paths :: struct {
 	tiles:            string,
 	grass_tile:       string,
 	forest_tile:      string,
+	shared:           string,
+	item_icons:       string,
+	magic_icons:      string,
+	command_icons:    string,
+	effects:          string,
 }
 
 PATHS :: Paths {
@@ -184,6 +189,21 @@ PATHS :: Paths {
 	tiles            = TILES_DIR,
 	grass_tile       = TILES_DIR + "/" + FILES.grass_tile,
 	forest_tile      = TILES_DIR + "/" + FILES.forest_tile,
+	shared           = "assets/sprites/shared",
+	item_icons       = "assets/sprites/shared/item_icons",
+	magic_icons      = "assets/sprites/shared/magic_icons",
+	command_icons    = "assets/sprites/shared/command_icons",
+	effects          = "assets/sprites/shared/effects",
+}
+
+Give :: struct {
+	trade_prompt_column_gap:      f32,
+	trade_prompt_name_to_icon_gap: f32,
+}
+
+GIVE :: Give {
+	trade_prompt_column_gap      = 24,
+	trade_prompt_name_to_icon_gap = 6,
 }
 
 // Process-lifetime backing store for Grid.range_tint. Slice this; do not delete the slice.

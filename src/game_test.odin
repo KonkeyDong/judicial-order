@@ -20,6 +20,7 @@ test_game_init_owns_grid :: proc(test: ^testing.T) {
 
 	testing.expect_value(test, game.grid.width, 11)
 	testing.expect_value(test, game.grid.height, 10)
+	testing.expect_value(test, game.renderer.debug_draw, false)
 	testing.expect_value(test, grid_block_at(&game.grid, 0, 1).terrain, defs.Terrain.Forest)
 	testing.expect_value(test, grid_block_at(&game.grid, 0, 2).terrain, defs.Terrain.Forest)
 	testing.expect_value(test, game.flip_flop.frames_per_phase, defs.ANIMATIONS.flip_flop_delay)

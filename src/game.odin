@@ -31,6 +31,7 @@ Message_Notice_Context :: struct {
 }
 
 Game :: struct {
+	renderer:                     Renderer,
 	grid:                         Grid,
 	units:                        [dynamic]^unit_pkg.Unit,
 	friendly_units_in_range:      [dynamic]^unit_pkg.Unit,
@@ -77,6 +78,7 @@ message_notice_set :: proc(
 
 game_init :: proc(game: ^Game, width, height: int) {
 	grid_init(&game.grid, width, height)
+	renderer_init(&game.renderer)
 	timers.flip_flop_init(&game.flip_flop, defs.ANIMATIONS.flip_flop_delay)
 	game.battle_screen_mode = .Combat
 	give_reset(&game.give)
@@ -92,6 +94,7 @@ game_init :: proc(game: ^Game, width, height: int) {
 
 game_destroy :: proc(game: ^Game) {
 	grid_destroy(&game.grid)
+	renderer_destroy(&game.renderer)
 	delete(game.units)
 	delete(game.friendly_units_in_range)
 	delete(game.unfriendly_units_in_range)

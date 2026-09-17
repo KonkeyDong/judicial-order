@@ -3,6 +3,7 @@ package game
 import "core:testing"
 
 import "data"
+import "timers"
 import unit_pkg "unit"
 
 @(test)
@@ -44,4 +45,59 @@ test_renderer_split_display_name :: proc(test: ^testing.T) {
 @(test)
 test_renderer_info_box_content_height :: proc(test: ^testing.T) {
 	testing.expect_value(test, renderer_info_box_content_height(10, 10, 10, 4), 38)
+}
+
+@(test)
+test_renderer_artillery_frame_index :: proc(test: ^testing.T) {
+	not_started := timers.Sequence_Timer {
+		start_delay_frames_remaining = 3,
+		current_index = 2,
+	}
+	frame_index, draw := renderer_artillery_frame_index(not_started, 4)
+	testing.expect_value(test, draw, false)
+	testing.expect_value(test, frame_index, 0)
+
+	complete := timers.Sequence_Timer {
+		is_complete = true,
+		current_index = 2,
+	}
+	frame_index, draw = renderer_artillery_frame_index(complete, 4)
+	testing.expect_value(test, draw, false)
+	testing.expect_value(test, frame_index, 0)
+
+	playing := timers.Sequence_Timer {
+		current_index = 1,
+	}
+	frame_index, draw = renderer_artillery_frame_index(playing, 0)
+	testing.expect_value(test, draw, false)
+	testing.expect_value(test, frame_index, 0)
+
+	frame_index, draw = renderer_artillery_frame_index(playing, 4)
+	testing.expect_value(test, draw, true)
+	testing.expect_value(test, frame_index, 1)
+
+	playing.current_index = -3
+	frame_index, draw = renderer_artillery_frame_index(playing, 4)
+	testing.expect_value(test, draw, true)
+	testing.expect_value(test, frame_index, 0)
+
+	playing.current_index = 9
+	frame_index, draw = renderer_artillery_frame_index(playing, 4)
+	testing.expect_value(test, draw, true)
+	testing.expect_value(test, frame_index, 3)
+}
+
+@(test)
+test_renderer_artillery_slice_bounds :: proc(test: ^testing.T) {
+	slice_start, slice_end := renderer_artillery_slice_bounds(0, 3, 7)
+	testing.expect_value(test, slice_start, 0)
+	testing.expect_value(test, slice_end, 3)
+
+	slice_start, slice_end = renderer_artillery_slice_bounds(3, 7, 7)
+	testing.expect_value(test, slice_start, 3)
+	testing.expect_value(test, slice_end, 7)
+
+	slice_start, slice_end = renderer_artillery_slice_bounds(3, 7, 2)
+	testing.expect_value(test, slice_start, 3)
+	testing.expect_value(test, slice_end, 2)
 }

@@ -7,10 +7,12 @@ import "core:strings"
 import rl "vendor:raylib"
 
 Frame_Rect :: struct {
-	offset_x: int `json:"x"`,
-	offset_y: int `json:"y"`,
-	width:    int `json:"w"`,
-	height:   int `json:"h"`,
+	x:        int `json:"x"`,
+	y:        int `json:"y"`,
+	w:        int `json:"w"`,
+	h:        int `json:"h"`,
+	offset_x: int,
+	offset_y: int,
 }
 
 Sprite :: struct {
@@ -34,9 +36,13 @@ cache: Sprite_Cache
 
 init :: proc() {
 	cache.textures = make(map[string]rl.Texture2D)
+	item_icons_init()
+	magic_icons_init()
 }
 
 destroy :: proc() {
+	item_icons_destroy()
+	magic_icons_destroy()
 	for _, tex in cache.textures {
 		rl.UnloadTexture(tex)
 	}

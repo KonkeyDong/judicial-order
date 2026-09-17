@@ -190,3 +190,47 @@ Magic_Effect :: enum {
 	Egress,
 	Desoul,
 }
+
+Battle_Screen_Mode :: enum {
+	Combat,
+	ItemConsumable,
+}
+
+Prompt_Action :: enum {
+	None,
+	DropItem,
+	GiveItem,
+	TradeItem,
+}
+
+// Battle states only. Mirrors src/state/state.odin Kind.
+State_Kind :: enum {
+	UnitMoving,
+	EndTurn,
+	CalculateUnitMovementRange,
+	CalculateWeaponAttackRange,
+	PrepareMagicTargets,
+	BattleActionMenu,
+	BattleItemMenu,
+	SelectingAction,
+	SelectEnemyForPhysicalAttack,
+	TransitionSelectorToNextUnit,
+	AnimateUnitDeaths,
+	SelectMagic,
+	SelectMagicLevel,
+	MessageNotice,
+	SelectMagicTargets,
+	BattleResolution,
+	BattleResolutionDebug,
+	EnterBattleScreen,
+	ExitBattleScreen,
+	DropItem,
+	PromptYesNo,
+	EquipItem,
+	UseWhichItem,
+	UseItemOnWhom,
+	UseConsumableBattle,
+	GiveWhichItem,
+	GiveItemToWhom,
+	TradeWhichItemFromAdjacentNeighbor,
+}

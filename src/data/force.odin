@@ -17,6 +17,7 @@ HALE_DATA :: unit.Unit_Data {
 	friendly      = true,
 	level         = 1,
 	default_job   = {.Swordsman},
+	attack_effect = .NormalAttack,
 }
 
 JUDY_DATA :: unit.Unit_Data {
@@ -31,6 +32,7 @@ JUDY_DATA :: unit.Unit_Data {
 	friendly      = true,
 	level         = 1,
 	default_job   = {.Mage},
+	attack_effect = .NormalAttack,
 }
 
 init :: proc() {

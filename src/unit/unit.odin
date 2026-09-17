@@ -50,6 +50,7 @@ Unit_Data :: struct {
 	friendly:      bool,
 	level:         int,
 	default_job:   defs.Job,
+	attack_effect: defs.Attack_Effect,
 }
 
 Item_Slot :: struct {
@@ -109,6 +110,7 @@ Unit :: struct {
 	movement_flip_flop:    timers.Flip_Flop,
 	walk_animations:       [defs.Direction][defs.WALK_FRAME_COUNT]sprites.Sprite,
 	walk_frames_loaded:    int,
+	attack_effect:         defs.Attack_Effect,
 }
 
 init :: proc(unit: ^Unit, data: Unit_Data) {
@@ -124,6 +126,7 @@ init :: proc(unit: ^Unit, data: Unit_Data) {
 	unit.level = data.level
 	unit.exp = 0
 	unit.job = data.default_job if data.friendly else {}
+	unit.attack_effect = data.attack_effect
 	unit.promoted = false
 	unit.facing_direction = .Down
 	unit.equipped_weapon_index = defs.UNARMED_INDEX

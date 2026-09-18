@@ -1,11 +1,13 @@
-package game
+package main
 
 import "core:log"
 import "core:strings"
 
 import "catalog"
 import "data"
+import "game"
 import "sprites"
+import "state"
 import unit_pkg "unit"
 import rl "vendor:raylib"
 
@@ -37,12 +39,12 @@ program_set_log_level :: proc(level: log.Level) {
 	context.logger.lowest_level = level
 }
 
-program_apply_debug_draw :: proc(game: ^Game) {
-	if game == nil {
+program_apply_debug_draw :: proc(session: ^game.Game) {
+	if session == nil {
 		return
 	}
 
-	game.renderer.debug_draw = program_log_in_debug_mode()
+	session.renderer.debug_draw = program_log_in_debug_mode()
 }
 
 program_parse_log_level :: proc(text: string) -> (level: log.Level, ok: bool) {
@@ -110,8 +112,8 @@ program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: boo
 	return options, true
 }
 
-program_handle_logging_toggle :: proc(game: ^Game) {
-	if !input_key_pressed(.F1) {
+program_handle_logging_toggle :: proc(session: ^game.Game) {
+	if !game.input_key_pressed(.F1) {
 		return
 	}
 
@@ -121,14 +123,14 @@ program_handle_logging_toggle :: proc(game: ^Game) {
 		program_set_log_level(.Debug)
 	}
 
-	program_apply_debug_draw(game)
+	program_apply_debug_draw(session)
 	log.infof("Logging level changed to: %v", program_log_level_get())
 }
 
-program_handle_global_input :: proc(game: ^Game, apply_os_window := true) {
-	window_handle_resize_input(game, apply_os_window)
-	program_handle_logging_toggle(game)
-	state_handle_input(game)
+program_handle_global_input :: proc(session: ^game.Game, apply_os_window := true) {
+	game.window_handle_resize_input(session, apply_os_window)
+	program_handle_logging_toggle(session)
+	state.state_handle_input(session)
 }
 
 program_init_databases :: proc() {
@@ -140,9 +142,10 @@ program_load_graphics :: proc() {
 	sprites.init()
 	sprites.item_icons_load()
 	sprites.magic_icons_load()
+	sprites.command_icons_load()
 }
 
-program_add_test_units :: proc(game: ^Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
+program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
 	catalog.init()
 	data.init()
 	hale = data.make_unit(.Hale)
@@ -152,19 +155,19 @@ program_add_test_units :: proc(game: ^Game) -> (hale, judy, bellweather: ^unit_p
 	unit_pkg.add_item(hale, .MedicalHerb)
 	unit_pkg.learn_spell(judy, .Heal1)
 	unit_pkg.learn_spell(judy, .Blaze1)
-	game_add_unit(game, hale, 3, 1)
-	game_add_unit(game, judy, 2, 1)
-	game_add_unit(game, bellweather, 3, 2)
+	game.game_add_unit(session, hale, 3, 1)
+	game.game_add_unit(session, judy, 2, 1)
+	game.game_add_unit(session, bellweather, 3, 2)
 	return hale, judy, bellweather
 }
 
-program_update :: proc(game: ^Game) {
-	state_update(game)
+program_update :: proc(session: ^game.Game) {
+	state.state_update(session)
 }
 
-program_draw :: proc(game: ^Game) {
+program_draw :: proc(session: ^game.Game) {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RAYWHITE)
-	state_draw(game)
+	state.state_draw(session)
 	rl.EndDrawing()
 }

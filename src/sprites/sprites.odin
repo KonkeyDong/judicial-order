@@ -4,21 +4,13 @@ import "core:encoding/json"
 import "core:log"
 import "core:os"
 import "core:strings"
+
+import "../defs"
+import "../unit"
 import rl "vendor:raylib"
 
-Frame_Rect :: struct {
-	x:        int `json:"x"`,
-	y:        int `json:"y"`,
-	w:        int `json:"w"`,
-	h:        int `json:"h"`,
-	offset_x: int,
-	offset_y: int,
-}
-
-Sprite :: struct {
-	texture: rl.Texture2D,
-	frame:   Frame_Rect,
-}
+Frame_Rect :: defs.Frame_Rect
+Sprite :: defs.Sprite
 
 Aseprite_Frame_Entry :: struct {
 	frame: Frame_Rect,
@@ -38,11 +30,14 @@ init :: proc() {
 	cache.textures = make(map[string]rl.Texture2D)
 	item_icons_init()
 	magic_icons_init()
+	command_icons_init()
+	unit.walk_loader = load_unit_walk
 }
 
 destroy :: proc() {
 	item_icons_destroy()
 	magic_icons_destroy()
+	command_icons_destroy()
 	for _, tex in cache.textures {
 		rl.UnloadTexture(tex)
 	}

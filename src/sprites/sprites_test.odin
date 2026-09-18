@@ -33,11 +33,14 @@ test_extract_frames_weasel_lawyer :: proc(test: ^testing.T) {
 test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	item_icons_init()
 	magic_icons_init()
+	command_icons_init()
 	defer item_icons_destroy()
 	defer magic_icons_destroy()
+	defer command_icons_destroy()
 
 	testing.expect_value(test, item_icons.selected, defs.Item_Name.NoItem)
 	testing.expect_value(test, magic_icons.selected, defs.Magic_Family.Blaze)
+	testing.expect_value(test, command_icons.selected, defs.Command_Icon.Attack)
 
 	frame0 := Sprite {
 		frame = {x = 0, y = 0, w = 24, h = 24},
@@ -61,4 +64,14 @@ test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	missing := item_icons_get(.MedicalHerb)
 	context.logger = old_logger
 	testing.expect_value(test, missing, Sprite{})
+
+	command_icons.animations[.Attack] = {frame0, frame1}
+	command_icons_set_selected(.Attack)
+	command_icons.flip_flop.is_on = true
+	attack_on := command_icons_get(.Attack)
+	testing.expect_value(test, attack_on.frame.x, 24)
+
+	command_icons.flip_flop.is_on = false
+	attack_off := command_icons_get(.Attack)
+	testing.expect_value(test, attack_off.frame.x, 0)
 }

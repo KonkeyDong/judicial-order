@@ -1,4 +1,4 @@
-package game
+package main
 
 import "core:log"
 import "core:testing"
@@ -6,6 +6,8 @@ import "core:testing"
 import "catalog"
 import "data"
 import "defs"
+import "game"
+import "state"
 import unit_pkg "unit"
 
 @(test)
@@ -66,38 +68,38 @@ test_parse_args_unknown_flag :: proc(test: ^testing.T) {
 
 @(test)
 test_f1_toggles_debug_and_info :: proc(test: ^testing.T) {
-	game := test_game_full()
-	defer game_destroy(&game)
-	defer input_set_pressed(nil)
+	session := game.test_game_full()
+	defer game.game_destroy(&session)
+	defer game.input_set_pressed(nil)
 	defer program_set_log_level(.Info)
 
 	program_set_log_level(.Info)
-	program_apply_debug_draw(&game)
+	program_apply_debug_draw(&session)
 	testing.expect(test, !program_log_in_debug_mode())
-	testing.expect_value(test, game.renderer.debug_draw, false)
+	testing.expect_value(test, session.renderer.debug_draw, false)
 
-	input_test_install_pressed({.F1})
-	program_handle_logging_toggle(&game)
+	game.input_test_install_pressed({.F1})
+	program_handle_logging_toggle(&session)
 	testing.expect(test, program_log_in_debug_mode())
-	testing.expect(test, game.renderer.debug_draw)
+	testing.expect(test, session.renderer.debug_draw)
 
-	program_handle_logging_toggle(&game)
+	program_handle_logging_toggle(&session)
 	testing.expect(test, !program_log_in_debug_mode())
-	testing.expect_value(test, game.renderer.debug_draw, false)
+	testing.expect_value(test, session.renderer.debug_draw, false)
 }
 
 @(test)
 test_program_add_test_units_hale_judy :: proc(test: ^testing.T) {
 	data.init()
-	game := test_game_full()
-	defer game_destroy(&game)
-	hale, judy, bellweather := program_add_test_units(&game)
+	session := game.test_game_full()
+	defer game.game_destroy(&session)
+	hale, judy, bellweather := program_add_test_units(&session)
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
 	defer unit_pkg.destroy(bellweather)
 
-	testing.expect_value(test, len(game.units), 3)
-	testing.expect(test, game_current_unit(&game) == hale)
+	testing.expect_value(test, len(session.units), 3)
+	testing.expect(test, game.game_current_unit(&session) == hale)
 	testing.expect_value(test, hale.grid_x, 3)
 	testing.expect_value(test, hale.grid_y, 1)
 	testing.expect_value(test, judy.grid_x, 2)
@@ -136,59 +138,59 @@ test_unit_get_force_and_enemy :: proc(test: ^testing.T) {
 
 @(test)
 test_battle_slide_amount_bounds :: proc(test: ^testing.T) {
-	testing.expect_value(test, battle_slide_amount(0), f32(0))
-	testing.expect_value(test, battle_slide_amount(0.5), f32(0))
-	testing.expect_value(test, battle_slide_amount(1), f32(1))
+	testing.expect_value(test, state.battle_slide_amount(0), f32(0))
+	testing.expect_value(test, state.battle_slide_amount(0.5), f32(0))
+	testing.expect_value(test, state.battle_slide_amount(1), f32(1))
 }
 
 @(test)
 test_window_scale_clamp :: proc(test: ^testing.T) {
-	testing.expect_value(test, window_scale_clamp(0.5), f32(1.0))
-	testing.expect_value(test, window_scale_clamp(6.0), f32(5.0))
-	testing.expect_value(test, window_scale_clamp(3.0), f32(3.0))
+	testing.expect_value(test, defs.window_scale_clamp(0.5), f32(1.0))
+	testing.expect_value(test, defs.window_scale_clamp(6.0), f32(5.0))
+	testing.expect_value(test, defs.window_scale_clamp(3.0), f32(3.0))
 }
 
 @(test)
 test_window_apply_scale_updates_block_size :: proc(test: ^testing.T) {
-	game := test_game_full()
-	defer game_destroy(&game)
+	session := game.test_game_full()
+	defer game.game_destroy(&session)
 
-	testing.expect_value(test, game.window.scale, f32(defs.WINDOW.scale))
-	testing.expect_value(test, game.window.width, i32(768))
-	testing.expect_value(test, game.window.height, i32(672))
-	testing.expect_value(test, game.grid.block_size, 72)
+	testing.expect_value(test, session.window.scale, f32(defs.WINDOW.scale))
+	testing.expect_value(test, session.window.width, i32(768))
+	testing.expect_value(test, session.window.height, i32(672))
+	testing.expect_value(test, session.grid.block_size, 72)
 
-	window_apply_scale(&game, 4.0, apply_os_window = false)
-	testing.expect_value(test, game.window.scale, f32(4.0))
-	testing.expect_value(test, game.window.width, i32(1024))
-	testing.expect_value(test, game.window.height, i32(896))
-	testing.expect_value(test, game.grid.block_size, 96)
+	game.window_apply_scale(&session, 4.0, apply_os_window = false)
+	testing.expect_value(test, session.window.scale, f32(4.0))
+	testing.expect_value(test, session.window.width, i32(1024))
+	testing.expect_value(test, session.window.height, i32(896))
+	testing.expect_value(test, session.grid.block_size, 96)
 
-	window_apply_scale(&game, 0.5, apply_os_window = false)
-	testing.expect_value(test, game.window.scale, f32(1.0))
-	testing.expect_value(test, game.window.width, i32(256))
-	testing.expect_value(test, game.window.height, i32(224))
-	testing.expect_value(test, game.grid.block_size, 24)
+	game.window_apply_scale(&session, 0.5, apply_os_window = false)
+	testing.expect_value(test, session.window.scale, f32(1.0))
+	testing.expect_value(test, session.window.width, i32(256))
+	testing.expect_value(test, session.window.height, i32(224))
+	testing.expect_value(test, session.grid.block_size, 24)
 }
 
 @(test)
 test_window_ctrl_plus_minus :: proc(test: ^testing.T) {
-	game := test_game_full()
-	defer game_destroy(&game)
-	defer input_set_pressed(nil)
-	defer input_set_down(nil)
+	session := game.test_game_full()
+	defer game.game_destroy(&session)
+	defer game.input_set_pressed(nil)
+	defer game.input_set_down(nil)
 
-	input_test_install_down({.LEFT_CONTROL})
-	input_test_install_pressed({.EQUAL})
-	window_handle_resize_input(&game, apply_os_window = false)
-	testing.expect_value(test, game.window.scale, f32(4.0))
+	game.input_test_install_down({.LEFT_CONTROL})
+	game.input_test_install_pressed({.EQUAL})
+	game.window_handle_resize_input(&session, apply_os_window = false)
+	testing.expect_value(test, session.window.scale, f32(4.0))
 
-	input_test_install_pressed({.MINUS})
-	window_handle_resize_input(&game, apply_os_window = false)
-	testing.expect_value(test, game.window.scale, f32(3.0))
+	game.input_test_install_pressed({.MINUS})
+	game.window_handle_resize_input(&session, apply_os_window = false)
+	testing.expect_value(test, session.window.scale, f32(3.0))
 
-	window_apply_scale(&game, 1.0, apply_os_window = false)
-	input_test_install_pressed({.MINUS})
-	window_handle_resize_input(&game, apply_os_window = false)
-	testing.expect_value(test, game.window.scale, f32(1.0))
+	game.window_apply_scale(&session, 1.0, apply_os_window = false)
+	game.input_test_install_pressed({.MINUS})
+	game.window_handle_resize_input(&session, apply_os_window = false)
+	testing.expect_value(test, session.window.scale, f32(1.0))
 }

@@ -4,7 +4,6 @@ import "core:fmt"
 import "core:log"
 
 import "../defs"
-import "../sprites"
 import "../timers"
 import rl "vendor:raylib"
 
@@ -108,7 +107,7 @@ Unit :: struct {
 	movement_timer:        f32,
 	is_animating:          bool,
 	movement_flip_flop:    timers.Flip_Flop,
-	walk_animations:       [defs.Direction][defs.WALK_FRAME_COUNT]sprites.Sprite,
+	walk_animations:       [defs.Direction][defs.WALK_FRAME_COUNT]defs.Sprite,
 	walk_frames_loaded:    int,
 	attack_effect:         defs.Attack_Effect,
 }

@@ -4,16 +4,12 @@ import "core:log"
 
 import "../defs"
 
-Tile_Range :: struct {
-	min, max: int,
-}
-
 Item_Data :: struct {
 	name:           defs.Item_Name,
 	type:           defs.Item_Type,
 	price:          int,
 	attack:         int,
-	distance_range: Tile_Range,
+	distance_range: defs.Tile_Range,
 	allowed_jobs:   defs.Job,
 	cursed:         bool,
 	effect_type:    defs.Item_Effect,
@@ -38,7 +34,7 @@ item_make_weapon :: proc(
 	name: defs.Item_Name,
 	attack: int,
 	item_type: defs.Item_Type,
-	distance: Tile_Range,
+	distance: defs.Tile_Range,
 	jobs: defs.Job,
 	price: int,
 	spell_name: defs.Magic_Name = .NoSpell,
@@ -60,7 +56,7 @@ item_make_weapon :: proc(
 
 item_make_consumable :: proc(
 	name: defs.Item_Name,
-	distance: Tile_Range,
+	distance: defs.Tile_Range,
 	price: int,
 	effect_type: defs.Item_Effect,
 	effect_value: int,
@@ -98,10 +94,10 @@ init :: proc() {
 }
 
 item_get :: proc(name: defs.Item_Name) -> Item_Data {
-	melee := Tile_Range{1, 1}
-	reach := Tile_Range{1, 2}
-	bow := Tile_Range{2, 2}
-	longbow := Tile_Range{2, 3}
+	melee := defs.Tile_Range{1, 1}
+	reach := defs.Tile_Range{1, 2}
+	bow := defs.Tile_Range{2, 2}
+	longbow := defs.Tile_Range{2, 3}
 	swordsman := defs.Job{.Swordsman, .Warrior, .Birdman}
 	hero := defs.Job{.Hero, .Ninja, .SkyWarrior, .Samurai}
 	light_sword := defs.Job{.Hero, .SkyWarrior}

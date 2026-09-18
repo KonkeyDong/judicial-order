@@ -24,7 +24,7 @@ Grid :: struct {
 
 GRID_ADJACENT_OFFSETS :: [4]Grid_Coord{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 
-GRID_GIVE_DISTANCE_RANGE :: catalog.Tile_Range {
+GRID_GIVE_DISTANCE_RANGE :: defs.Tile_Range {
 	min = 1,
 	max = 1,
 }
@@ -419,7 +419,7 @@ grid_calculate_unit_movement_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 grid_fill_effect_distance_range :: proc(
 	grid: ^Grid,
 	unit: ^units.Unit,
-	tile_range: catalog.Tile_Range,
+	tile_range: defs.Tile_Range,
 ) {
 	grid_clear_range_set(grid)
 	if unit == nil || !unit.on_map {
@@ -441,7 +441,7 @@ grid_fill_effect_distance_range :: proc(
 	for queue_start < len(queue) {
 		current := queue[queue_start]
 		queue_start += 1
-		distance := abs(current.grid_x - start.grid_x) + abs(current.grid_y - start.grid_y)
+		distance := uint(abs(current.grid_x - start.grid_x) + abs(current.grid_y - start.grid_y))
 		if distance >= tile_range.min && distance <= tile_range.max {
 			grid_range_add(grid, current.grid_x, current.grid_y)
 		}

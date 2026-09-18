@@ -43,6 +43,7 @@ state_draw_item_radial :: proc(game: ^game_pkg.Game, scale: f32, owner: ^unit_pk
 		index := sprites.radial_index_for_direction(direction)
 		slot := owner.items[index]
 		selected := index == game.item_ui.selected_index
+
 		sprites.renderer_draw_item_icon(
 			scale,
 			slot.name,
@@ -145,6 +146,7 @@ battle_item_menu_update :: proc(game: ^game_pkg.Game) {
 battle_item_menu_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	state_draw_map(game, scale, true, false)
 	center := sprites.radial_center(game.window)
+
 	sprites.renderer_draw_battle_menu_message(
 		scale,
 		sprites.command_icon_display_name(game.state_scratch.selected_command),
@@ -157,6 +159,7 @@ use_which_item_enter :: proc(game: ^game_pkg.Game) {
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 	sprites.item_ui_select_first(&game.item_ui, current, sprites.item_ui_usable_filter)
+
 	if !sprites.item_ui_has_valid_selection(
 		&game.item_ui,
 		current,
@@ -203,6 +206,7 @@ use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 		}
 
 		game.prompt.item_slot_index = game.item_ui.selected_index
+
 		state_change(game, .UseItemOnWhom)
 	}
 
@@ -210,6 +214,7 @@ use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 		sprites.item_ui_reset(&game.item_ui)
 		sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 		game_pkg.grid_clear_range_set(&game.grid)
+
 		state_change(game, .BattleItemMenu)
 	}
 }
@@ -395,6 +400,7 @@ use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
 			target := game.state_scratch.targets[game.state_scratch.list_index]
 			game.state_scratch.target_count = 1
 			game.state_scratch.targets[0] = target
+
 			use_item_on_whom_confirm_consumable_targets(game)
 		} else {
 			use_item_on_whom_confirm_spell(game)
@@ -415,10 +421,12 @@ use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 		&game.grid,
 		game.prompt.item_slot_index,
 	)
+
 	game.battle_screen_mode = .ItemConsumable
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 	game_pkg.grid_clear_range_set(&game.grid)
+
 	state_change(game, .EnterBattleScreen)
 }
 
@@ -430,7 +438,9 @@ use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 	selected := game.state_scratch.targets[game.state_scratch.list_index]
 	game_pkg.grid_calculate_spell_effect_range(&game.grid, selected, magic)
 	aoe := game_pkg.grid_units_in_range(&game.grid)
+
 	defer delete(aoe)
+
 	game.state_scratch.target_count = 0
 	for unit in aoe {
 		if unit == nil {
@@ -457,18 +467,21 @@ use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 		game.state_scratch.targets[:game.state_scratch.target_count],
 		&game.grid,
 	)
+
 	game_pkg.magic_context_cast(&game.magic_context, data.spell_name, true)
 	unit_pkg.item_apply_spell_item_durability(current, game.prompt.item_slot_index)
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 	game_pkg.grid_clear_range_set(&game.grid)
 	game_pkg.prompt_reset(&game.prompt)
+
 	state_change(game, .AnimateUnitDeaths)
 }
 
 use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.flip_flop)
+
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
@@ -496,6 +509,7 @@ drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 		game.prompt.item_slot_index = game.item_ui.selected_index
 		game.prompt.return_state_on_no = .DropItem
 		game.prompt.return_state_on_yes = .BattleItemMenu
+
 		state_change(game, .PromptYesNo)
 	}
 
@@ -532,6 +546,7 @@ equip_item_enter :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
 	game.state_scratch.list_index = 3
 	game.state_scratch.equip_unarmed = true
+
 	if current != nil && current.equipped_weapon_index >= 0 && current.equipped_weapon_index <= 2 {
 		if equip_item_slot_equippable(current, current.equipped_weapon_index) {
 			game.state_scratch.list_index = current.equipped_weapon_index

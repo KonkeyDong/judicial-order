@@ -140,7 +140,7 @@ battle_item_menu_confirm :: proc(game: ^game_pkg.Game) {
 
 battle_item_menu_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 }
 
 battle_item_menu_draw :: proc(game: ^game_pkg.Game, scale: f32) {
@@ -205,7 +205,7 @@ use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 			return
 		}
 
-		game.prompt.item_slot_index = game.item_ui.selected_index
+		game.contexts.prompt.item_slot_index = game.item_ui.selected_index
 
 		state_change(game, .UseItemOnWhom)
 	}
@@ -221,7 +221,7 @@ use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 
 use_which_item_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
@@ -242,7 +242,7 @@ use_item_on_whom_enter :: proc(game: ^game_pkg.Game) {
 		return
 	}
 
-	slot_index := game.prompt.item_slot_index
+	slot_index := game.contexts.prompt.item_slot_index
 	if slot_index < 0 || slot_index >= defs.MAX_BUCKET_SIZE {
 		log.errorf("UseItemOnWhom: invalid ItemSlotIndex. Returning to UseWhichItem.")
 		state_change(game, .UseWhichItem)
@@ -415,11 +415,11 @@ use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
 use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
 	game_pkg.item_context_init(
-		&game.item_context,
+		&game.contexts.item_context,
 		current,
 		game.state_scratch.targets[:game.state_scratch.target_count],
 		&game.grid,
-		game.prompt.item_slot_index,
+		game.contexts.prompt.item_slot_index,
 	)
 
 	game.battle_screen_mode = .ItemConsumable
@@ -432,7 +432,7 @@ use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 
 use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
-	slot := unit_pkg.item_at(current, game.prompt.item_slot_index)
+	slot := unit_pkg.item_at(current, game.contexts.prompt.item_slot_index)
 	data := catalog.item_get(slot.name)
 	magic := catalog.magic_get(data.spell_name)
 	selected := game.state_scratch.targets[game.state_scratch.list_index]
@@ -462,25 +462,25 @@ use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 	}
 
 	game_pkg.magic_context_init(
-		&game.magic_context,
+		&game.contexts.magic_context,
 		current,
 		game.state_scratch.targets[:game.state_scratch.target_count],
 		&game.grid,
 	)
 
-	game_pkg.magic_context_cast(&game.magic_context, data.spell_name, true)
-	unit_pkg.item_apply_spell_item_durability(current, game.prompt.item_slot_index)
+	game_pkg.magic_context_cast(&game.contexts.magic_context, data.spell_name, true)
+	unit_pkg.item_apply_spell_item_durability(current, game.contexts.prompt.item_slot_index)
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 	game_pkg.grid_clear_range_set(&game.grid)
-	game_pkg.prompt_reset(&game.prompt)
+	game_pkg.prompt_reset(&game.contexts.prompt)
 
 	state_change(game, .AnimateUnitDeaths)
 }
 
 use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
@@ -505,10 +505,10 @@ drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
 	state_item_handle_slot_keys(game, current, sprites.item_ui_giveable_filter)
 	if game_pkg.input_confirm_press() {
-		game.prompt.action = .DropItem
-		game.prompt.item_slot_index = game.item_ui.selected_index
-		game.prompt.return_state_on_no = .DropItem
-		game.prompt.return_state_on_yes = .BattleItemMenu
+		game.contexts.prompt.action = .DropItem
+		game.contexts.prompt.item_slot_index = game.item_ui.selected_index
+		game.contexts.prompt.return_state_on_no = .DropItem
+		game.contexts.prompt.return_state_on_yes = .BattleItemMenu
 
 		state_change(game, .PromptYesNo)
 	}
@@ -520,7 +520,7 @@ drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 
 drop_item_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
@@ -599,7 +599,7 @@ equip_item_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 equip_item_update :: proc(game: ^game_pkg.Game) {
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
@@ -641,9 +641,9 @@ give_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 			return
 		}
 
-		game.give.giver_slot_index = game.item_ui.selected_index
-		game.give.recipient = nil
-		game.give.recipient_slot_index = -1
+		game.contexts.give.giver_slot_index = game.item_ui.selected_index
+		game.contexts.give.recipient = nil
+		game.contexts.give.recipient_slot_index = -1
 		state_change(game, .GiveItemToWhom)
 	}
 
@@ -656,7 +656,7 @@ give_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 
 give_which_item_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
@@ -703,12 +703,12 @@ give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
 		}
 
 		recipient := game.friendly_units_in_range[game.state_scratch.list_index]
-		game.give.recipient = recipient
-		game.give.recipient_slot_index = -1
+		game.contexts.give.recipient = recipient
+		game.contexts.give.recipient_slot_index = -1
 		if unit_pkg.has_empty_item_slot(recipient) {
-			game.prompt.action = .GiveItem
-			game.prompt.return_state_on_yes = .EndTurn
-			game.prompt.return_state_on_no = .GiveItemToWhom
+			game.contexts.prompt.action = .GiveItem
+			game.contexts.prompt.return_state_on_yes = .EndTurn
+			game.contexts.prompt.return_state_on_no = .GiveItemToWhom
 			state_change(game, .PromptYesNo)
 		} else if unit_pkg.has_giveable_item(recipient) {
 			state_change(game, .TradeWhichItemFromAdjacentNeighbor)
@@ -722,7 +722,7 @@ give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
 
 give_item_to_whom_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
@@ -739,7 +739,7 @@ give_item_to_whom_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 
 trade_which_item_enter :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
-	recipient := game.give.recipient
+	recipient := game.contexts.give.recipient
 	if recipient == nil {
 		log.errorf("TradeWhichItemFromAdjacentNeighbor: Give.Recipient is nil.")
 		state_change(game, .GiveItemToWhom)
@@ -762,7 +762,7 @@ trade_which_item_enter :: proc(game: ^game_pkg.Game) {
 trade_which_item_exit :: proc(_: ^game_pkg.Game) {}
 
 trade_which_item_handle_input :: proc(game: ^game_pkg.Game) {
-	recipient := game.give.recipient
+	recipient := game.contexts.give.recipient
 	state_item_handle_slot_keys(game, recipient, sprites.item_ui_giveable_filter)
 	if game_pkg.input_confirm_press() {
 		if !sprites.item_ui_has_valid_selection(
@@ -773,10 +773,10 @@ trade_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 			return
 		}
 
-		game.give.recipient_slot_index = game.item_ui.selected_index
-		game.prompt.action = .TradeItem
-		game.prompt.return_state_on_yes = .EndTurn
-		game.prompt.return_state_on_no = .TradeWhichItemFromAdjacentNeighbor
+		game.contexts.give.recipient_slot_index = game.item_ui.selected_index
+		game.contexts.prompt.action = .TradeItem
+		game.contexts.prompt.return_state_on_yes = .EndTurn
+		game.contexts.prompt.return_state_on_no = .TradeWhichItemFromAdjacentNeighbor
 		state_change(game, .PromptYesNo)
 	}
 
@@ -789,14 +789,14 @@ trade_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 
 trade_which_item_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
 trade_which_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	state_draw_map(game, scale, true, true)
-	state_draw_item_radial(game, scale, game.give.recipient)
+	state_draw_item_radial(game, scale, game.contexts.give.recipient)
 }
 
 prompt_yes_no_enter :: proc(game: ^game_pkg.Game) {
@@ -829,41 +829,45 @@ prompt_yes_no_handle_input :: proc(game: ^game_pkg.Game) {
 
 prompt_yes_no_on_yes :: proc(game: ^game_pkg.Game) {
 	current := game_pkg.game_current_unit(game)
-	switch game.prompt.action {
+	switch game.contexts.prompt.action {
 	case .DropItem:
 		if current != nil {
-			unit_pkg.remove_item_at(current, game.prompt.item_slot_index)
+			unit_pkg.remove_item_at(current, game.contexts.prompt.item_slot_index)
 		}
 	case .GiveItem:
-		if current != nil && game.give.recipient != nil {
-			unit_pkg.give_item_to(current, game.give.recipient, game.give.giver_slot_index)
+		if current != nil && game.contexts.give.recipient != nil {
+			unit_pkg.give_item_to(
+				current,
+				game.contexts.give.recipient,
+				game.contexts.give.giver_slot_index,
+			)
 		}
 	case .TradeItem:
-		if current != nil && game.give.recipient != nil {
+		if current != nil && game.contexts.give.recipient != nil {
 			unit_pkg.swap_item_with(
 				current,
-				game.give.recipient,
-				game.give.giver_slot_index,
-				game.give.recipient_slot_index,
+				game.contexts.give.recipient,
+				game.contexts.give.giver_slot_index,
+				game.contexts.give.recipient_slot_index,
 			)
 		}
 	case .None:
 		log.warn("PromptYesNo: No prompt action set.")
 	}
 
-	next := game.prompt.return_state_on_yes
-	game_pkg.prompt_reset(&game.prompt)
+	next := game.contexts.prompt.return_state_on_yes
+	game_pkg.prompt_reset(&game.contexts.prompt)
 	state_change(game, next)
 }
 
 prompt_yes_no_on_no :: proc(game: ^game_pkg.Game) {
-	next := game.prompt.return_state_on_no
-	game_pkg.prompt_reset(&game.prompt)
+	next := game.contexts.prompt.return_state_on_no
+	game_pkg.prompt_reset(&game.contexts.prompt)
 	state_change(game, next)
 }
 
 prompt_yes_no_update :: proc(game: ^game_pkg.Game) {
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 }
 
 prompt_yes_no_draw :: proc(game: ^game_pkg.Game, scale: f32) {

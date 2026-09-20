@@ -11,9 +11,9 @@ import "../timers"
 message_notice_enter :: proc(game: ^game_pkg.Game) {
 	timers.countdown_timer_reset(&game.state_scratch.countdown)
 
-	if len(game.message_notice.message) == 0 {
+	if len(game.contexts.message_notice.message) == 0 {
 		log.warn("MessageNotice: Message was empty. Returning immediately.")
-		return_state := game.message_notice.return_state
+		return_state := game.contexts.message_notice.return_state
 		state_change(game, return_state)
 		return
 	}
@@ -21,13 +21,13 @@ message_notice_enter :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_reset(&game.grid.range_tint)
 	log.infof(
 		"MessageNotice: \"%s\" → return to [%v].",
-		game.message_notice.message,
-		game.message_notice.return_state,
+		game.contexts.message_notice.message,
+		game.contexts.message_notice.return_state,
 	)
 }
 
 message_notice_exit :: proc(game: ^game_pkg.Game) {
-	game_pkg.message_notice_reset(&game.message_notice)
+	game_pkg.message_notice_reset(&game.contexts.message_notice)
 }
 
 message_notice_handle_input :: proc(game: ^game_pkg.Game) {
@@ -37,13 +37,13 @@ message_notice_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 message_notice_dismiss :: proc(game: ^game_pkg.Game) {
-	return_state := game.message_notice.return_state
+	return_state := game.contexts.message_notice.return_state
 	state_change(game, return_state)
 }
 
 message_notice_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
 
 	if !game.state_scratch.countdown.is_active {
@@ -56,10 +56,16 @@ message_notice_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	debug_draw := game.renderer.debug_draw
 	game_pkg.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	game_pkg.renderer_draw_range(scale, &game.grid, debug_draw)
-	sprites.renderer_draw_units(scale, game.units[:], game.flip_flop.is_on, 255, debug_draw)
+	sprites.renderer_draw_units(
+		scale,
+		game.units[:],
+		game.overworld_idle_flip_flop.is_on,
+		255,
+		debug_draw,
+	)
 	sprites.renderer_draw_battle_menu_message(
 		scale,
-		game.message_notice.message,
+		game.contexts.message_notice.message,
 		defs.WORLD_MAP.positions.no_target_message_box,
 	)
 }

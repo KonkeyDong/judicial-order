@@ -29,13 +29,13 @@ test_message_notice_dismiss_returns :: proc(test: ^testing.T) {
 
 	state_show_message_notice(&game, "No target", .BattleActionMenu)
 	testing.expect_value(test, game.state, defs.State_Kind.MessageNotice)
-	testing.expect_value(test, game.message_notice.message, "No target")
+	testing.expect_value(test, game.contexts.message_notice.message, "No target")
 	testing.expect(test, game.state_scratch.countdown.is_active)
 
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.BattleActionMenu)
-	testing.expect_value(test, game.message_notice.message, "")
+	testing.expect_value(test, game.contexts.message_notice.message, "")
 }
 
 @(test)
@@ -51,7 +51,7 @@ test_message_notice_empty_returns_immediately :: proc(test: ^testing.T) {
 	state_show_message_notice(&game, "", .UnitMoving)
 	context.logger = old_logger
 	testing.expect_value(test, game.state, defs.State_Kind.UnitMoving)
-	testing.expect_value(test, game.message_notice.message, "")
+	testing.expect_value(test, game.contexts.message_notice.message, "")
 }
 
 @(test)
@@ -72,7 +72,7 @@ test_message_notice_countdown_returns :: proc(test: ^testing.T) {
 	}
 
 	testing.expect_value(test, game.state, defs.State_Kind.BattleActionMenu)
-	testing.expect_value(test, game.message_notice.message, "")
+	testing.expect_value(test, game.contexts.message_notice.message, "")
 }
 
 @(test)
@@ -85,10 +85,10 @@ test_transition_selector_settles_then_next_turn :: proc(test: ^testing.T) {
 
 	state_change(&game, .TransitionSelectorToNextUnit)
 	testing.expect_value(test, game.state, defs.State_Kind.TransitionSelectorToNextUnit)
-	testing.expect_value(test, game.highlight_target_position, unit_pkg.tile_pixel(judy))
-	testing.expect(test, !game.highlight_animation_complete)
+	testing.expect_value(test, game.highlight.target_position, unit_pkg.tile_pixel(judy))
+	testing.expect(test, !game.highlight.animation_complete)
 
-	game.highlight_animation_complete = true
+	game.highlight.animation_complete = true
 	state_update(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.UnitMoving)
 	testing.expect(test, game_pkg.game_current_unit(&game) == judy)
@@ -138,7 +138,7 @@ test_action_menu_stay_rotates_to_judy :: proc(test: ^testing.T) {
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.TransitionSelectorToNextUnit)
-	game.highlight_animation_complete = true
+	game.highlight.animation_complete = true
 	state_update(&game)
 	testing.expect(test, game_pkg.game_current_unit(&game) == judy)
 	testing.expect_value(test, game.state, defs.State_Kind.UnitMoving)
@@ -201,8 +201,8 @@ test_select_enemy_inits_attack_and_does_not_double_damage :: proc(test: ^testing
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.EnterBattleScreen)
-	testing.expect(test, game.attack_context.active)
-	testing.expect(test, game.attack_context.hit)
+	testing.expect(test, game.contexts.attack_context.active)
+	testing.expect(test, game.contexts.attack_context.hit)
 	hp_after_hit := judy.hp.current
 	testing.expect(test, hp_after_hit < 10)
 	for _ in 0 ..< defs.BATTLE.transition_frames + 2 {
@@ -224,13 +224,13 @@ test_end_turn_resets_contexts :: proc(test: ^testing.T) {
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
 
-	game.attack_context.active = true
-	game.item_context.active = true
-	game.magic_context.active = true
+	game.contexts.attack_context.active = true
+	game.contexts.item_context.active = true
+	game.contexts.magic_context.active = true
 	state_change(&game, .EndTurn)
-	testing.expect_value(test, game.attack_context.active, false)
-	testing.expect_value(test, game.item_context.active, false)
-	testing.expect_value(test, game.magic_context.active, false)
+	testing.expect_value(test, game.contexts.attack_context.active, false)
+	testing.expect_value(test, game.contexts.item_context.active, false)
+	testing.expect_value(test, game.contexts.magic_context.active, false)
 }
 
 @(test)
@@ -286,5 +286,5 @@ test_herb_use_consumes_slot :: proc(test: ^testing.T) {
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.EnterBattleScreen)
-	testing.expect(test, game.item_context.active)
+	testing.expect(test, game.contexts.item_context.active)
 }

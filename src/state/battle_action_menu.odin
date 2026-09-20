@@ -107,7 +107,7 @@ battle_action_menu_confirm :: proc(game: ^game_pkg.Game) {
 
 battle_action_menu_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.command_icons_tick()
 }
 

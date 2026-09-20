@@ -19,11 +19,11 @@ transition_selector_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 transition_selector_update :: proc(game: ^game_pkg.Game) {
-	if game.highlight_animation_complete {
+	if game.highlight.animation_complete {
 		state_change(game, .EndTurn)
 	}
 
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
@@ -31,6 +31,12 @@ transition_selector_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	debug_draw := game.renderer.debug_draw
 	game_pkg.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	game_pkg.renderer_draw_range(scale, &game.grid, debug_draw)
-	sprites.renderer_draw_units(scale, game.units[:], game.flip_flop.is_on, 255, debug_draw)
-	sprites.renderer_draw_highlight_rectangle(scale, game.highlight_current_position)
+	sprites.renderer_draw_units(
+		scale,
+		game.units[:],
+		game.overworld_idle_flip_flop.is_on,
+		255,
+		debug_draw,
+	)
+	sprites.renderer_draw_highlight_rectangle(scale, game.highlight.current_position)
 }

@@ -60,16 +60,24 @@ test_game_init_owns_grid :: proc(test: ^testing.T) {
 	testing.expect_value(test, game.renderer.debug_draw, false)
 	testing.expect_value(test, grid_block_at(&game.grid, 0, 1).terrain, defs.Terrain.Forest)
 	testing.expect_value(test, grid_block_at(&game.grid, 0, 2).terrain, defs.Terrain.Forest)
-	testing.expect_value(test, game.flip_flop.frames_per_phase, defs.ANIMATIONS.flip_flop_delay)
+	testing.expect_value(
+		test,
+		game.overworld_idle_flip_flop.frames_per_phase,
+		defs.ANIMATIONS.flip_flop_delay,
+	)
 	testing.expect_value(test, game.state, defs.State_Kind.CalculateUnitMovementRange)
 	testing.expect_value(test, game.battle_screen_mode, defs.Battle_Screen_Mode.Combat)
-	testing.expect_value(test, game.give.giver_slot_index, -1)
-	testing.expect_value(test, game.prompt.return_state_on_no, defs.State_Kind.BattleActionMenu)
-	testing.expect_value(test, game.attack_context.active, false)
-	testing.expect_value(test, game.item_context.active, false)
-	testing.expect_value(test, game.magic_context.active, false)
-	testing.expect_value(test, game.item_context.target_count, 0)
-	testing.expect_value(test, game.magic_context.target_count, 0)
+	testing.expect_value(test, game.contexts.give.giver_slot_index, -1)
+	testing.expect_value(
+		test,
+		game.contexts.prompt.return_state_on_no,
+		defs.State_Kind.BattleActionMenu,
+	)
+	testing.expect_value(test, game.contexts.attack_context.active, false)
+	testing.expect_value(test, game.contexts.item_context.active, false)
+	testing.expect_value(test, game.contexts.magic_context.active, false)
+	testing.expect_value(test, game.contexts.item_context.target_count, 0)
+	testing.expect_value(test, game.contexts.magic_context.target_count, 0)
 	testing.expect_value(test, game.window.scale, f32(defs.WINDOW.scale))
 	testing.expect_value(test, game.window.width, i32(768))
 	testing.expect_value(test, game.window.height, i32(672))
@@ -236,20 +244,28 @@ test_context_reset :: proc(test: ^testing.T) {
 	game := test_game_full()
 	defer game_destroy(&game)
 
-	game.prompt.action = .DropItem
-	game.prompt.item_slot_index = 2
-	game.prompt.return_state_on_no = .EndTurn
-	game.give.giver_slot_index = 0
-	game.message_notice.message = "x"
-	prompt_reset(&game.prompt)
-	give_reset(&game.give)
-	message_notice_reset(&game.message_notice)
-	testing.expect_value(test, game.prompt.action, defs.Prompt_Action.None)
-	testing.expect_value(test, game.prompt.item_slot_index, -1)
-	testing.expect_value(test, game.prompt.return_state_on_no, defs.State_Kind.BattleActionMenu)
-	testing.expect_value(test, game.give.giver_slot_index, -1)
-	testing.expect_value(test, game.message_notice.message, "")
-	testing.expect_value(test, game.message_notice.return_state, defs.State_Kind.BattleActionMenu)
+	game.contexts.prompt.action = .DropItem
+	game.contexts.prompt.item_slot_index = 2
+	game.contexts.prompt.return_state_on_no = .EndTurn
+	game.contexts.give.giver_slot_index = 0
+	game.contexts.message_notice.message = "x"
+	prompt_reset(&game.contexts.prompt)
+	give_reset(&game.contexts.give)
+	message_notice_reset(&game.contexts.message_notice)
+	testing.expect_value(test, game.contexts.prompt.action, defs.Prompt_Action.None)
+	testing.expect_value(test, game.contexts.prompt.item_slot_index, -1)
+	testing.expect_value(
+		test,
+		game.contexts.prompt.return_state_on_no,
+		defs.State_Kind.BattleActionMenu,
+	)
+	testing.expect_value(test, game.contexts.give.giver_slot_index, -1)
+	testing.expect_value(test, game.contexts.message_notice.message, "")
+	testing.expect_value(
+		test,
+		game.contexts.message_notice.return_state,
+		defs.State_Kind.BattleActionMenu,
+	)
 }
 
 @(test)
@@ -388,16 +404,16 @@ test_highlight_init_and_settle :: proc(test: ^testing.T) {
 	testing.expect(test, game_add_unit(&game, hale, 3, 1))
 	testing.expect(test, game_add_unit(&game, judy, 4, 1))
 	game_initialize_highlight(&game)
-	testing.expect_value(test, game.highlight_current_position, rl.Vector2{72, 24})
+	testing.expect_value(test, game.highlight.current_position, rl.Vector2{72, 24})
 	game_set_highlight_target(&game, judy)
-	testing.expect_value(test, game.highlight_target_position, rl.Vector2{96, 24})
-	testing.expect(test, !game.highlight_animation_complete)
+	testing.expect_value(test, game.highlight.target_position, rl.Vector2{96, 24})
+	testing.expect(test, !game.highlight.animation_complete)
 	game_update_highlight(&game, 10)
-	testing.expect_value(test, game.highlight_current_position, rl.Vector2{96, 24})
-	testing.expect(test, !game.highlight_animation_complete)
+	testing.expect_value(test, game.highlight.current_position, rl.Vector2{96, 24})
+	testing.expect(test, !game.highlight.animation_complete)
 	game_update_highlight(&game, 1.0 / 60)
-	testing.expect_value(test, game.highlight_current_position, rl.Vector2{96, 24})
-	testing.expect(test, game.highlight_animation_complete)
+	testing.expect_value(test, game.highlight.current_position, rl.Vector2{96, 24})
+	testing.expect(test, game.highlight.animation_complete)
 }
 
 @(test)
@@ -415,9 +431,9 @@ test_highlight_steps :: proc(test: ^testing.T) {
 	game_initialize_highlight(&game)
 	game_set_highlight_target(&game, judy)
 	game_update_highlight(&game, 1.0 / 60)
-	testing.expect(test, game.highlight_current_position.x > 72)
-	testing.expect(test, game.highlight_current_position.x < 96)
-	testing.expect(test, !game.highlight_animation_complete)
+	testing.expect(test, game.highlight.current_position.x > 72)
+	testing.expect(test, game.highlight.current_position.x < 96)
+	testing.expect(test, !game.highlight.animation_complete)
 }
 
 @(test)
@@ -431,10 +447,10 @@ test_highlight_off_map :: proc(test: ^testing.T) {
 	old_logger := context.logger
 	context.logger = {}
 	game_initialize_highlight(&game)
-	before := game.highlight_current_position
+	before := game.highlight.current_position
 	game_set_highlight_target(&game, hale)
 	context.logger = old_logger
-	testing.expect_value(test, game.highlight_current_position, before)
+	testing.expect_value(test, game.highlight.current_position, before)
 	testing.expect(test, !hale.on_map)
 }
 
@@ -452,13 +468,17 @@ test_attack_context_hale_normal_effect :: proc(test: ^testing.T) {
 
 	judy.friendly = false
 	game_test_install_rolls({1, 100})
-	attack_context_init(&game.attack_context, hale, judy)
-	testing.expect(test, game.attack_context.active)
-	testing.expect_value(test, game.attack_context.effect, defs.Attack_Effect.NormalAttack)
-	testing.expect_value(test, game.attack_context.damage_apply_frame, 0)
-	testing.expect(test, game.attack_context.hit)
-	testing.expect_value(test, attack_context_monster(&game.attack_context), judy)
-	testing.expect_value(test, attack_context_force_member(&game.attack_context), hale)
+	attack_context_init(&game.contexts.attack_context, hale, judy)
+	testing.expect(test, game.contexts.attack_context.active)
+	testing.expect_value(
+		test,
+		game.contexts.attack_context.effect,
+		defs.Attack_Effect.NormalAttack,
+	)
+	testing.expect_value(test, game.contexts.attack_context.damage_apply_frame, 0)
+	testing.expect(test, game.contexts.attack_context.hit)
+	testing.expect_value(test, attack_context_monster(&game.contexts.attack_context), judy)
+	testing.expect_value(test, attack_context_force_member(&game.contexts.attack_context), hale)
 }
 
 @(test)
@@ -472,17 +492,17 @@ test_item_context_self_and_party :: proc(test: ^testing.T) {
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
 
-	item_context_init(&game.item_context, hale, {hale}, &game.grid, 0)
-	testing.expect(test, item_context_is_self_target(&game.item_context))
-	testing.expect(test, !item_context_is_party_wide(&game.item_context))
-	testing.expect_value(test, item_context_target(&game.item_context), hale)
-	testing.expect(test, game.item_context.grid == &game.grid)
+	item_context_init(&game.contexts.item_context, hale, {hale}, &game.grid, 0)
+	testing.expect(test, item_context_is_self_target(&game.contexts.item_context))
+	testing.expect(test, !item_context_is_party_wide(&game.contexts.item_context))
+	testing.expect_value(test, item_context_target(&game.contexts.item_context), hale)
+	testing.expect(test, game.contexts.item_context.grid == &game.grid)
 
-	item_context_init(&game.item_context, hale, {hale, judy}, &game.grid, 0)
-	testing.expect(test, item_context_is_party_wide(&game.item_context))
-	testing.expect(test, !item_context_is_self_target(&game.item_context))
-	testing.expect_value(test, item_context_target(&game.item_context), hale)
-	testing.expect_value(test, game.item_context.target_count, 2)
+	item_context_init(&game.contexts.item_context, hale, {hale, judy}, &game.grid, 0)
+	testing.expect(test, item_context_is_party_wide(&game.contexts.item_context))
+	testing.expect(test, !item_context_is_self_target(&game.contexts.item_context))
+	testing.expect_value(test, item_context_target(&game.contexts.item_context), hale)
+	testing.expect_value(test, game.contexts.item_context.target_count, 2)
 }
 
 @(test)
@@ -494,12 +514,12 @@ test_item_context_use_item_empty_slot :: proc(test: ^testing.T) {
 	hale := data.make_unit(.Hale)
 	defer unit_pkg.destroy(hale)
 
-	item_context_init(&game.item_context, hale, {hale}, &game.grid, 0)
+	item_context_init(&game.contexts.item_context, hale, {hale}, &game.grid, 0)
 	old_logger := context.logger
 	context.logger = {}
-	item_context_use_item(&game.item_context)
+	item_context_use_item(&game.contexts.item_context)
 	context.logger = old_logger
-	testing.expect(test, game.item_context.active)
+	testing.expect(test, game.contexts.item_context.active)
 	testing.expect(test, unit_pkg.item_slot_is_empty(unit_pkg.item_at(hale, 0)))
 }
 
@@ -508,11 +528,11 @@ test_game_contexts_reset_on_init :: proc(test: ^testing.T) {
 	game := test_game_full()
 	defer game_destroy(&game)
 
-	testing.expect_value(test, game.attack_context.active, false)
-	testing.expect_value(test, game.item_context.active, false)
-	testing.expect_value(test, game.magic_context.active, false)
-	testing.expect_value(test, game.item_context.target_count, 0)
-	testing.expect_value(test, game.magic_context.target_count, 0)
-	testing.expect_value(test, game.item_context.targets[0], nil)
-	testing.expect_value(test, game.magic_context.targets[0], nil)
+	testing.expect_value(test, game.contexts.attack_context.active, false)
+	testing.expect_value(test, game.contexts.item_context.active, false)
+	testing.expect_value(test, game.contexts.magic_context.active, false)
+	testing.expect_value(test, game.contexts.item_context.target_count, 0)
+	testing.expect_value(test, game.contexts.magic_context.target_count, 0)
+	testing.expect_value(test, game.contexts.item_context.targets[0], nil)
+	testing.expect_value(test, game.contexts.magic_context.targets[0], nil)
 }

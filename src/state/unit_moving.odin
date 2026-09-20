@@ -63,7 +63,8 @@ unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
 unit_moving_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
+	
 	current := game_pkg.game_current_unit(game)
 	if current != nil && current.is_animating {
 		unit_pkg.update_movement(current, rl.GetFrameTime())

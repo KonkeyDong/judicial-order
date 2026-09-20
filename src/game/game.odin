@@ -32,31 +32,41 @@ Message_Notice_Context :: struct {
 }
 
 Game :: struct {
-	renderer:                     sprites.Renderer,
-	grid:                         Grid,
-	units:                        [dynamic]^unit_pkg.Unit,
-	friendly_units_in_range:      [dynamic]^unit_pkg.Unit,
-	unfriendly_units_in_range:    [dynamic]^unit_pkg.Unit,
-	flip_flop:                    timers.Flip_Flop,
-	battle_screen_mode:           defs.Battle_Screen_Mode,
-	prompt:                       Prompt_Context,
-	give:                         Give_Context,
-	message_notice:               Message_Notice_Context,
-	first_unit_died_from_poison:  bool,
-	unit_that_died_from_poison:   ^unit_pkg.Unit,
-	highlight_current_position:   rl.Vector2,
-	highlight_target_position:    rl.Vector2,
-	highlight_animation_complete: bool,
-	state:                        defs.State_Kind,
-	attack_context:               Attack_Context,
-	item_context:                 Item_Context,
-	magic_context:                Magic_Context,
-	window:                       defs.Window_View,
-	state_scratch:                State_Scratch,
-	magic_ui:                     sprites.Magic_UI,
-	item_ui:                      sprites.Item_UI,
+	renderer:                    sprites.Renderer,
+	grid:                        Grid,
+	units:                       [dynamic]^unit_pkg.Unit,
+	friendly_units_in_range:     [dynamic]^unit_pkg.Unit,
+	unfriendly_units_in_range:   [dynamic]^unit_pkg.Unit,
+	overworld_idle_flip_flop:    timers.Flip_Flop,
+	battle_screen_mode:          defs.Battle_Screen_Mode,
+	contexts:                    State_Contexts,
+	first_unit_died_from_poison: bool,
+	unit_that_died_from_poison:  ^unit_pkg.Unit,
+	highlight:                   Highlight,
+	state:                       defs.State_Kind,
+	window:                      defs.Window_View,
+	state_scratch:               State_Scratch,
+	magic_ui:                    sprites.Magic_UI,
+	item_ui:                     sprites.Item_UI,
 }
 
+State_Contexts :: struct {
+	prompt:         Prompt_Context,
+	give:           Give_Context,
+	message_notice: Message_Notice_Context,
+	attack_context: Attack_Context,
+	item_context:   Item_Context,
+	magic_context:  Magic_Context,
+}
+
+// stores the coordinates of the highlight box
+Highlight :: struct {
+	current_position:   rl.Vector2,
+	target_position:    rl.Vector2,
+	animation_complete: bool,
+}
+
+// temporary data
 State_Scratch :: struct {
 	countdown:             timers.Countdown_Timer,
 	blinker:               timers.Flip_Flop,
@@ -105,23 +115,31 @@ message_notice_set :: proc(
 	notice.return_state = return_state
 }
 
+highlight_reset :: proc(highlight: ^Highlight) {
+	highlight.current_position = {}
+	highlight.target_position = {}
+	highlight.animation_complete = false
+}
+
+state_contexts_reset :: proc(contexts: ^State_Contexts) {
+	give_reset(&contexts.give)
+	prompt_reset(&contexts.prompt)
+	message_notice_reset(&contexts.message_notice)
+	attack_context_reset(&contexts.attack_context)
+	item_context_reset(&contexts.item_context)
+	magic_context_reset(&contexts.magic_context)
+}
+
 game_init :: proc(game: ^Game, width, height: int) {
 	grid_init(&game.grid, width, height)
 	sprites.renderer_init(&game.renderer)
-	timers.flip_flop_init(&game.flip_flop, defs.ANIMATIONS.flip_flop_delay)
+	timers.flip_flop_init(&game.overworld_idle_flip_flop, defs.ANIMATIONS.flip_flop_delay)
 	game.battle_screen_mode = .Combat
-	give_reset(&game.give)
-	prompt_reset(&game.prompt)
-	message_notice_reset(&game.message_notice)
-	attack_context_reset(&game.attack_context)
-	item_context_reset(&game.item_context)
-	magic_context_reset(&game.magic_context)
+	state_contexts_reset(&game.contexts)
 	game.first_unit_died_from_poison = false
 	game.unit_that_died_from_poison = nil
 	game.state = .CalculateUnitMovementRange
-	game.highlight_current_position = {}
-	game.highlight_target_position = {}
-	game.highlight_animation_complete = false
+	highlight_reset(&game.highlight)
 	game.window = defs.window_view_from_scale(defs.WINDOW.scale)
 	state_scratch_init(&game.state_scratch)
 	sprites.magic_ui_reset(&game.magic_ui)
@@ -297,9 +315,9 @@ game_initialize_highlight :: proc(game: ^Game) {
 	}
 
 	pixel := unit_pkg.tile_pixel(current)
-	game.highlight_current_position = pixel
-	game.highlight_target_position = pixel
-	game.highlight_animation_complete = false
+	game.highlight.current_position = pixel
+	game.highlight.target_position = pixel
+	game.highlight.animation_complete = false
 }
 
 game_set_highlight_target :: proc(game: ^Game, target_unit: ^unit_pkg.Unit) {
@@ -308,12 +326,13 @@ game_set_highlight_target :: proc(game: ^Game, target_unit: ^unit_pkg.Unit) {
 		return
 	}
 
-	game.highlight_target_position = unit_pkg.tile_pixel(target_unit)
-	game.highlight_animation_complete = false
+	game.highlight.target_position = unit_pkg.tile_pixel(target_unit)
+	game.highlight.animation_complete = false
 }
 
 game_update_highlight :: proc(game: ^Game, delta_time: f32) {
-	delta := game.highlight_target_position - game.highlight_current_position
+	h := &game.highlight
+	delta := h.target_position - h.current_position
 	distance := math.sqrt(delta.x * delta.x + delta.y * delta.y)
 	if distance > GAME_HIGHLIGHT_SETTLE_DISTANCE {
 		direction := delta * (1.0 / distance)
@@ -322,9 +341,9 @@ game_update_highlight :: proc(game: ^Game, delta_time: f32) {
 			move_distance = distance
 		}
 
-		game.highlight_current_position += direction * move_distance
+		h.current_position += direction * move_distance
 	} else {
-		game.highlight_current_position = game.highlight_target_position
-		game.highlight_animation_complete = true
+		h.current_position = h.target_position
+		h.animation_complete = true
 	}
 }

@@ -18,7 +18,7 @@ end_turn_enter :: proc(game: ^game_pkg.Game) {
 		current.movement_origin = unit_pkg.MOVEMENT_ORIGIN_INVALID
 	}
 
-	timers.flip_flop_reset(&game.flip_flop)
+	timers.flip_flop_reset(&game.overworld_idle_flip_flop)
 
 	game_pkg.grid_clear_range_set(&game.grid)
 	game_pkg.game_reset_units_in_range(game)
@@ -28,13 +28,8 @@ end_turn_enter :: proc(game: ^game_pkg.Game) {
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
 
-	game_pkg.give_reset(&game.give)
-	game_pkg.message_notice_reset(&game.message_notice)
-	game_pkg.attack_context_reset(&game.attack_context)
-	game_pkg.item_context_reset(&game.item_context)
-	game_pkg.magic_context_reset(&game.magic_context)
+	game_pkg.state_contexts_reset(&game.contexts)
 	game.battle_screen_mode = .Combat
-	game_pkg.prompt_reset(&game.prompt)
 
 	if !game.first_unit_died_from_poison {
 		game_pkg.game_move_first_unit_to_end(game)

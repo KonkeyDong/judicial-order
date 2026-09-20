@@ -52,7 +52,7 @@ calculate_unit_movement_range_proceed :: proc(game: ^game_pkg.Game) {
 
 calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 
 	if !(game.state_scratch.is_poisoned || game.state_scratch.is_sleeping) {
 		return

@@ -54,7 +54,7 @@ select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 
 	game.battle_screen_mode = .Combat
 	game_pkg.attack_context_init(
-		&game.attack_context,
+		&game.contexts.attack_context,
 		current,
 		game.unfriendly_units_in_range[index],
 	)
@@ -63,7 +63,7 @@ select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 
 select_enemy_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 

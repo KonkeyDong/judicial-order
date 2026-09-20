@@ -62,7 +62,7 @@ select_magic_handle_input :: proc(game: ^game_pkg.Game) {
 
 select_magic_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.magic_icons_tick()
 }
 
@@ -140,7 +140,7 @@ select_magic_level_handle_input :: proc(game: ^game_pkg.Game) {
 
 select_magic_level_update :: proc(game: ^game_pkg.Game) {
 	timers.oscillator_tick(&game.grid.range_tint)
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.flip_flop_tick(&game.state_scratch.blinker)
 	sprites.magic_icons_tick()
 }
@@ -233,7 +233,7 @@ select_magic_targets_set_context :: proc(game: ^game_pkg.Game) {
 	aoe := game_pkg.grid_units_in_range(&game.grid)
 	defer delete(aoe)
 	current := game_pkg.game_current_unit(game)
-	game_pkg.magic_context_init(&game.magic_context, current, aoe, &game.grid)
+	game_pkg.magic_context_init(&game.contexts.magic_context, current, aoe, &game.grid)
 }
 
 select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
@@ -247,7 +247,7 @@ select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 
 	if game_pkg.input_confirm_press() {
-		game_pkg.magic_context_cast(&game.magic_context, game.magic_ui.selected_name)
+		game_pkg.magic_context_cast(&game.contexts.magic_context, game.magic_ui.selected_name)
 		state_change(game, .AnimateUnitDeaths)
 	}
 
@@ -257,15 +257,15 @@ select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_targets_update :: proc(game: ^game_pkg.Game) {
-	timers.flip_flop_tick(&game.flip_flop)
+	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.oscillator_tick(&game.grid.range_tint)
 	game_pkg.game_update_highlight(game, 1.0 / 60)
 }
 
 select_magic_targets_draw :: proc(game: ^game_pkg.Game, scale: f32) {
-	highlight := !game.highlight_animation_complete
+	highlight := !game.highlight.animation_complete
 	state_draw_map(game, scale, true, highlight)
-	if game.highlight_animation_complete {
+	if game.highlight.animation_complete {
 		for coord in game.grid.range_coords {
 			block := game_pkg.grid_block_at(&game.grid, coord.x, coord.y)
 			if block != nil {

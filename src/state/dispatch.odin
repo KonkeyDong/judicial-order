@@ -226,9 +226,15 @@ state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highli
 		game_pkg.renderer_draw_range(scale, &game.grid, debug_draw)
 	}
 
-	sprites.renderer_draw_units(scale, game.units[:], game.flip_flop.is_on, 255, debug_draw)
+	sprites.renderer_draw_units(
+		scale,
+		game.units[:],
+		game.overworld_idle_flip_flop.is_on,
+		255,
+		debug_draw,
+	)
 	if draw_highlight {
-		sprites.renderer_draw_highlight_rectangle(scale, game.highlight_current_position)
+		sprites.renderer_draw_highlight_rectangle(scale, game.highlight.current_position)
 	}
 }
 
@@ -254,7 +260,7 @@ state_show_message_notice :: proc(
 		return
 	}
 
-	game_pkg.message_notice_set(&game.message_notice, message, return_state)
+	game_pkg.message_notice_set(&game.contexts.message_notice, message, return_state)
 	state_change(game, .MessageNotice)
 }
 

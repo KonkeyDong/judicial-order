@@ -24,10 +24,11 @@ DEATH_DIRECTION_CYCLE := [12]defs.Direction {
 }
 
 animate_unit_deaths_enter :: proc(game: ^game_pkg.Game) {
-	dead := game_pkg.game_remove_all_dead_units(game)
-	defer delete(dead)
+	dead_units := game_pkg.game_remove_all_dead_units(game)
+	defer delete(dead_units)
+
 	game.state_scratch.target_count = 0
-	for unit in dead {
+	for unit in dead_units {
 		if game.state_scratch.target_count >= len(game.state_scratch.targets) {
 			break
 		}

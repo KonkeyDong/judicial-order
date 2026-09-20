@@ -112,17 +112,17 @@ test_program_add_test_units_hale_judy :: proc(test: ^testing.T) {
 
 @(test)
 test_item_get_register_stats :: proc(test: ^testing.T) {
-	herb := catalog.item_get(.HealingSeed)
+	herb := catalog.item_get(.FoisGras)
 	testing.expect_value(test, herb.effect_value, 20)
 	testing.expect_value(test, herb.effect_type, defs.Item_Effect.Heal)
-	staff := catalog.item_get(.WoodenStaff)
+	staff := catalog.item_get(.Pencil)
 	testing.expect_value(test, staff.attack, 5)
-	testing.expect_value(test, staff.type, defs.Item_Type.Staff)
-	light := catalog.item_get(.SwordOfLight)
+	testing.expect_value(test, staff.type, defs.Item_Type.Pen)
+	light := catalog.item_get(.BriefcaseOfHonor)
 	testing.expect_value(test, light.attack, 36)
 	testing.expect_value(test, light.spell_name, defs.Magic_Name.Bolt2)
-	testing.expect_value(test, defs.item_name_display(.ShortSword), "Short Sword")
-	testing.expect_value(test, defs.item_name_display(.SwordOfLight), "Sword Of Light")
+	testing.expect_value(test, defs.item_name_display(.SmallBriefcase), "Small Briefcase")
+	testing.expect_value(test, defs.item_name_display(.BriefcaseOfHonor), "Briefcase Of Honor")
 }
 
 @(test)

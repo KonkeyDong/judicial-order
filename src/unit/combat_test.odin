@@ -110,7 +110,7 @@ test_variance_bounds :: proc(test: ^testing.T) {
 	hale := make(test_data_hale())
 	defer destroy(hale)
 	defer combat_set_random(nil)
-	testing.expect(test, add_item(hale, .ShortSword, auto_equip_weapon = true))
+	testing.expect(test, add_item(hale, .SmallBriefcase, auto_equip_weapon = true))
 
 	judy_low := make(test_data_judy())
 	defer destroy(judy_low)
@@ -299,7 +299,7 @@ test_consumable_heal_same_team :: proc(test: ^testing.T) {
 	judy.hp.current = 2
 	test_install_rolls({100})
 	herb := catalog.Item_Data {
-		name         = .MedicalHerb,
+		name         = .Hotdog,
 		type         = .Consumable,
 		effect_type  = .Heal,
 		effect_value = 4,
@@ -318,8 +318,8 @@ test_consumable_heal_rejects_enemy :: proc(test: ^testing.T) {
 
 	judy.friendly = false
 	judy.hp.current = 2
-	testing.expect(test, add_item(hale, .MedicalHerb))
-	item_use_item(.MedicalHerb, hale, {judy}, 0)
+	testing.expect(test, add_item(hale, .Hotdog))
+	item_use_item(.Hotdog, hale, {judy}, 0)
 	testing.expect_value(test, judy.hp.current, 2)
 	testing.expect(test, item_slot_is_empty(item_at(hale, 0)))
 }
@@ -336,7 +336,7 @@ test_heal_all_full_no_variance :: proc(test: ^testing.T) {
 	judy.hp.current = 2
 	test_install_rolls({75})
 	shower := catalog.Item_Data {
-		name         = .MedicalHerb,
+		name         = .Hotdog,
 		type         = .Consumable,
 		effect_type  = .HealAllFull,
 		effect_value = 4,
@@ -356,7 +356,7 @@ test_poison_cure :: proc(test: ^testing.T) {
 	apply_status(judy, .Poison)
 	testing.expect(test, has_status(judy, .Poison))
 	antidote := catalog.Item_Data {
-		name        = .MedicalHerb,
+		name        = .Hotdog,
 		type        = .Consumable,
 		effect_type = .RemovePoison,
 	}
@@ -374,7 +374,7 @@ test_poison_cure_noop :: proc(test: ^testing.T) {
 
 	testing.expect(test, !has_status(judy, .Poison))
 	antidote := catalog.Item_Data {
-		name        = .MedicalHerb,
+		name        = .Hotdog,
 		type        = .Consumable,
 		effect_type = .RemovePoison,
 	}
@@ -390,10 +390,10 @@ test_escape_unimplemented :: proc(test: ^testing.T) {
 	defer destroy(hale)
 	defer destroy(judy)
 
-	testing.expect(test, add_item(hale, .MedicalHerb))
+	testing.expect(test, add_item(hale, .Hotdog))
 	hp := judy.hp.current
 	escape := catalog.Item_Data {
-		name        = .MedicalHerb,
+		name        = .Hotdog,
 		type        = .Consumable,
 		effect_type = .Escape,
 	}
@@ -408,7 +408,7 @@ test_durability_already_damaged_removes :: proc(test: ^testing.T) {
 	hale := make(test_data_hale())
 	defer destroy(hale)
 
-	testing.expect(test, add_item(hale, .ShortSword, damaged = true))
+	testing.expect(test, add_item(hale, .SmallBriefcase, damaged = true))
 	item_apply_spell_item_durability(hale, 0)
 	testing.expect(test, item_slot_is_empty(item_at(hale, 0)))
 }
@@ -420,7 +420,7 @@ test_durability_break :: proc(test: ^testing.T) {
 	defer destroy(hale)
 	defer combat_set_random(nil)
 
-	testing.expect(test, add_item(hale, .ShortSword))
+	testing.expect(test, add_item(hale, .SmallBriefcase))
 	test_install_rolls({0})
 	item_apply_spell_item_durability(hale, 0)
 	testing.expect(test, !item_slot_is_empty(item_at(hale, 0)))
@@ -434,7 +434,7 @@ test_durability_intact :: proc(test: ^testing.T) {
 	defer destroy(hale)
 	defer combat_set_random(nil)
 
-	testing.expect(test, add_item(hale, .ShortSword))
+	testing.expect(test, add_item(hale, .SmallBriefcase))
 	test_install_rolls({1})
 	item_apply_spell_item_durability(hale, 0)
 	testing.expect_value(test, item_at(hale, 0).damaged, false)
@@ -446,10 +446,10 @@ test_consume_removes_at_index :: proc(test: ^testing.T) {
 	hale := make(test_data_hale())
 	defer destroy(hale)
 
-	testing.expect(test, add_item(hale, .MedicalHerb))
-	testing.expect(test, add_item(hale, .ShortSword))
+	testing.expect(test, add_item(hale, .Hotdog))
+	testing.expect(test, add_item(hale, .SmallBriefcase))
 	item_consume_item(hale, 0)
-	testing.expect_value(test, item_at(hale, 0).name, defs.Item_Name.ShortSword)
+	testing.expect_value(test, item_at(hale, 0).name, defs.Item_Name.SmallBriefcase)
 }
 
 @(test)
@@ -464,15 +464,15 @@ test_spell_item_use_is_stub :: proc(test: ^testing.T) {
 	hp := judy.hp.current
 	mp := hale.mp.current
 	spell_item := catalog.Item_Data {
-		name       = .ShortSword,
-		type       = .Sword,
+		name       = .SmallBriefcase,
+		type       = .Briefcase,
 		spell_name = .Blaze1,
 	}
-	testing.expect(test, add_item(hale, .ShortSword))
+	testing.expect(test, add_item(hale, .SmallBriefcase))
 	item_use_data(spell_item, hale, {judy}, 0)
 	testing.expect_value(test, judy.hp.current, hp)
 	testing.expect_value(test, hale.mp.current, mp)
-	testing.expect_value(test, item_at(hale, 0).name, defs.Item_Name.ShortSword)
+	testing.expect_value(test, item_at(hale, 0).name, defs.Item_Name.SmallBriefcase)
 }
 
 @(test)

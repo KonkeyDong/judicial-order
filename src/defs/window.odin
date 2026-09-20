@@ -1,7 +1,6 @@
 package defs
 
 import "core:math"
-import rl "vendor:raylib"
 
 WINDOW_SCALE_MIN :: 1.0
 WINDOW_SCALE_MAX :: 5.0

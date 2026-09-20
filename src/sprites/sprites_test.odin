@@ -48,20 +48,20 @@ test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	frame1 := Sprite {
 		frame = {x = 24, y = 0, w = 24, h = 24},
 	}
-	item_icons.animations[.ShortSword] = {frame0, frame1}
-	item_icons_set_selected(.ShortSword)
+	item_icons.animations[.SmallBriefcase] = {frame0, frame1}
+	item_icons_set_selected(.SmallBriefcase)
 
 	item_icons.flip_flop.is_on = true
-	selected_on := item_icons_get(.ShortSword)
+	selected_on := item_icons_get(.SmallBriefcase)
 	testing.expect_value(test, selected_on.frame.x, 24)
 
 	item_icons.flip_flop.is_on = false
-	selected_off := item_icons_get(.ShortSword)
+	selected_off := item_icons_get(.SmallBriefcase)
 	testing.expect_value(test, selected_off.frame.x, 0)
 
 	old_logger := context.logger
 	context.logger = {}
-	missing := item_icons_get(.MedicalHerb)
+	missing := item_icons_get(.Hotdog)
 	context.logger = old_logger
 	testing.expect_value(test, missing, Sprite{})
 

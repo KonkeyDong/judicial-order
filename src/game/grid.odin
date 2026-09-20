@@ -110,6 +110,7 @@ grid_destroy :: proc(grid: ^Grid) {
 	delete(grid.blocks)
 	delete(grid.range_mask)
 	delete(grid.range_coords)
+
 	grid.blocks = nil
 	grid.range_mask = nil
 	grid.range_coords = nil
@@ -386,6 +387,7 @@ grid_calculate_unit_movement_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 			x = current.grid_x,
 			y = current.grid_y,
 		}
+		
 		current_cost := cost_to_reach[current_coord]
 		count := grid_adjacent_blocks(grid, current, neighbors[:])
 		for i in 0 ..< count {

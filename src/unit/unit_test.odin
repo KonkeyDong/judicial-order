@@ -45,13 +45,13 @@ test_add_remove_equipped_shift :: proc(test: ^testing.T) {
 	unit := make(test_data_hale())
 	defer destroy(unit)
 
-	testing.expect(test, add_item(unit, .ShortSword, auto_equip_weapon = true))
-	testing.expect(test, add_item(unit, .MedicalHerb))
-	testing.expect(test, add_item(unit, .ShortSword))
+	testing.expect(test, add_item(unit, .SmallBriefcase, auto_equip_weapon = true))
+	testing.expect(test, add_item(unit, .Hotdog))
+	testing.expect(test, add_item(unit, .SmallBriefcase))
 	testing.expect_value(test, unit.equipped_weapon_index, 0)
 	testing.expect(test, remove_item_at(unit, 0))
 	testing.expect_value(test, unit.equipped_weapon_index, defs.UNARMED_INDEX)
-	testing.expect_value(test, unit.items[0].name, defs.Item_Name.MedicalHerb)
+	testing.expect_value(test, unit.items[0].name, defs.Item_Name.Hotdog)
 }
 
 @(test)
@@ -62,14 +62,14 @@ test_swap_unequips_and_does_not_re_equip :: proc(test: ^testing.T) {
 	defer destroy(hale)
 	defer destroy(judy)
 
-	testing.expect(test, add_item(hale, .ShortSword, auto_equip_weapon = true))
-	testing.expect(test, add_item(judy, .MedicalHerb))
+	testing.expect(test, add_item(hale, .SmallBriefcase, auto_equip_weapon = true))
+	testing.expect(test, add_item(judy, .Hotdog))
 	testing.expect_value(test, hale.equipped_weapon_index, 0)
 	testing.expect(test, swap_item_with(hale, judy, 0, 0))
 	testing.expect_value(test, hale.equipped_weapon_index, defs.UNARMED_INDEX)
 	testing.expect_value(test, judy.equipped_weapon_index, defs.UNARMED_INDEX)
-	testing.expect_value(test, hale.items[0].name, defs.Item_Name.MedicalHerb)
-	testing.expect_value(test, judy.items[0].name, defs.Item_Name.ShortSword)
+	testing.expect_value(test, hale.items[0].name, defs.Item_Name.Hotdog)
+	testing.expect_value(test, judy.items[0].name, defs.Item_Name.SmallBriefcase)
 }
 
 @(test)
@@ -79,11 +79,11 @@ test_reject_unarmed_and_full_add :: proc(test: ^testing.T) {
 	defer destroy(unit)
 
 	testing.expect(test, !add_item(unit, .Unarmed))
-	testing.expect(test, add_item(unit, .ShortSword))
-	testing.expect(test, add_item(unit, .MedicalHerb))
-	testing.expect(test, add_item(unit, .ShortSword))
-	testing.expect(test, add_item(unit, .MedicalHerb))
-	testing.expect(test, !add_item(unit, .ShortSword))
+	testing.expect(test, add_item(unit, .SmallBriefcase))
+	testing.expect(test, add_item(unit, .Hotdog))
+	testing.expect(test, add_item(unit, .SmallBriefcase))
+	testing.expect(test, add_item(unit, .Hotdog))
+	testing.expect(test, !add_item(unit, .SmallBriefcase))
 }
 
 @(test)

@@ -135,13 +135,17 @@ game_init :: proc(game: ^Game, width, height: int) {
 	sprites.renderer_init(&game.renderer)
 	timers.flip_flop_init(&game.overworld_idle_flip_flop, defs.ANIMATIONS.flip_flop_delay)
 	game.battle_screen_mode = .Combat
+
 	state_contexts_reset(&game.contexts)
+
 	game.first_unit_died_from_poison = false
 	game.unit_that_died_from_poison = nil
+
 	game.state = .CalculateUnitMovementRange
 	highlight_reset(&game.highlight)
 	game.window = defs.window_view_from_scale(defs.WINDOW.scale)
 	state_scratch_init(&game.state_scratch)
+
 	sprites.magic_ui_reset(&game.magic_ui)
 	sprites.magic_ui_reset_layout_center(&game.magic_ui, game.window)
 	sprites.item_ui_reset(&game.item_ui)
@@ -152,6 +156,7 @@ state_scratch_init :: proc(scratch: ^State_Scratch) {
 	timers.countdown_timer_init(&scratch.countdown, defs.ANIMATIONS.switch_state_countdown)
 	timers.flip_flop_init(&scratch.blinker, defs.ANIMATIONS.blink_delay)
 	timers.delay_init(&scratch.delay, defs.ANIMATIONS.idle_delay)
+
 	scratch.selected_command = .Attack
 	scratch.list_index = 0
 	scratch.yes_selected = true
@@ -161,9 +166,11 @@ state_scratch_init :: proc(scratch: ^State_Scratch) {
 game_destroy :: proc(game: ^Game) {
 	grid_destroy(&game.grid)
 	sprites.renderer_destroy(&game.renderer)
+
 	delete(game.units)
 	delete(game.friendly_units_in_range)
 	delete(game.unfriendly_units_in_range)
+
 	game.units = nil
 	game.friendly_units_in_range = nil
 	game.unfriendly_units_in_range = nil

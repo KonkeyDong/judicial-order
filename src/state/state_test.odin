@@ -266,7 +266,7 @@ test_herb_use_consumes_slot :: proc(test: ^testing.T) {
 	defer game_pkg.input_set_pressed(nil)
 	defer unit_pkg.combat_set_random(nil)
 
-	testing.expect(test, unit_pkg.add_item(hale, .MedicalHerb))
+	testing.expect(test, unit_pkg.add_item(hale, .Hotdog))
 	hale.hp.current = 5
 	state_enter(&game)
 	game_pkg.input_test_install_pressed({.Z})

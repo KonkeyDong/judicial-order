@@ -3,7 +3,6 @@ package state
 import game_pkg "../game"
 
 import "core:fmt"
-import "core:log"
 
 import "../defs"
 import "../sprites"

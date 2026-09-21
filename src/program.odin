@@ -151,10 +151,12 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 	hale = data.make_unit(.Hale)
 	judy = data.make_unit(.Judy)
 	bellweather = data.make_unit(.Bellweather)
+
 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
 	unit_pkg.add_item(hale, .Hotdog)
 	unit_pkg.learn_spell(judy, .Heal1)
 	unit_pkg.learn_spell(judy, .Blaze1)
+
 	game.game_add_unit(session, hale, 3, 1)
 	game.game_add_unit(session, judy, 2, 1)
 	game.game_add_unit(session, bellweather, 3, 2)

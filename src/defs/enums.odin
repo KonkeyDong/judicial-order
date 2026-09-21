@@ -48,7 +48,7 @@ Item_Name :: enum {
 	// Spears
 	Spear,
 	PowerSpear,
-	
+
 	// Scales
 	BronzeScales, // BronzeLance,
 	SteelScales, // SteelLance,
@@ -63,18 +63,15 @@ Item_Name :: enum {
 	Caviar, // ShowerOfCure,
 	Antidote,
 	StrategicWithdrawal, // AngelWing,
-
 	BreadOfLife,
 	PowerPotion,
 	DefensePotion,
 	LegsOfHaste,
 	TurboPepper,
-
 	OrbOfLight,
 	DomingoEgg,
 	MoonStone,
 	LunarDew,
-
 	SugoiMizugi,
 	KituiHuku,
 }

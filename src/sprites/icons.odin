@@ -38,10 +38,13 @@ icon_set_destroy :: proc(set: ^Icon_Set($Key)) {
 	set.loaded = false
 }
 
-icon_set_load :: proc(set: ^Icon_Set($Key)) {
+icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := false) {
 	clear(&set.animations) // C# Load starts with Clear; skip leaks
 
-	json_path := strings.concatenate({set.root_path, "/FrameData.json"}, context.temp_allocator)
+	json_path := strings.concatenate(
+		{set.root_path, "/", defs.PATHS.frame_data},
+		context.temp_allocator,
+	)
 	frames := extract_frames(json_path)
 	defer delete(frames)
 
@@ -64,6 +67,14 @@ icon_set_load :: proc(set: ^Icon_Set($Key)) {
 		rects = synthesized[:]
 	}
 
+	fallback := defs.PATHS.placeholder_png
+	if missing_png != "" {
+		candidate := strings.concatenate({set.root_path, "/", missing_png}, context.temp_allocator)
+		if os.exists(candidate) {
+			fallback = candidate
+		}
+	}
+
 	total_frames := 0
 	for key in Key {
 		png := strings.concatenate(
@@ -71,8 +82,12 @@ icon_set_load :: proc(set: ^Icon_Set($Key)) {
 			context.temp_allocator,
 		)
 		if !os.exists(png) {
-			log.warnf("icon_set_load: missing %s; using placeholder.", png)
-			png = defs.PATHS.placeholder_png
+			if skip_missing {
+				continue
+			}
+
+			log.warnf("icon_set_load: missing %s; using %s.", png, fallback)
+			png = fallback
 		}
 
 		tex := load(png)

@@ -387,7 +387,7 @@ grid_calculate_unit_movement_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 			x = current.grid_x,
 			y = current.grid_y,
 		}
-		
+
 		current_cost := cost_to_reach[current_coord]
 		count := grid_adjacent_blocks(grid, current, neighbors[:])
 		for i in 0 ..< count {

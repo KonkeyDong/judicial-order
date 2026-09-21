@@ -47,6 +47,10 @@ combat_miss :: proc() -> bool {
 	return combat_chance(16)
 }
 
+combat_crit :: proc() -> bool {
+	return combat_chance(16)
+}
+
 combat_apply_amount_variance :: proc(base_amount: int) -> int {
 	log.infof("  Base amount: [%d].", base_amount)
 	variance := combat_random_inclusive(75, 125)
@@ -75,14 +79,13 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 		return result
 	}
 
-	if combat_miss() {
-		log.info("   Attack missed!")
+	if (has_status(attacker, defs.Status_Effect.Blind) && combat_chance(2)) || combat_miss() {
+		log.info("   Attack missed (Blind)!")
 		return result
 	}
 
 	result.hit = true
-	log.warn("Critical hit not implemented.")
-	result.crit = false
+	result.crit = combat_crit()
 	log.info("   Attack hits!")
 
 	base := total_offense(attacker) - defender.defense
@@ -101,6 +104,10 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 
 	variant := combat_apply_amount_variance(base)
 	result.damage = max(variant, 1)
+	if result.crit {
+		result.damage *= 2
+	}
+
 	combat_apply_attack_damage(defender, result)
 	return result
 }
@@ -112,6 +119,16 @@ combat_magic_attack :: proc(
 ) {
 	if attacker == nil || defender == nil {
 		log.errorf("combat_magic_attack: attacker or defender is nil.")
+		return
+	}
+
+	if has_status(defender, defs.Status_Effect.Shield) {
+		log.infof(
+			"%s attack has no effect due to %s having the shield status.",
+			defs.name_display(attacker.name),
+			defs.name_display(defender.name),
+		)
+		log.warn("need to return a magic context to determine magic message.")
 		return
 	}
 

@@ -63,7 +63,6 @@ Item_Name :: enum {
 	Caviar, // ShowerOfCure,
 	Antidote,
 	StrategicWithdrawal, // AngelWing,
-	
 	BreadOfLife,
 	PowerPotion,
 	DefensePotion,
@@ -148,6 +147,8 @@ Status_Effect :: enum {
 	None,
 	Poison,
 	Sleep,
+	Shield,
+	Blind,
 }
 
 Name :: enum {

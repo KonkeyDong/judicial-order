@@ -116,11 +116,13 @@ TEXTURES :: Textures {
 Status_Effects :: struct {
 	poison_damage_denominator: int,
 	sleep_duration:            int,
+	shield_duration:           int,
 }
 
 STATUS_EFFECTS :: Status_Effects {
 	poison_damage_denominator = 8,
 	sleep_duration            = 3,
+	shield_duration           = 3,
 }
 
 Items :: struct {

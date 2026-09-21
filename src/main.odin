@@ -24,7 +24,7 @@ main :: proc() {
 	log.infof("Logger level set to: %v", program_log_level_get())
 
 	view := defs.window_view_from_scale(defs.WINDOW.scale)
-	rl.InitWindow(view.width, view.height, "Judicial Order") // 768x672. 11x10 stub dest 792x720 still clips — same as C#, not a bug.
+	rl.InitWindow(view.width, view.height, "Judicial Order")
 	defer rl.CloseWindow()
 	rl.SetTargetFPS(60)
 

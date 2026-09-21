@@ -14,6 +14,10 @@ status_create :: proc(type: defs.Status_Effect) -> Status_Effect_Slot {
 			type = .Sleep,
 			duration = rand.int_max(defs.STATUS_EFFECTS.sleep_duration),
 		}
+	case .Shield:
+		return Status_Effect_Slot{type = .Shield, duration = defs.STATUS_EFFECTS.shield_duration}
+	case .Blind:
+		return Status_Effect_Slot{type = .Blind, duration = defs.STATUS_DURATION_PERMANENT}
 	case .None:
 		return STATUS_EFFECT_EMPTY
 	}

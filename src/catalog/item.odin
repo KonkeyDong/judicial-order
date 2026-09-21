@@ -119,7 +119,14 @@ item_get :: proc(name: defs.Item_Name) -> Item_Data {
 	case .MediumBriefcase:
 		return item_make_weapon(.MediumBriefcase, 8, .Briefcase, melee, swordsman, 250)
 	case .LargeBriefcase:
-		return item_make_weapon(.LargeBriefcase, 12, .Briefcase, melee, {.Swordsman, .Warrior}, 750)
+		return item_make_weapon(
+			.LargeBriefcase,
+			12,
+			.Briefcase,
+			melee,
+			{.Swordsman, .Warrior},
+			750,
+		)
 	case .SteelBriefcase:
 		return item_make_weapon(.SteelBriefcase, 18, .Briefcase, melee, hero, 2500)
 	case .BroadBriefcase:

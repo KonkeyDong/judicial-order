@@ -125,6 +125,13 @@ BATTLE_ACTION_COMMANDS :: [4]Command_Radial_Slot {
 	{.Down, .Stay},
 }
 
+BATTLE_ITEM_COMMANDS :: [4]Command_Radial_Slot {
+	{.Up, .Use},
+	{.Left, .Give},
+	{.Right, .Equip},
+	{.Down, .Drop},
+}
+
 radial_draw_command_icons :: proc(
 	scale: f32,
 	center: rl.Vector2,

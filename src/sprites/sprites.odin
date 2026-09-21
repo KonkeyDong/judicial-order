@@ -20,6 +20,10 @@ Aseprite_Sheet :: struct {
 	frames: []Aseprite_Frame_Entry,
 }
 
+Flat_Frame_Sheet :: struct {
+	frames: []Frame_Rect,
+}
+
 Sprite_Cache :: struct {
 	textures: map[string]rl.Texture2D,
 }
@@ -62,6 +66,87 @@ load :: proc(path: string) -> rl.Texture2D {
 	return tex
 }
 
+json_object_int :: proc(obj: json.Object, keys: []string) -> (int, bool) {
+	for key in keys {
+		if value, ok := obj[key]; ok {
+			#partial switch v in value {
+			case json.Integer:
+				return int(v), true
+			case json.Float:
+				return int(v), true
+			}
+		}
+	}
+
+	return 0, false
+}
+
+frame_rect_from_json_object :: proc(obj: json.Object) -> (Frame_Rect, bool) {
+	src := obj
+	if nested, ok := obj["frame"]; ok {
+		if nested_obj, nested_ok := nested.(json.Object); nested_ok {
+			src = nested_obj
+		}
+	}
+
+	x, x_ok := json_object_int(src, {"x", "X"})
+	y, y_ok := json_object_int(src, {"y", "Y"})
+	w, w_ok := json_object_int(src, {"w", "W"})
+	h, h_ok := json_object_int(src, {"h", "H"})
+	if !x_ok || !y_ok || !w_ok || !h_ok {
+		return {}, false
+	}
+
+	return Frame_Rect{x = x, y = y, w = w, h = h}, true
+}
+
+extract_frames_from_value :: proc(root: json.Value) -> []Frame_Rect {
+	obj, is_obj := root.(json.Object)
+	if !is_obj {
+		return {}
+	}
+
+	frames_value, has_frames := obj["frames"]
+	if !has_frames {
+		return {}
+	}
+
+	out: [dynamic]Frame_Rect
+	#partial switch frames in frames_value {
+	case json.Array:
+		for entry in frames {
+			entry_obj, ok := entry.(json.Object)
+			if !ok {
+				continue
+			}
+
+			rect, rect_ok := frame_rect_from_json_object(entry_obj)
+			if rect_ok {
+				append(&out, rect)
+			}
+		}
+	case json.Object:
+		for _, entry in frames {
+			entry_obj, ok := entry.(json.Object)
+			if !ok {
+				continue
+			}
+
+			rect, rect_ok := frame_rect_from_json_object(entry_obj)
+			if rect_ok {
+				append(&out, rect)
+			}
+		}
+	}
+
+	if len(out) == 0 {
+		delete(out)
+		return {}
+	}
+
+	return out[:]
+}
+
 extract_frames :: proc(json_path: string) -> []Frame_Rect {
 	if json_path == "" {
 		log.error("ExtractFrameData: jsonFilePath is empty")
@@ -76,23 +161,34 @@ extract_frames :: proc(json_path: string) -> []Frame_Rect {
 
 	defer delete(data)
 
+	root, parse_err := json.parse(data, parse_integers = true)
+	if parse_err == .None {
+		defer json.destroy_value(root)
+		if parsed := extract_frames_from_value(root); len(parsed) > 0 {
+			return parsed
+		}
+	}
+
 	sheet: Aseprite_Sheet
-	if err := json.unmarshal(data, &sheet); err != nil {
-		log.errorf("Failed to load/parse JSON %s: %v", json_path, err)
-		return {}
+	if unmarshal_err := json.unmarshal(data, &sheet);
+	   unmarshal_err == nil && len(sheet.frames) > 0 {
+		defer delete(sheet.frames)
+		out := make([]Frame_Rect, len(sheet.frames))
+		for entry, i in sheet.frames {
+			out[i] = entry.frame
+		}
+
+		return out
 	}
 
-	defer delete(sheet.frames)
-
-	if len(sheet.frames) == 0 {
-		log.warnf("No frames found in JSON: %s", json_path)
-		return {}
+	flat: Flat_Frame_Sheet
+	if unmarshal_err := json.unmarshal(data, &flat); unmarshal_err == nil && len(flat.frames) > 0 {
+		defer delete(flat.frames)
+		out := make([]Frame_Rect, len(flat.frames))
+		copy(out, flat.frames)
+		return out
 	}
 
-	out := make([]Frame_Rect, len(sheet.frames))
-	for entry, i in sheet.frames {
-		out[i] = entry.frame
-	}
-
-	return out
+	log.errorf("Failed to load/parse JSON %s: %v", json_path, parse_err)
+	return {}
 }

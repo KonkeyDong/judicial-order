@@ -13,7 +13,19 @@ item_icons_destroy :: proc() {
 }
 
 item_icons_load :: proc() {
-	icon_set_load(&item_icons)
+	icon_set_load(&item_icons, skip_missing = true)
+}
+
+item_icons_resolve :: proc(name: defs.Item_Name) -> defs.Item_Name {
+	if name == .NoItem {
+		return .NoItem
+	}
+
+	if _, ok := item_icons.animations[name]; ok {
+		return name
+	}
+
+	return .NoItem
 }
 
 item_icons_tick :: proc() {
@@ -29,11 +41,11 @@ item_icons_clear_selection :: proc() {
 }
 
 item_icons_get :: proc(name: defs.Item_Name) -> Sprite {
-	return icon_set_get(&item_icons, name)
+	return icon_set_get(&item_icons, item_icons_resolve(name))
 }
 
 item_icons_get_selected :: proc(name: defs.Item_Name, is_selected: bool) -> Sprite {
-	return icon_set_get_selected(&item_icons, name, is_selected)
+	return icon_set_get_selected(&item_icons, item_icons_resolve(name), is_selected)
 }
 
 item_icons_reset :: proc() {

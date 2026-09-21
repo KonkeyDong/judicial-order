@@ -30,6 +30,26 @@ test_extract_frames_weasel_lawyer :: proc(test: ^testing.T) {
 }
 
 @(test)
+test_extract_frames_item_icons :: proc(test: ^testing.T) {
+	frames := extract_frames("assets/sprites/shared/item_icons/FrameData.json")
+	defer delete(frames)
+
+	testing.expect_value(test, len(frames), 2)
+	if len(frames) < 2 {
+		return
+	}
+
+	testing.expect_value(test, frames[0].x, 0)
+	testing.expect_value(test, frames[0].y, 0)
+	testing.expect_value(test, frames[0].w, 17)
+	testing.expect_value(test, frames[0].h, 25)
+	testing.expect_value(test, frames[1].x, 17)
+	testing.expect_value(test, frames[1].y, 0)
+	testing.expect_value(test, frames[1].w, 17)
+	testing.expect_value(test, frames[1].h, 25)
+}
+
+@(test)
 test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	item_icons_init()
 	magic_icons_init()
@@ -64,6 +84,15 @@ test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	missing := item_icons_get(.Hotdog)
 	context.logger = old_logger
 	testing.expect_value(test, missing, Sprite{})
+
+	no_item := Sprite {
+		frame = {x = 1, y = 2, w = 17, h = 25},
+	}
+	item_icons.animations[.NoItem] = {no_item, no_item}
+	placeholder := item_icons_get(.Hotdog)
+	testing.expect_value(test, placeholder.frame, no_item.frame)
+	testing.expect_value(test, item_icons_resolve(.Hotdog), defs.Item_Name.NoItem)
+	testing.expect_value(test, item_icons_resolve(.SmallBriefcase), defs.Item_Name.SmallBriefcase)
 
 	command_icons.animations[.Attack] = {frame0, frame1}
 	command_icons_set_selected(.Attack)

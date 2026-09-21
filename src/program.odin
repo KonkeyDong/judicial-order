@@ -154,6 +154,8 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 
 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
 	unit_pkg.add_item(hale, .Hotdog)
+	unit_pkg.add_item(hale, .Caviar)
+	unit_pkg.add_item(hale, .FoisGras)
 	unit_pkg.learn_spell(judy, .Heal1)
 	unit_pkg.learn_spell(judy, .Blaze1)
 

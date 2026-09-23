@@ -51,6 +51,16 @@ FILES :: Files {
 	forest_tile = "forest.png",
 }
 
+Combat_Amounts :: struct {
+	min_variance: int,
+	max_variance: int,
+}
+
+COMBAT_AMOUNTS :: Combat_Amounts {
+	min_variance = 75,
+	max_variance = 100,
+}
+
 Animations :: struct {
 	highlight_transition_speed: f32,
 	range_tint_frame_delay:     int,

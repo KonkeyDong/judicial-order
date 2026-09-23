@@ -53,10 +53,21 @@ combat_crit :: proc() -> bool {
 
 combat_apply_amount_variance :: proc(base_amount: int) -> int {
 	log.infof("  Base amount: [%d].", base_amount)
-	variance := combat_random_inclusive(75, 125)
+	
+	variance := combat_random_inclusive(defs.COMBAT_AMOUNTS.min_variance, defs.COMBAT_AMOUNTS.max_variance)
 	variant_amount := (base_amount * variance) / 100
+	
 	log.infof("  Variant amount: [%d].", variant_amount)
+
 	return variant_amount
+}
+
+combat_apply_minimum_variance :: proc(base_amount: int) -> int {
+	return (base_amount * defs.COMBAT_AMOUNTS.min_variance) / 100
+}
+
+combat_apply_maximum_variance :: proc(base_amount: int) -> int {
+	return (base_amount * defs.COMBAT_AMOUNTS.max_variance) / 100
 }
 
 Combat_Attack_Result :: struct {
@@ -80,7 +91,7 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 	}
 
 	if (has_status(attacker, defs.Status_Effect.Blind) && combat_chance(2)) || combat_miss() {
-		log.info("   Attack missed (Blind)!")
+		log.info("   Attack missed!")
 		return result
 	}
 
@@ -102,11 +113,15 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 		return result
 	}
 
-	variant := combat_apply_amount_variance(base)
-	result.damage = max(variant, 1)
 	if result.crit {
-		result.damage *= 2
+		variant := combat_apply_maximum_variance(base)
+		result.damage = max(variant, 1) * 2
+	} else {
+		variant := combat_apply_amount_variance(base)
+		result.damage = max(variant, 1)
 	}
+
+	
 
 	combat_apply_attack_damage(defender, result)
 	return result

@@ -96,7 +96,7 @@ test_hit_min_damage_1 :: proc(test: ^testing.T) {
 	defer destroy(judy)
 	defer combat_set_random(nil)
 
-	test_install_rolls({1})
+	test_install_rolls({1, 1})
 	result := combat_calculate_attack_outcome(judy, hale)
 	testing.expect_value(test, result.hit, true)
 	testing.expect_value(test, result.crit, false)
@@ -114,7 +114,7 @@ test_variance_bounds :: proc(test: ^testing.T) {
 
 	judy_low := make(test_data_judy())
 	defer destroy(judy_low)
-	test_install_rolls({1, 75})
+	test_install_rolls({1, 1, 75})
 	result_low := combat_calculate_attack_outcome(hale, judy_low)
 	testing.expect_value(test, result_low.hit, true)
 	testing.expect_value(test, result_low.damage, 8)
@@ -123,7 +123,7 @@ test_variance_bounds :: proc(test: ^testing.T) {
 
 	judy_high := make(test_data_judy())
 	defer destroy(judy_high)
-	test_install_rolls({1, 125})
+	test_install_rolls({1, 1, 125})
 	result_high := combat_calculate_attack_outcome(hale, judy_high)
 	testing.expect_value(test, result_high.hit, true)
 	testing.expect_value(test, result_high.damage, 13)
@@ -131,7 +131,7 @@ test_variance_bounds :: proc(test: ^testing.T) {
 }
 
 @(test)
-test_crit_always_false_on_hit :: proc(test: ^testing.T) {
+test_crit_doubles_max_variance :: proc(test: ^testing.T) {
 	catalog.init()
 	hale := make(test_data_hale())
 	judy := make(test_data_judy())
@@ -139,12 +139,12 @@ test_crit_always_false_on_hit :: proc(test: ^testing.T) {
 	defer destroy(judy)
 	defer combat_set_random(nil)
 
-	judy_hp := judy.hp.current
-	test_install_rolls({1, 100})
+	test_install_rolls({1, 0})
 	result := combat_calculate_attack_outcome(hale, judy)
 	testing.expect_value(test, result.hit, true)
-	testing.expect_value(test, result.crit, false)
-	testing.expect(test, judy.hp.current < judy_hp)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 12)
+	testing.expect_value(test, judy.hp.current, 0)
 }
 
 @(test)
@@ -156,7 +156,280 @@ test_hale_judy_unarmed_hit :: proc(test: ^testing.T) {
 	defer destroy(judy)
 	defer combat_set_random(nil)
 
-	test_install_rolls({1, 100})
+	test_install_rolls({1, 1, 100})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 6)
+	testing.expect_value(test, judy.hp.current, 4)
+}
+
+@(test)
+test_blind_forces_miss :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Blind)
+	judy_hp := judy.hp.current
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, false)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 0)
+	testing.expect_value(test, judy.hp.current, judy_hp)
+}
+
+@(test)
+test_blind_hit_skips_miss_roll :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Blind)
+	// 1 is the blind hit. 0 is the crit roll, not a 1/16 miss.
+	test_install_rolls({1, 0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 12)
+	testing.expect_value(test, judy.hp.current, 0)
+}
+
+@(test)
+test_blind_hit :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Blind)
+	test_install_rolls({1, 1, 100})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 6)
+	testing.expect_value(test, judy.hp.current, 4)
+}
+
+@(test)
+test_blind_misses_sleeping_defender :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Blind)
+	apply_status(judy, .Sleep)
+	judy_hp := judy.hp.current
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, false)
+	testing.expect_value(test, result.damage, 0)
+	testing.expect_value(test, judy.hp.current, judy_hp)
+}
+
+@(test)
+test_sleep_auto_hit_uses_zero_as_crit :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(judy, .Sleep)
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 12)
+	testing.expect_value(test, judy.hp.current, 0)
+}
+
+@(test)
+test_quick_versus_slow_auto_hit :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Quick)
+	apply_status(judy, .Slow)
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 12)
+	testing.expect_value(test, judy.hp.current, 0)
+}
+
+@(test)
+test_quick_alone_can_miss :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Quick)
+	judy_hp := judy.hp.current
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, false)
+	testing.expect_value(test, result.damage, 0)
+	testing.expect_value(test, judy.hp.current, judy_hp)
+}
+
+@(test)
+test_slow_alone_can_miss :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(judy, .Slow)
+	judy_hp := judy.hp.current
+	test_install_rolls({0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, false)
+	testing.expect_value(test, result.damage, 0)
+	testing.expect_value(test, judy.hp.current, judy_hp)
+}
+
+@(test)
+test_boost_adds_before_defense :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Boost)
+	test_install_rolls({1, 1, 100})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 21)
+	testing.expect_value(test, judy.hp.current, 0)
+}
+
+@(test)
+test_boost_still_minimum_1 :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Boost)
+	judy.defense = total_offense(hale) + defs.COMBAT_AMOUNTS.boost_bonus + 1
+	test_install_rolls({1, 1})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 1)
+	testing.expect_value(test, judy.hp.current, 9)
+}
+
+@(test)
+test_poison_attacker_uses_minimum_variance :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Poison)
+	test_install_rolls({1, 1, 125})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, false)
+	testing.expect_value(test, result.damage, 4)
+	testing.expect_value(test, judy.hp.current, 6)
+}
+
+@(test)
+test_poison_overrides_crit_damage :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(hale, .Poison)
+	test_install_rolls({1, 0})
+	result := combat_calculate_attack_outcome(hale, judy)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 4)
+	testing.expect_value(test, judy.hp.current, 6)
+}
+
+@(test)
+test_crit_roll_does_not_double_floor_damage :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	test_install_rolls({1, 0})
+	result := combat_calculate_attack_outcome(judy, hale)
+	testing.expect_value(test, result.hit, true)
+	testing.expect_value(test, result.crit, true)
+	testing.expect_value(test, result.damage, 1)
+	testing.expect_value(test, hale.hp.current, 14)
+}
+
+@(test)
+test_shield_blocks_magic :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	hale.friendly = false
+	apply_status(hale, .Shield)
+	hp := hale.hp.current
+	test_install_rolls({125})
+	combat_magic_attack(judy, hale, 7, .Fire)
+	testing.expect_value(test, hale.hp.current, hp)
+}
+
+@(test)
+test_shield_does_not_block_physical :: proc(test: ^testing.T) {
+	catalog.init()
+	hale := make(test_data_hale())
+	judy := make(test_data_judy())
+	defer destroy(hale)
+	defer destroy(judy)
+	defer combat_set_random(nil)
+
+	apply_status(judy, .Shield)
+	test_install_rolls({1, 1, 100})
 	result := combat_calculate_attack_outcome(hale, judy)
 	testing.expect_value(test, result.hit, true)
 	testing.expect_value(test, result.damage, 6)

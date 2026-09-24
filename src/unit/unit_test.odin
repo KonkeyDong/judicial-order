@@ -123,11 +123,193 @@ test_sleep_expires :: proc(test: ^testing.T) {
 
 	apply_status(unit, .Sleep)
 	testing.expect(test, has_status(unit, .Sleep))
-	for _ in 0 ..< defs.STATUS_EFFECTS.sleep_duration + 1 {
+	for _ in 0 ..< defs.STATUS_EFFECTS.base_duration + 1 {
 		process_sleep(unit)
 	}
 
 	testing.expect(test, !has_status(unit, .Sleep))
+}
+
+@(test)
+test_status_durations :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Poison)
+	testing.expect_value(test, status_duration(unit, .Poison), defs.STATUS_EFFECTS.permanent_duration)
+	apply_status(unit, .Blind)
+	testing.expect_value(test, status_duration(unit, .Blind), defs.STATUS_EFFECTS.permanent_duration)
+	apply_status(unit, .Shield)
+	testing.expect_value(test, status_duration(unit, .Shield), defs.STATUS_EFFECTS.base_duration)
+	apply_status(unit, .Boost)
+	testing.expect_value(test, status_duration(unit, .Boost), defs.STATUS_EFFECTS.base_duration)
+	apply_status(unit, .Quick)
+	testing.expect_value(test, status_duration(unit, .Quick), defs.STATUS_EFFECTS.base_duration)
+	apply_status(unit, .Muddle)
+	testing.expect_value(test, status_duration(unit, .Muddle), defs.STATUS_EFFECTS.base_duration)
+
+	other := make(test_data_judy())
+	defer destroy(other)
+	apply_status(other, .Slow)
+	testing.expect_value(test, status_duration(other, .Slow), defs.STATUS_EFFECTS.base_duration)
+
+	apply_status(unit, .Sleep)
+	sleep_duration := status_duration(unit, .Sleep)
+	testing.expect(test, sleep_duration >= 0)
+	testing.expect(test, sleep_duration < defs.STATUS_EFFECTS.base_duration)
+}
+
+@(test)
+test_status_duplicate_ignored :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Boost)
+	apply_status(unit, .Boost)
+	testing.expect_value(test, unit.status_count, 1)
+	testing.expect(test, has_status(unit, .Boost))
+}
+
+@(test)
+test_quick_replaces_slow :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Slow)
+	apply_status(unit, .Quick)
+	testing.expect_value(test, unit.status_count, 1)
+	testing.expect(test, has_status(unit, .Quick))
+	testing.expect(test, !has_status(unit, .Slow))
+}
+
+@(test)
+test_slow_replaces_quick :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Quick)
+	apply_status(unit, .Slow)
+	testing.expect_value(test, unit.status_count, 1)
+	testing.expect(test, has_status(unit, .Slow))
+	testing.expect(test, !has_status(unit, .Quick))
+}
+
+@(test)
+test_quick_duplicate_does_not_remove :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Quick)
+	duration := status_duration(unit, .Quick)
+	apply_status(unit, .Quick)
+	testing.expect_value(test, unit.status_count, 1)
+	testing.expect(test, has_status(unit, .Quick))
+	testing.expect_value(test, status_duration(unit, .Quick), duration)
+}
+
+@(test)
+test_status_full_rejects :: proc(test: ^testing.T) {
+	old_logger := context.logger
+	context.logger = {}
+	defer {context.logger = old_logger}
+
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	unit.status_count = defs.MAX_STATUS_EFFECTS
+	apply_status(unit, .Muddle)
+	testing.expect_value(test, unit.status_count, defs.MAX_STATUS_EFFECTS)
+	testing.expect(test, !has_status(unit, .Muddle))
+}
+
+// The capacity check runs before Quick/Slow cancellation, so a full list keeps Slow.
+@(test)
+test_full_array_keeps_slow_when_quick_is_rejected :: proc(test: ^testing.T) {
+	old_logger := context.logger
+	context.logger = {}
+	defer {context.logger = old_logger}
+
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	unit.status_effects[0] = Status_Effect_Slot {
+		type     = .Slow,
+		duration = defs.STATUS_EFFECTS.base_duration,
+	}
+	for i in 1 ..< defs.MAX_STATUS_EFFECTS {
+		unit.status_effects[i] = Status_Effect_Slot {
+			type     = .Shield,
+			duration = defs.STATUS_EFFECTS.base_duration,
+		}
+	}
+	unit.status_count = defs.MAX_STATUS_EFFECTS
+
+	apply_status(unit, .Quick)
+	testing.expect_value(test, unit.status_count, defs.MAX_STATUS_EFFECTS)
+	testing.expect(test, has_status(unit, .Slow))
+	testing.expect(test, !has_status(unit, .Quick))
+}
+
+@(test)
+test_remove_status_swaps_with_last :: proc(test: ^testing.T) {
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Shield)
+	apply_status(unit, .Blind)
+	apply_status(unit, .Boost)
+	remove_status(unit, .Blind)
+	testing.expect_value(test, unit.status_count, 2)
+	testing.expect(test, has_status(unit, .Shield))
+	testing.expect(test, !has_status(unit, .Blind))
+	testing.expect(test, has_status(unit, .Boost))
+	testing.expect_value(test, unit.status_effects[0].type, defs.Status_Effect.Shield)
+	testing.expect_value(test, unit.status_effects[1].type, defs.Status_Effect.Boost)
+	testing.expect_value(test, unit.status_effects[2].type, defs.Status_Effect.None)
+}
+
+@(test)
+test_process_new_statuses_are_stubs :: proc(test: ^testing.T) {
+	old_logger := context.logger
+	context.logger = {}
+	defer {context.logger = old_logger}
+
+	catalog.init()
+	unit := make(test_data_hale())
+	defer destroy(unit)
+
+	apply_status(unit, .Shield)
+	apply_status(unit, .Blind)
+	apply_status(unit, .Boost)
+	apply_status(unit, .Quick)
+	apply_status(unit, .Muddle)
+	hp := unit.hp.current
+	count := unit.status_count
+
+	process_shield(unit)
+	process_blind(unit)
+	process_boost(unit)
+	process_quick(unit)
+	process_slow(unit)
+	process_muddle(unit)
+	process_all_statuses(unit)
+
+	testing.expect_value(test, unit.status_count, count)
+	testing.expect_value(test, unit.hp.current, hp)
+	testing.expect_value(test, status_duration(unit, .Shield), defs.STATUS_EFFECTS.base_duration)
+	testing.expect_value(test, status_duration(unit, .Blind), defs.STATUS_EFFECTS.permanent_duration)
+	testing.expect_value(test, status_duration(unit, .Boost), defs.STATUS_EFFECTS.base_duration)
+	testing.expect_value(test, status_duration(unit, .Quick), defs.STATUS_EFFECTS.base_duration)
+	testing.expect_value(test, status_duration(unit, .Muddle), defs.STATUS_EFFECTS.base_duration)
+	testing.expect_value(test, status_duration(unit, .Slow), -1)
 }
 
 @(test)

@@ -83,6 +83,13 @@ calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 		return
 	}
 
+	unit_pkg.process_shield(current)
+	unit_pkg.process_blind(current)
+	unit_pkg.process_boost(current)
+	unit_pkg.process_quick(current)
+	unit_pkg.process_slow(current)
+	unit_pkg.process_muddle(current)
+
 	calculate_unit_movement_range_proceed(game)
 }
 

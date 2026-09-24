@@ -44,19 +44,22 @@ combat_chance :: proc(denominator: int) -> bool {
 }
 
 combat_miss :: proc() -> bool {
-	return combat_chance(16)
+	return combat_chance(defs.COMBAT_AMOUNTS.base_chance)
 }
 
 combat_crit :: proc() -> bool {
-	return combat_chance(16)
+	return combat_chance(defs.COMBAT_AMOUNTS.base_chance)
 }
 
 combat_apply_amount_variance :: proc(base_amount: int) -> int {
 	log.infof("  Base amount: [%d].", base_amount)
-	
-	variance := combat_random_inclusive(defs.COMBAT_AMOUNTS.min_variance, defs.COMBAT_AMOUNTS.max_variance)
+
+	variance := combat_random_inclusive(
+		defs.COMBAT_AMOUNTS.min_variance,
+		defs.COMBAT_AMOUNTS.max_variance,
+	)
 	variant_amount := (base_amount * variance) / 100
-	
+
 	log.infof("  Variant amount: [%d].", variant_amount)
 
 	return variant_amount
@@ -83,23 +86,39 @@ combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result
 	take_damage(defender, result.damage)
 }
 
-combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Attack_Result {
-	result: Combat_Attack_Result
-	if attacker == nil || defender == nil {
-		log.errorf("combat_calculate_attack_outcome: attacker or defender is nil.")
-		return result
+// A blind attacker uses only the 1/2 roll. A miss ends the attack. A hit skips
+// sleep, quick versus slow, and the normal 1/16 miss roll.
+combat_attack_misses :: proc(attacker, defender: ^Unit) -> bool {
+	if has_status(attacker, defs.Status_Effect.Blind) {
+		if combat_chance(2) {
+			log.info("   Attack missed!")
+			return true
+		}
+
+		return false
 	}
 
-	if (has_status(attacker, defs.Status_Effect.Blind) && combat_chance(2)) || combat_miss() {
-		log.info("   Attack missed!")
-		return result
+	if has_status(defender, defs.Status_Effect.Sleep) {
+		log.info("Defender is asleep; attack automatically hits!")
+		return false
 	}
 
-	result.hit = true
-	result.crit = combat_crit()
-	log.info("   Attack hits!")
+	if has_status(attacker, defs.Status_Effect.Quick) &&
+	   has_status(defender, defs.Status_Effect.Slow) {
+		log.info(
+			"Attack has the quick status while defender has the slow status; attack automatically hits!",
+		)
+		return false
+	}
 
-	base := total_offense(attacker) - defender.defense
+	return combat_miss()
+}
+
+// crit is the crit roll. Poison and the damage floor ignore it for the amount.
+combat_roll_attack_damage :: proc(attacker, defender: ^Unit, crit: bool) -> int {
+	boost_amount :=
+		has_status(attacker, defs.Status_Effect.Boost) ? defs.COMBAT_AMOUNTS.boost_bonus : 0
+	base := (total_offense(attacker) + boost_amount) - defender.defense
 	if base <= 0 {
 		log.infof(
 			"%s's attack [%d] is less than or equal to %s's defense [%d]. Minimum damage is 1",
@@ -108,21 +127,37 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 			defs.name_display(defender.name),
 			defender.defense,
 		)
-		result.damage = 1
-		combat_apply_attack_damage(defender, result)
+		return 1
+	}
+
+	if has_status(attacker, defs.Status_Effect.Poison) {
+		// A poisoned attacker is weak and always hits the minimum amount
+		return max(combat_apply_minimum_variance(base), 1)
+	}
+
+	if crit {
+		// A well-aimed attack always hits at max value and then doubled!
+		return max(combat_apply_maximum_variance(base), 1) * 2
+	}
+
+	return max(combat_apply_amount_variance(base), 1)
+}
+
+combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Attack_Result {
+	result: Combat_Attack_Result
+	if attacker == nil || defender == nil {
+		log.errorf("combat_calculate_attack_outcome: attacker or defender is nil.")
 		return result
 	}
 
-	if result.crit {
-		variant := combat_apply_maximum_variance(base)
-		result.damage = max(variant, 1) * 2
-	} else {
-		variant := combat_apply_amount_variance(base)
-		result.damage = max(variant, 1)
+	if combat_attack_misses(attacker, defender) {
+		return result
 	}
 
-	
-
+	result.hit = true
+	result.crit = combat_crit()
+	log.info("   Attack hits!")
+	result.damage = combat_roll_attack_damage(attacker, defender, result.crit)
 	combat_apply_attack_damage(defender, result)
 	return result
 }

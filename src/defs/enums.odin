@@ -149,6 +149,10 @@ Status_Effect :: enum {
 	Sleep,
 	Shield,
 	Blind,
+	Boost,
+	Quick,
+	Slow,
+	Muddle,
 }
 
 Name :: enum {

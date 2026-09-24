@@ -6,18 +6,26 @@ import "core:math/rand"
 import "../defs"
 
 status_create :: proc(type: defs.Status_Effect) -> Status_Effect_Slot {
+	base_duration := defs.STATUS_EFFECTS.base_duration
+	permanent_duration := defs.STATUS_EFFECTS.permanent_duration
+
 	switch type {
 	case .Poison:
-		return Status_Effect_Slot{type = .Poison, duration = defs.STATUS_DURATION_PERMANENT}
+		return Status_Effect_Slot{type = .Poison, duration = permanent_duration}
 	case .Sleep:
-		return Status_Effect_Slot {
-			type = .Sleep,
-			duration = rand.int_max(defs.STATUS_EFFECTS.sleep_duration),
-		}
+		return Status_Effect_Slot{type = .Sleep, duration = rand.int_max(base_duration)}
 	case .Shield:
-		return Status_Effect_Slot{type = .Shield, duration = defs.STATUS_EFFECTS.shield_duration}
+		return Status_Effect_Slot{type = .Shield, duration = base_duration}
 	case .Blind:
-		return Status_Effect_Slot{type = .Blind, duration = defs.STATUS_DURATION_PERMANENT}
+		return Status_Effect_Slot{type = .Blind, duration = permanent_duration}
+	case .Boost:
+		return Status_Effect_Slot{type = .Boost, duration = base_duration}
+	case .Quick:
+		return Status_Effect_Slot{type = .Quick, duration = base_duration}
+	case .Slow:
+		return Status_Effect_Slot{type = .Slow, duration = base_duration}
+	case .Muddle:
+		return Status_Effect_Slot{type = .Muddle, duration = base_duration}
 	case .None:
 		return STATUS_EFFECT_EMPTY
 	}
@@ -34,6 +42,16 @@ apply_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
 	if unit.status_count == defs.MAX_STATUS_EFFECTS {
 		log.errorf("apply_status: status array full for [%s].", defs.name_display(unit.name))
 		return
+	}
+
+	if has_status(unit, .Slow) && type == .Quick {
+		log.debug("Unit no longer will have the slow status due to having quick status applied.")
+		remove_status(unit, .Slow)
+	}
+
+	if has_status(unit, .Quick) && type == .Slow {
+		log.debug("Unit no longer will have the quick status due to having slow status applied.")
+		remove_status(unit, .Quick)
 	}
 
 	unit.status_effects[unit.status_count] = status_create(type)
@@ -81,6 +99,17 @@ status_duration :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
 	return unit.status_effects[index].duration
 }
 
+process_all_statuses :: proc(unit: ^Unit) {
+	process_poison(unit)
+	process_sleep(unit)
+	process_shield(unit)
+	process_blind(unit)
+	process_boost(unit)
+	process_quick(unit)
+	process_slow(unit)
+	process_muddle(unit)
+}
+
 process_poison :: proc(unit: ^Unit) {
 	if !has_status(unit, .Poison) {
 		return
@@ -110,4 +139,28 @@ process_sleep :: proc(unit: ^Unit) {
 		)
 		remove_status(unit, .Sleep)
 	}
+}
+
+process_shield :: proc(unit: ^Unit) {
+	log.warnf("Shield status has not been implemented yet!")
+}
+
+process_blind :: proc(unit: ^Unit) {
+	log.warnf("Blind status has not been implemented yet!")
+}
+
+process_boost :: proc(unit: ^Unit) {
+	log.warnf("Boost status has not been implemented yet!")
+}
+
+process_quick :: proc(unit: ^Unit) {
+	log.warnf("Quick status has not been implemented yet!")
+}
+
+process_slow :: proc(unit: ^Unit) {
+	log.warnf("Slow status has not been implemented yet!")
+}
+
+process_muddle :: proc(unit: ^Unit) {
+	log.warnf("Muddle status has not been implemented yet!")
 }

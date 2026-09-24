@@ -10,8 +10,7 @@ MAX_CONTEXT_TARGETS :: 64
 MAX_OCCUPANT_SIZE :: 2
 UNARMED_INDEX :: -1
 WALK_FRAME_COUNT :: 2
-MAX_STATUS_EFFECTS :: 4
-STATUS_DURATION_PERMANENT :: max(int)
+MAX_STATUS_EFFECTS :: 8
 
 Debug :: struct {
 	color:                       rl.Color,
@@ -52,13 +51,14 @@ FILES :: Files {
 }
 
 Combat_Amounts :: struct {
-	min_variance: int,
-	max_variance: int,
+	min_variance, max_variance, base_chance, boost_bonus: int,
 }
 
 COMBAT_AMOUNTS :: Combat_Amounts {
 	min_variance = 75,
 	max_variance = 100,
+	base_chance  = 16,
+	boost_bonus  = 15,
 }
 
 Animations :: struct {
@@ -125,14 +125,14 @@ TEXTURES :: Textures {
 
 Status_Effects :: struct {
 	poison_damage_denominator: int,
-	sleep_duration:            int,
-	shield_duration:           int,
+	base_duration:             int,
+	permanent_duration:        int,
 }
 
 STATUS_EFFECTS :: Status_Effects {
 	poison_damage_denominator = 8,
-	sleep_duration            = 3,
-	shield_duration           = 3,
+	base_duration             = 3,
+	permanent_duration        = max(int),
 }
 
 Items :: struct {

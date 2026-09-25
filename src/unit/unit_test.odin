@@ -137,9 +137,17 @@ test_status_durations :: proc(test: ^testing.T) {
 	defer destroy(unit)
 
 	apply_status(unit, .Poison)
-	testing.expect_value(test, status_duration(unit, .Poison), defs.STATUS_EFFECTS.permanent_duration)
+	testing.expect_value(
+		test,
+		status_duration(unit, .Poison),
+		defs.STATUS_EFFECTS.permanent_duration,
+	)
 	apply_status(unit, .Blind)
-	testing.expect_value(test, status_duration(unit, .Blind), defs.STATUS_EFFECTS.permanent_duration)
+	testing.expect_value(
+		test,
+		status_duration(unit, .Blind),
+		defs.STATUS_EFFECTS.permanent_duration,
+	)
 	apply_status(unit, .Shield)
 	testing.expect_value(test, status_duration(unit, .Shield), defs.STATUS_EFFECTS.base_duration)
 	apply_status(unit, .Boost)
@@ -305,7 +313,11 @@ test_process_new_statuses_are_stubs :: proc(test: ^testing.T) {
 	testing.expect_value(test, unit.status_count, count)
 	testing.expect_value(test, unit.hp.current, hp)
 	testing.expect_value(test, status_duration(unit, .Shield), defs.STATUS_EFFECTS.base_duration)
-	testing.expect_value(test, status_duration(unit, .Blind), defs.STATUS_EFFECTS.permanent_duration)
+	testing.expect_value(
+		test,
+		status_duration(unit, .Blind),
+		defs.STATUS_EFFECTS.permanent_duration,
+	)
 	testing.expect_value(test, status_duration(unit, .Boost), defs.STATUS_EFFECTS.base_duration)
 	testing.expect_value(test, status_duration(unit, .Quick), defs.STATUS_EFFECTS.base_duration)
 	testing.expect_value(test, status_duration(unit, .Muddle), defs.STATUS_EFFECTS.base_duration)

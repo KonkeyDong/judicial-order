@@ -50,6 +50,60 @@ test_extract_frames_item_icons :: proc(test: ^testing.T) {
 }
 
 @(test)
+test_extract_frames_battle_planes :: proc(test: ^testing.T) {
+	background := extract_frames("assets/backgrounds/FrameData.json")
+	defer delete(background)
+	testing.expect_value(test, len(background), 1)
+	if len(background) > 0 {
+		testing.expect_value(test, background[0].x, 0)
+		testing.expect_value(test, background[0].y, 0)
+		testing.expect_value(test, background[0].w, 256)
+		testing.expect_value(test, background[0].h, 96)
+	}
+
+	foreground := extract_frames("assets/foreground/FrameData.json")
+	defer delete(foreground)
+	testing.expect_value(test, len(foreground), 1)
+	if len(foreground) > 0 {
+		testing.expect_value(test, foreground[0].x, 0)
+		testing.expect_value(test, foreground[0].y, 0)
+		testing.expect_value(test, foreground[0].w, 96)
+		testing.expect_value(test, foreground[0].h, 32)
+	}
+}
+
+@(test)
+test_battle_plane_png_path_uses_placeholder :: proc(test: ^testing.T) {
+	background_named := battle_plane_png_path(
+		defs.PATHS.backgrounds,
+		"law_101",
+		defs.PATHS.background_placeholder,
+	)
+	testing.expect_value(test, background_named, "assets/backgrounds/law_101.png")
+
+	background_missing := battle_plane_png_path(
+		defs.PATHS.backgrounds,
+		"GatesOfGuardiana",
+		defs.PATHS.background_placeholder,
+	)
+	testing.expect_value(test, background_missing, "assets/backgrounds/law_101.png")
+
+	foreground_named := battle_plane_png_path(
+		defs.PATHS.foreground,
+		"class_room",
+		defs.PATHS.foreground_placeholder,
+	)
+	testing.expect_value(test, foreground_named, "assets/foreground/class_room.png")
+
+	foreground_missing := battle_plane_png_path(
+		defs.PATHS.foreground,
+		"RoughTerrain",
+		defs.PATHS.foreground_placeholder,
+	)
+	testing.expect_value(test, foreground_missing, "assets/foreground/class_room.png")
+}
+
+@(test)
 test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	item_icons_init()
 	magic_icons_init()

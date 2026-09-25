@@ -30,6 +30,13 @@ battle_slide_amount :: proc(progress: f32) -> f32 {
 	return clamp((eased - 0.5) * 2, 0, 1)
 }
 
+// Somber-Inertia lerps the foreground with the full eased progress, not the unit slide.
+battle_foreground_position :: proc(eased: f32) -> rl.Vector2 {
+	start := defs.BATTLE.positions.foreground
+	start.x += defs.BATTLE.foreground_slide
+	return sprites.renderer_vector_lerp(start, defs.BATTLE.positions.foreground, eased)
+}
+
 enter_battle_screen_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.battle_item_mode = game.battle_screen_mode == .ItemConsumable
 	game.state_scratch.battle_progress = 0
@@ -82,7 +89,8 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 
 	alpha := int(255 * ((eased - 0.5) * 2))
 	slide := battle_slide_amount(game.state_scratch.battle_progress)
-	sprites.renderer_draw_battle_ground(scale, alpha)
+	foreground := battle_foreground_position(eased)
+	sprites.renderer_draw_battle_background(scale, alpha)
 	if game.state_scratch.battle_item_mode {
 		caster := game.contexts.item_context.caster
 		pos := sprites.renderer_vector_lerp(
@@ -90,13 +98,14 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 			defs.BATTLE.positions.friendly_standin,
 			slide,
 		)
-		sprites.renderer_draw_battle_standin(scale, caster, pos, alpha)
 		sprites.renderer_draw_unit_info_box(
 			scale,
 			caster,
 			defs.BATTLE.positions.friendly_stats,
 			alpha,
 		)
+		sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
+		sprites.renderer_draw_battle_standin(scale, caster, pos, alpha)
 		return
 	}
 
@@ -129,13 +138,17 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 			unfriendly,
 			alpha,
 		)
+		sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 		sprites.renderer_draw_battle_standin(
 			scale,
 			game_pkg.attack_context_force_member(&game.contexts.attack_context),
 			friendly,
 			alpha,
 		)
+		return
 	}
+
+	sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 }
 
 battle_resolution_enter :: proc(game: ^game_pkg.Game) {
@@ -172,7 +185,8 @@ battle_resolution_jitter :: proc(game: ^game_pkg.Game) -> int {
 
 battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	rl.ClearBackground(rl.BLACK)
-	sprites.renderer_draw_battle_ground(scale, 255)
+	sprites.renderer_draw_battle_background(scale, 255)
+	sprites.renderer_draw_battle_foreground(scale, defs.BATTLE.positions.foreground, 255)
 	if !game.contexts.attack_context.active {
 		return
 	}
@@ -254,8 +268,10 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	eased := sprites.renderer_ease_in_out(game.state_scratch.battle_progress)
 	if game.state_scratch.battle_progress < 0.5 {
 		alpha := int(255 * (1 - eased * 2))
-		sprites.renderer_draw_battle_ground(scale, alpha)
+		foreground := defs.BATTLE.positions.foreground
+		sprites.renderer_draw_battle_background(scale, alpha)
 		if game.state_scratch.battle_item_mode {
+			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 			sprites.renderer_draw_battle_standin(
 				scale,
 				game.contexts.item_context.caster,
@@ -275,12 +291,15 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 				defs.BATTLE.positions.unfriendly_standin,
 				alpha,
 			)
+			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 			sprites.renderer_draw_battle_standin(
 				scale,
 				game_pkg.attack_context_force_member(&game.contexts.attack_context),
 				defs.BATTLE.positions.friendly_standin,
 				alpha,
 			)
+		} else {
+			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 		}
 		return
 	}
@@ -338,7 +357,8 @@ use_consumable_battle_update :: proc(game: ^game_pkg.Game) {
 
 use_consumable_battle_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	rl.ClearBackground(rl.BLACK)
-	sprites.renderer_draw_battle_ground(scale, 255)
+	sprites.renderer_draw_battle_background(scale, 255)
+	sprites.renderer_draw_battle_foreground(scale, defs.BATTLE.positions.foreground, 255)
 	caster := game.contexts.item_context.caster
 	sprites.renderer_draw_battle_standin(scale, caster, defs.BATTLE.positions.friendly_standin)
 	sprites.renderer_draw_unit_info_box(scale, caster, defs.BATTLE.positions.friendly_stats)

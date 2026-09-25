@@ -35,6 +35,7 @@ init :: proc() {
 	item_icons_init()
 	magic_icons_init()
 	command_icons_init()
+	battle_planes_init()
 	unit.walk_loader = load_unit_walk
 }
 
@@ -42,6 +43,7 @@ destroy :: proc() {
 	item_icons_destroy()
 	magic_icons_destroy()
 	command_icons_destroy()
+	battle_planes_destroy()
 	for _, tex in cache.textures {
 		rl.UnloadTexture(tex)
 	}

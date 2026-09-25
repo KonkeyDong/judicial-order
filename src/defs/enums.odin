@@ -143,6 +143,14 @@ Attack_Effect :: enum {
 	BattleFieldDeath,
 }
 
+Background :: enum {
+	Classroom,
+}
+
+Foreground :: enum {
+	Classroom,
+}
+
 Status_Effect :: enum {
 	None,
 	Poison,

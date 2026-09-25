@@ -467,7 +467,7 @@ test_attack_context_hale_normal_effect :: proc(test: ^testing.T) {
 	defer unit_pkg.combat_set_random(nil)
 
 	judy.friendly = false
-	game_test_install_rolls({1, 100})
+	game_test_install_rolls({1, 1, 100})
 	attack_context_init(&game.contexts.attack_context, hale, judy)
 	testing.expect(test, game.contexts.attack_context.active)
 	testing.expect_value(

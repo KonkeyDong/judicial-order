@@ -178,17 +178,17 @@ renderer_vector_lerp :: proc(start, finish: rl.Vector2, amount: f32) -> rl.Vecto
 	return start + (finish - start) * t
 }
 
-renderer_draw_battle_ground :: proc(scale: f32, alpha: int) {
-	pos := defs.BATTLE.positions.foreground
-	rect := rl.Rectangle {
-		pos.x * scale,
-		pos.y * scale,
-		f32(defs.WINDOW.width) * scale,
-		f32(defs.TILE_SIZE) * scale,
-	}
-	color := defs.TEXTURES.dark_orange
-	color.a = renderer_alpha_u8(alpha)
-	rl.DrawRectangleRec(rect, color)
+renderer_draw_battle_background :: proc(scale: f32, alpha: int) {
+	renderer_draw(
+		scale,
+		battle_background_get(.Classroom),
+		defs.BATTLE.positions.background,
+		alpha,
+	)
+}
+
+renderer_draw_battle_foreground :: proc(scale: f32, position: rl.Vector2, alpha: int) {
+	renderer_draw(scale, battle_foreground_get(.Classroom), position, alpha)
 }
 
 renderer_draw_battle_standin :: proc(

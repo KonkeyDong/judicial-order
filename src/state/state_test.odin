@@ -19,6 +19,21 @@ test_place_hale_judy :: proc(game: ^game_pkg.Game) -> (hale, judy: ^unit_pkg.Uni
 }
 
 @(test)
+test_battle_foreground_position :: proc(test: ^testing.T) {
+	at_start := battle_foreground_position(0)
+	testing.expect_value(test, at_start.x, f32(227))
+	testing.expect_value(test, at_start.y, f32(150))
+
+	midway := battle_foreground_position(0.5)
+	testing.expect_value(test, midway.x, f32(177))
+	testing.expect_value(test, midway.y, f32(150))
+
+	at_rest := battle_foreground_position(1)
+	testing.expect_value(test, at_rest.x, f32(127))
+	testing.expect_value(test, at_rest.y, f32(150))
+}
+
+@(test)
 test_message_notice_dismiss_returns :: proc(test: ^testing.T) {
 	game := game_pkg.test_game_full()
 	defer game_pkg.game_destroy(&game)
@@ -197,7 +212,7 @@ test_select_enemy_inits_attack_and_does_not_double_damage :: proc(test: ^testing
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.SelectEnemyForPhysicalAttack)
-	game_pkg.game_test_install_rolls({1, 100})
+	game_pkg.game_test_install_rolls({1, 1, 100})
 	game_pkg.input_test_install_pressed({.Z})
 	state_handle_input(&game)
 	testing.expect_value(test, game.state, defs.State_Kind.EnterBattleScreen)

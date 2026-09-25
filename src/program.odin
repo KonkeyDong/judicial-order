@@ -143,6 +143,7 @@ program_load_graphics :: proc() {
 	sprites.item_icons_load()
 	sprites.magic_icons_load()
 	sprites.command_icons_load()
+	sprites.battle_planes_load()
 }
 
 program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {

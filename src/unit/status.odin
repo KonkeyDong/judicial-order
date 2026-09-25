@@ -126,7 +126,35 @@ process_poison :: proc(unit: ^Unit) {
 }
 
 process_sleep :: proc(unit: ^Unit) {
-	index := find_status_index(unit, .Sleep)
+	process_duration_status_effect(unit, .Sleep)
+}
+
+process_shield :: proc(unit: ^Unit) {
+	process_duration_status_effect(unit, .Shield)
+}
+
+process_blind :: proc(unit: ^Unit) {
+	// no op
+}
+
+process_boost :: proc(unit: ^Unit) {
+	process_duration_status_effect(unit, .Boost)
+}
+
+process_quick :: proc(unit: ^Unit) {
+	process_duration_status_effect(unit, .Quick)
+}
+
+process_slow :: proc(unit: ^Unit) {
+	process_duration_status_effect(unit, .Slow)
+}
+
+process_muddle :: proc(unit: ^Unit) {
+	process_duration_status_effect(unit, .Muddle)
+}
+
+process_duration_status_effect :: proc(unit: ^Unit, status: defs.Status_Effect) {
+	index := find_status_index(unit, status)
 	if index < 0 {
 		return
 	}
@@ -134,33 +162,10 @@ process_sleep :: proc(unit: ^Unit) {
 	unit.status_effects[index].duration -= 1
 	if unit.status_effects[index].duration < 0 {
 		log.infof(
-			"Sleep status on unit [%s] has exhausted; removing.",
+			"%s status on unit [%s] has exhausted; removing.",
+			status,
 			defs.name_display(unit.name),
 		)
-		remove_status(unit, .Sleep)
+		remove_status(unit, status)
 	}
-}
-
-process_shield :: proc(unit: ^Unit) {
-	log.warnf("Shield status has not been implemented yet!")
-}
-
-process_blind :: proc(unit: ^Unit) {
-	log.warnf("Blind status has not been implemented yet!")
-}
-
-process_boost :: proc(unit: ^Unit) {
-	log.warnf("Boost status has not been implemented yet!")
-}
-
-process_quick :: proc(unit: ^Unit) {
-	log.warnf("Quick status has not been implemented yet!")
-}
-
-process_slow :: proc(unit: ^Unit) {
-	log.warnf("Slow status has not been implemented yet!")
-}
-
-process_muddle :: proc(unit: ^Unit) {
-	log.warnf("Muddle status has not been implemented yet!")
 }

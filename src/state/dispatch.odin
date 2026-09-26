@@ -221,9 +221,9 @@ STATE_TABLE := [defs.State_Kind]State_Procs {
 
 state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highlight: bool) {
 	debug_draw := game.renderer.debug_draw
-	game_pkg.renderer_draw_background(scale, &game.grid, 255, debug_draw)
+	sprites.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	if draw_range {
-		game_pkg.renderer_draw_range(scale, &game.grid, debug_draw)
+		sprites.renderer_draw_range(scale, &game.grid, debug_draw)
 	}
 
 	sprites.renderer_draw_units(

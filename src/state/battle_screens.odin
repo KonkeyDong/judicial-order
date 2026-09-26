@@ -76,7 +76,7 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game.state_scratch.battle_progress < 0.5 {
 		alpha := int(255 * (1 - eased * 2))
 		debug_draw := game.renderer.debug_draw
-		game_pkg.renderer_draw_background(scale, &game.grid, alpha, debug_draw)
+		sprites.renderer_draw_background(scale, &game.grid, alpha, debug_draw)
 		sprites.renderer_draw_units(
 			scale,
 			game.units[:],
@@ -306,7 +306,7 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 
 	alpha := int(255 * ((eased - 0.5) * 2))
 	debug_draw := game.renderer.debug_draw
-	game_pkg.renderer_draw_background(scale, &game.grid, alpha, debug_draw)
+	sprites.renderer_draw_background(scale, &game.grid, alpha, debug_draw)
 	sprites.renderer_draw_units(
 		scale,
 		game.units[:],

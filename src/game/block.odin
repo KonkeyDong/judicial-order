@@ -7,14 +7,6 @@ import "../defs"
 import units "../unit"
 import rl "vendor:raylib"
 
-Block :: struct {
-	texture:        rl.Texture2D,
-	terrain:        defs.Terrain,
-	grid_x, grid_y: int,
-	occupant:       ^units.Unit,
-	visitor:        ^units.Unit,
-}
-
 block_occupant_count :: proc(block: ^Block) -> int {
 	count := 0
 	if block.occupant != nil {

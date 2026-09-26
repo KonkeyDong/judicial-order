@@ -29,8 +29,8 @@ transition_selector_update :: proc(game: ^game_pkg.Game) {
 
 transition_selector_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	debug_draw := game.renderer.debug_draw
-	game_pkg.renderer_draw_background(scale, &game.grid, 255, debug_draw)
-	game_pkg.renderer_draw_range(scale, &game.grid, debug_draw)
+	sprites.renderer_draw_background(scale, &game.grid, 255, debug_draw)
+	sprites.renderer_draw_range(scale, &game.grid, debug_draw)
 	sprites.renderer_draw_units(
 		scale,
 		game.units[:],

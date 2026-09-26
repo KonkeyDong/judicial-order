@@ -4,23 +4,15 @@ import "core:log"
 
 import "../catalog"
 import "../defs"
+import grid_pkg "../grid"
 import "../sprites"
 import "../timers"
 import units "../unit"
 import rl "vendor:raylib"
 
-Grid_Coord :: struct {
-	x, y: int,
-}
-
-Grid :: struct {
-	width, height: int,
-	block_size:    int,
-	blocks:        []Block,
-	range_mask:    []bool,
-	range_coords:  [dynamic]Grid_Coord,
-	range_tint:    timers.Oscillator(rl.Color),
-}
+Grid :: grid_pkg.Grid
+Block :: grid_pkg.Block
+Grid_Coord :: grid_pkg.Grid_Coord
 
 GRID_ADJACENT_OFFSETS :: [4]Grid_Coord{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 

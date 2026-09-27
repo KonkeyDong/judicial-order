@@ -17,6 +17,10 @@ Icon_Set :: struct($Key: typeid) {
 }
 
 icon_set_init :: proc(set: ^Icon_Set($Key), root_path: string, selected: Key) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	if set.animations.allocator.procedure != nil {
 		delete(set.animations)
 	}
@@ -29,6 +33,10 @@ icon_set_init :: proc(set: ^Icon_Set($Key), root_path: string, selected: Key) {
 }
 
 icon_set_destroy :: proc(set: ^Icon_Set($Key)) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	// Do NOT UnloadTexture — sprites share sprites.cache.
 	if set.animations.allocator.procedure != nil {
 		delete(set.animations)
@@ -39,6 +47,10 @@ icon_set_destroy :: proc(set: ^Icon_Set($Key)) {
 }
 
 icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := false) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	clear(&set.animations) // C# Load starts with Clear; skip leaks
 
 	json_path := strings.concatenate(
@@ -114,23 +126,43 @@ icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := f
 }
 
 icon_set_tick :: proc(set: ^Icon_Set($Key)) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	timers.flip_flop_tick(&set.flip_flop)
 }
 
 icon_set_reset :: proc(set: ^Icon_Set($Key)) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	timers.flip_flop_reset(&set.flip_flop)
 }
 
 icon_set_set_selected :: proc(set: ^Icon_Set($Key), key: Key) {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	set.selected = key
 	icon_set_reset(set)
 }
 
 icon_set_get :: proc(set: ^Icon_Set($Key), key: Key) -> Sprite {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	return icon_set_get_selected(set, key, key == set.selected)
 }
 
 icon_set_get_selected :: proc(set: ^Icon_Set($Key), key: Key, is_selected: bool) -> Sprite {
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
 	pair, ok := set.animations[key]
 	if !ok {
 		log.errorf("Icon for [%v] not found in IconSet.", key)

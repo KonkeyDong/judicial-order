@@ -10,6 +10,10 @@ import "../timers"
 import unit_pkg "../unit"
 
 battle_action_menu_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -21,9 +25,17 @@ battle_action_menu_enter :: proc(game: ^game_pkg.Game) {
 	sprites.magic_ui_reset_layout_center(&game.magic_ui, game.window)
 }
 
-battle_action_menu_exit :: proc(_: ^game_pkg.Game) {}
+battle_action_menu_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 battle_action_menu_set_command :: proc(game: ^game_pkg.Game, command: defs.Command_Icon) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game.state_scratch.selected_command == command {
 		return
 	}
@@ -33,6 +45,10 @@ battle_action_menu_set_command :: proc(game: ^game_pkg.Game, command: defs.Comma
 }
 
 battle_action_menu_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_key_pressed(.UP) {
 		battle_action_menu_set_command(game, .Attack)
 	}
@@ -59,6 +75,10 @@ battle_action_menu_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 battle_action_menu_confirm :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -106,12 +126,20 @@ battle_action_menu_confirm :: proc(game: ^game_pkg.Game) {
 }
 
 battle_action_menu_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.command_icons_tick()
 }
 
 battle_action_menu_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	center := sprites.radial_center(game.window)
 	sprites.radial_draw_command_icons(scale, center, sprites.BATTLE_ACTION_COMMANDS)

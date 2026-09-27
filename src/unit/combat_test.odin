@@ -546,21 +546,6 @@ test_magic_heal_skips_enemy :: proc(test: ^testing.T) {
 }
 
 @(test)
-test_magic_nil_caster :: proc(test: ^testing.T) {
-	old_logger := context.logger
-	context.logger = {}
-	defer {context.logger = old_logger}
-
-	hale := make(test_data_hale())
-	defer destroy(hale)
-	hp := hale.hp.current
-	mp := hale.mp.current
-	magic_cast_data(catalog.magic_get(.Blaze1), nil, {hale})
-	testing.expect_value(test, hale.hp.current, hp)
-	testing.expect_value(test, hale.mp.current, mp)
-}
-
-@(test)
 test_consumable_heal_same_team :: proc(test: ^testing.T) {
 	catalog.init()
 	hale := make(test_data_hale())
@@ -746,15 +731,4 @@ test_spell_item_use_is_stub :: proc(test: ^testing.T) {
 	testing.expect_value(test, judy.hp.current, hp)
 	testing.expect_value(test, hale.mp.current, mp)
 	testing.expect_value(test, item_at(hale, 0).name, defs.Item_Name.SmallBriefcase)
-}
-
-@(test)
-test_nil_attack_units :: proc(test: ^testing.T) {
-	old_logger := context.logger
-	context.logger = {}
-	defer {context.logger = old_logger}
-
-	result := combat_calculate_attack_outcome(nil, nil)
-	testing.expect_value(test, result.hit, false)
-	testing.expect_value(test, result.damage, 0)
 }

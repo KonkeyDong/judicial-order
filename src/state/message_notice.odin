@@ -9,6 +9,10 @@ import "../sprites"
 import "../timers"
 
 message_notice_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.countdown_timer_reset(&game.state_scratch.countdown)
 
 	if len(game.contexts.message_notice.message) == 0 {
@@ -27,21 +31,37 @@ message_notice_enter :: proc(game: ^game_pkg.Game) {
 }
 
 message_notice_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	game_pkg.message_notice_reset(&game.contexts.message_notice)
 }
 
 message_notice_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_dismiss_press() {
 		message_notice_dismiss(game)
 	}
 }
 
 message_notice_dismiss :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	return_state := game.contexts.message_notice.return_state
 	state_change(game, return_state)
 }
 
 message_notice_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
@@ -53,6 +73,10 @@ message_notice_update :: proc(game: ^game_pkg.Game) {
 }
 
 message_notice_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	debug_draw := game.renderer.debug_draw
 	sprites.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	sprites.renderer_draw_range(scale, &game.grid, debug_draw)

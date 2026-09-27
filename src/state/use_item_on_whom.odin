@@ -13,6 +13,10 @@ import "../timers"
 
 
 use_item_on_whom_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -57,7 +61,15 @@ use_item_on_whom_enter :: proc(game: ^game_pkg.Game) {
 }
 
 use_item_on_whom_push_target :: proc(game: ^game_pkg.Game, target: ^unit_pkg.Unit) {
-	if target == nil || game.state_scratch.target_count >= len(game.state_scratch.targets) {
+	if target == nil {
+		log.panic("target is nil.")
+	}
+
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if game.state_scratch.target_count >= len(game.state_scratch.targets) {
 		return
 	}
 
@@ -72,6 +84,14 @@ use_item_on_whom_push_target :: proc(game: ^game_pkg.Game, target: ^unit_pkg.Uni
 }
 
 use_item_on_whom_enter_heal_all :: proc(game: ^game_pkg.Game, current: ^unit_pkg.Unit) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if current == nil {
+		log.panic("current is nil.")
+	}
+
 	for unit in game.units {
 		if unit != nil && unit.friendly == current.friendly && !unit_pkg.is_dead(unit) {
 			use_item_on_whom_push_target(game, unit)
@@ -91,6 +111,14 @@ use_item_on_whom_enter_consumable :: proc(
 	current: ^unit_pkg.Unit,
 	data: catalog.Item_Data,
 ) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if current == nil {
+		log.panic("current is nil.")
+	}
+
 	game_pkg.grid_calculate_item_use_range(&game.grid, current, data)
 	units := game_pkg.grid_units_in_range(&game.grid)
 	defer delete(units)
@@ -125,6 +153,14 @@ use_item_on_whom_enter_spell :: proc(
 	current: ^unit_pkg.Unit,
 	magic: catalog.Magic_Data,
 ) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if current == nil {
+		log.panic("current is nil.")
+	}
+
 	game_pkg.grid_calculate_magic_attack_range(&game.grid, current, magic)
 	units := game_pkg.grid_units_in_range(&game.grid)
 	defer delete(units)
@@ -158,9 +194,17 @@ use_item_on_whom_enter_spell :: proc(
 	game_pkg.game_set_highlight_target(game, game.state_scratch.targets[0])
 }
 
-use_item_on_whom_exit :: proc(_: ^game_pkg.Game) {}
+use_item_on_whom_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_try_cycle_index(
 		&game.state_scratch.list_index,
 		game.state_scratch.target_count,
@@ -189,6 +233,10 @@ use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	game_pkg.item_context_init(
 		&game.contexts.item_context,
@@ -207,6 +255,10 @@ use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 }
 
 use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	slot := unit_pkg.item_at(current, game.contexts.prompt.item_slot_index)
 	data := catalog.item_get(slot.name)
@@ -255,6 +307,10 @@ use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 }
 
 use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 
@@ -262,5 +318,9 @@ use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
 }
 
 use_item_on_whom_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, true)
 }

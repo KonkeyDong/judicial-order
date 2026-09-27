@@ -8,6 +8,10 @@ import units "../unit"
 import rl "vendor:raylib"
 
 block_occupant_count :: proc(block: ^Block) -> int {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	count := 0
 	if block.occupant != nil {
 		count += 1
@@ -21,10 +25,22 @@ block_occupant_count :: proc(block: ^Block) -> int {
 }
 
 block_is_fully_occupied :: proc(block: ^Block) -> bool {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	return block.occupant != nil && block.visitor != nil
 }
 
 block_enter :: proc(block: ^Block, unit: ^units.Unit) -> bool {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if block_is_fully_occupied(block) {
 		log.errorf("block_enter: Block %s already has two occupants.", block_print_coords(block))
 		return false
@@ -53,6 +69,14 @@ block_enter :: proc(block: ^Block, unit: ^units.Unit) -> bool {
 }
 
 block_leave :: proc(block: ^Block, unit: ^units.Unit) {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if block.visitor == unit {
 		block.visitor = nil
 	} else if block.occupant == unit {
@@ -70,6 +94,10 @@ block_leave :: proc(block: ^Block, unit: ^units.Unit) {
 }
 
 block_top :: proc(block: ^Block) -> ^units.Unit {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	if block.visitor != nil {
 		return block.visitor
 	}
@@ -78,9 +106,17 @@ block_top :: proc(block: ^Block) -> ^units.Unit {
 }
 
 block_pixel_coords :: proc(block: ^Block) -> rl.Vector2 {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	return {f32(block.grid_x * defs.TILE_SIZE), f32(block.grid_y * defs.TILE_SIZE)}
 }
 
 block_print_coords :: proc(block: ^Block) -> string {
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	return fmt.tprintf("[%d, %d]", block.grid_x, block.grid_y)
 }

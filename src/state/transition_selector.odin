@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../sprites"
@@ -8,17 +10,33 @@ import "../timers"
 import rl "vendor:raylib"
 
 transition_selector_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	game_pkg.game_initialize_highlight(game)
 	game_pkg.game_set_highlight_target(game, game_pkg.game_next_unit(game))
 }
 
 transition_selector_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 }
 
 transition_selector_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 }
 
 transition_selector_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game.highlight.animation_complete {
 		state_change(game, .EndTurn)
 	}
@@ -28,6 +46,10 @@ transition_selector_update :: proc(game: ^game_pkg.Game) {
 }
 
 transition_selector_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	debug_draw := game.renderer.debug_draw
 	sprites.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	sprites.renderer_draw_range(scale, &game.grid, debug_draw)

@@ -1,10 +1,16 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../defs"
 
 calculate_weapon_attack_range_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -21,7 +27,23 @@ calculate_weapon_attack_range_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-calculate_weapon_attack_range_exit :: proc(_: ^game_pkg.Game) {}
-calculate_weapon_attack_range_handle_input :: proc(_: ^game_pkg.Game) {}
-calculate_weapon_attack_range_update :: proc(_: ^game_pkg.Game) {}
-calculate_weapon_attack_range_draw :: proc(_: ^game_pkg.Game, _: f32) {}
+calculate_weapon_attack_range_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+calculate_weapon_attack_range_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+calculate_weapon_attack_range_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+calculate_weapon_attack_range_draw :: proc(game: ^game_pkg.Game, _: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}

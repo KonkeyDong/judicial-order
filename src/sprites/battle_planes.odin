@@ -33,6 +33,10 @@ battle_plane_png_path :: proc(root, name, placeholder_file: string) -> string {
 }
 
 battle_plane_load :: proc(sprites: ^[$Key]Sprite, root, placeholder_file, label: string) -> bool {
+	if sprites == nil {
+		log.panic("sprites is nil.")
+	}
+
 	json_path := strings.concatenate({root, "/", defs.PATHS.frame_data}, context.temp_allocator)
 	frames := extract_frames(json_path)
 	defer delete(frames)

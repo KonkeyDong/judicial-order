@@ -10,6 +10,10 @@ import "../timers"
 import unit_pkg "../unit"
 
 end_turn_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current :=
 		game.unit_that_died_from_poison if game.first_unit_died_from_poison else game_pkg.game_current_unit(game)
 	if current != nil {
@@ -46,6 +50,10 @@ end_turn_enter :: proc(game: ^game_pkg.Game) {
 }
 
 end_turn_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -54,6 +62,18 @@ end_turn_exit :: proc(game: ^game_pkg.Game) {
 	log.infof("%s's turn begins.", defs.name_display(current.name))
 }
 
-end_turn_handle_input :: proc(_: ^game_pkg.Game) {}
-end_turn_update :: proc(_: ^game_pkg.Game) {}
-end_turn_draw :: proc(_: ^game_pkg.Game, _: f32) {}
+end_turn_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+end_turn_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+end_turn_draw :: proc(game: ^game_pkg.Game, _: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}

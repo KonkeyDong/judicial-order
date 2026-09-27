@@ -13,6 +13,10 @@ join_path :: proc(elems: []string) -> string {
 }
 
 asset_root :: proc(target: ^unit.Unit) -> string {
+	if target == nil {
+		log.panic("target is nil.")
+	}
+
 	base := defs.name_base(target.name)
 	if target.friendly {
 		promo := defs.PATHS.promoted if unit.is_promoted(target) else defs.PATHS.unpromoted
@@ -39,6 +43,10 @@ structured_walk_complete :: proc(overworld_dir: string) -> bool {
 }
 
 load_unit_walk :: proc(target: ^unit.Unit) {
+	if target == nil {
+		log.panic("target is nil.")
+	}
+
 	target.walk_frames_loaded = 0
 	if cache.textures.allocator.procedure == nil {
 		return

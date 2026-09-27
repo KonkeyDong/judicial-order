@@ -6,6 +6,10 @@ import "../catalog"
 import "../defs"
 
 has_spells :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if unit.magic_family_buckets[i] != .NoSpell {
 			return true
@@ -16,6 +20,10 @@ has_spells :: proc(unit: ^Unit) -> bool {
 }
 
 learn_spell :: proc(unit: ^Unit, spell_name: defs.Magic_Name) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if spell_name == .NoSpell {
 		log.warn("learn_spell: NoSpell is not a learnable spell.")
 		return
@@ -52,6 +60,10 @@ learn_spell :: proc(unit: ^Unit, spell_name: defs.Magic_Name) {
 }
 
 find_family_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if unit.magic_family_buckets[i] == family {
 			return i
@@ -62,6 +74,10 @@ find_family_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
 }
 
 fill_first_available_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if unit.magic_family_buckets[i] == .NoSpell {
 			unit.magic_family_buckets[i] = family
@@ -77,6 +93,10 @@ fill_first_available_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> i
 }
 
 magic_list_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> []defs.Magic_Name {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	index := find_family_bucket(unit, family)
 	if index < 0 {
 		log.errorf("Magic family [%v] not found.", family)
@@ -87,6 +107,10 @@ magic_list_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> []defs.M
 }
 
 highest_magic_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> defs.Magic_Name {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	list := magic_list_in_bucket(unit, family)
 	if len(list) == 0 {
 		return .NoSpell
@@ -99,6 +123,10 @@ highest_magic_data_in_bucket :: proc(
 	unit: ^Unit,
 	family: defs.Magic_Family,
 ) -> catalog.Magic_Data {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return catalog.magic_get(highest_magic_in_bucket(unit, family))
 }
 
@@ -112,9 +140,9 @@ magic_mp_cost :: proc(name: defs.Magic_Name, from_item := false) -> int {
 
 magic_execute_effect :: proc(data: catalog.Magic_Data, caster: ^Unit, targets: []^Unit) {
 	if caster == nil {
-		log.errorf("magic_execute_effect: caster is nil.")
-		return
+		log.panic("caster is nil.")
 	}
+
 
 	switch data.effect_type {
 	case .Damage:
@@ -154,9 +182,9 @@ magic_cast_data :: proc(
 	from_item := false,
 ) {
 	if caster == nil {
-		log.errorf("magic_cast_data: caster is nil.")
-		return
+		log.panic("caster is nil.")
 	}
+
 
 	if !from_item && caster.mp.current < data.mp_cost {
 		log.warnf("Not enough MP to cast [%v].", data.name)
@@ -171,5 +199,9 @@ magic_cast_data :: proc(
 }
 
 magic_cast :: proc(name: defs.Magic_Name, caster: ^Unit, targets: []^Unit, from_item := false) {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
 	magic_cast_data(catalog.magic_get(name), caster, targets, from_item)
 }

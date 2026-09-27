@@ -13,10 +13,18 @@ Renderer :: struct {
 }
 
 renderer_init :: proc(renderer: ^Renderer) {
+	if renderer == nil {
+		log.panic("renderer is nil.")
+	}
+
 	renderer.debug_draw = false
 }
 
 renderer_destroy :: proc(renderer: ^Renderer) {
+	if renderer == nil {
+		log.panic("renderer is nil.")
+	}
+
 	renderer.debug_draw = false
 }
 
@@ -110,13 +118,12 @@ renderer_draw_unit :: proc(
 	alpha := 255,
 	debug_draw := false,
 ) {
-	if unit == nil || !unit.on_map {
-		name := "nil"
-		if unit != nil {
-			name = defs.name_display(unit.name)
-		}
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
 
-		log.errorf("Unit %s has no Block reference!", name)
+	if !unit.on_map {
+		log.errorf("Unit %s has no Block reference!", defs.name_display(unit.name))
 		return
 	}
 
@@ -199,8 +206,9 @@ renderer_draw_battle_standin :: proc(
 	jitter := 0,
 ) {
 	if unit == nil {
-		return
+		log.panic("unit is nil.")
 	}
+
 
 	draw_pos := position
 	draw_pos.x += f32(jitter)

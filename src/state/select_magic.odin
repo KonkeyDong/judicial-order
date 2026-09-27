@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../defs"
@@ -8,6 +10,10 @@ import "../timers"
 import unit_pkg "../unit"
 
 select_magic_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	sprites.magic_ui_reset_layout_center(&game.magic_ui, game.window)
 	sprites.magic_ui_set_selected(&game.magic_ui, .Up, current)
@@ -20,9 +26,17 @@ select_magic_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-select_magic_exit :: proc(_: ^game_pkg.Game) {}
+select_magic_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 select_magic_set :: proc(game: ^game_pkg.Game, direction: defs.Direction) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	sprites.magic_ui_set_selected(&game.magic_ui, direction, current)
 	if current != nil {
@@ -35,6 +49,10 @@ select_magic_set :: proc(game: ^game_pkg.Game, direction: defs.Direction) {
 }
 
 select_magic_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_key_pressed(.UP) {
 		select_magic_set(game, .Up)
 	}
@@ -61,12 +79,20 @@ select_magic_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.magic_icons_tick()
 }
 
 select_magic_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
@@ -92,6 +118,10 @@ select_magic_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 }
 
 select_magic_level_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	timers.flip_flop_init(&game.state_scratch.blinker, defs.ANIMATIONS.blink_delay)
 	if current != nil {
@@ -103,9 +133,17 @@ select_magic_level_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-select_magic_level_exit :: proc(_: ^game_pkg.Game) {}
+select_magic_level_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 select_magic_level_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if game_pkg.input_key_pressed(.LEFT) {
 		sprites.magic_ui_previous_level(&game.magic_ui, current)
@@ -139,6 +177,10 @@ select_magic_level_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_level_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.flip_flop_tick(&game.state_scratch.blinker)
@@ -146,6 +188,10 @@ select_magic_level_update :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_level_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
@@ -172,6 +218,10 @@ select_magic_level_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 }
 
 prepare_magic_targets_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -195,12 +245,32 @@ prepare_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-prepare_magic_targets_exit :: proc(_: ^game_pkg.Game) {}
-prepare_magic_targets_handle_input :: proc(_: ^game_pkg.Game) {}
-prepare_magic_targets_update :: proc(_: ^game_pkg.Game) {}
-prepare_magic_targets_draw :: proc(_: ^game_pkg.Game, _: f32) {}
+prepare_magic_targets_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+prepare_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+prepare_magic_targets_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+prepare_magic_targets_draw :: proc(game: ^game_pkg.Game, _: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 select_magic_targets_list :: proc(game: ^game_pkg.Game) -> [dynamic]^unit_pkg.Unit {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if sprites.magic_ui_is_offensive(&game.magic_ui) {
 		return game.unfriendly_units_in_range
 	}
@@ -209,6 +279,10 @@ select_magic_targets_list :: proc(game: ^game_pkg.Game) -> [dynamic]^unit_pkg.Un
 }
 
 select_magic_targets_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	list := select_magic_targets_list(game)
 	if len(list) > 0 {
 		game_pkg.game_initialize_highlight(game)
@@ -218,9 +292,17 @@ select_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-select_magic_targets_exit :: proc(_: ^game_pkg.Game) {}
+select_magic_targets_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 select_magic_targets_set_context :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	list := select_magic_targets_list(game)
 	index := game.state_scratch.list_index
 	if index < 0 || index >= len(list) {
@@ -237,6 +319,10 @@ select_magic_targets_set_context :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	list := select_magic_targets_list(game)
 	if game_pkg.input_try_cycle_index(&game.state_scratch.list_index, len(list)) {
 		target := list[game.state_scratch.list_index]
@@ -257,12 +343,20 @@ select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 select_magic_targets_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	timers.oscillator_tick(&game.grid.range_tint)
 	game_pkg.game_update_highlight(game, 1.0 / 60)
 }
 
 select_magic_targets_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	highlight := !game.highlight.animation_complete
 	state_draw_map(game, scale, true, highlight)
 	if game.highlight.animation_complete {

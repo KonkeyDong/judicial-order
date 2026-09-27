@@ -11,6 +11,10 @@ Oscillator :: struct($T: typeid) {
 }
 
 oscillator_init :: proc(oscillator: ^Oscillator($T), levels: []T, frames_per_step: int) {
+	if oscillator == nil {
+		log.panic("oscillator is nil.")
+	}
+
 	if len(levels) == 0 {
 		log.errorf("Oscillator requires at least one level.")
 		oscillator.levels = {}
@@ -29,6 +33,10 @@ oscillator_init :: proc(oscillator: ^Oscillator($T), levels: []T, frames_per_ste
 }
 
 oscillator_tick :: proc(oscillator: ^Oscillator($T)) {
+	if oscillator == nil {
+		log.panic("oscillator is nil.")
+	}
+
 	if len(oscillator.levels) == 0 {
 		return
 	}
@@ -48,6 +56,10 @@ oscillator_tick :: proc(oscillator: ^Oscillator($T)) {
 }
 
 oscillator_reset :: proc(oscillator: ^Oscillator($T)) {
+	if oscillator == nil {
+		log.panic("oscillator is nil.")
+	}
+
 	oscillator.current_index = 0
 	oscillator.direction = 1
 	oscillator.frame_counter = oscillator.frames_per_step

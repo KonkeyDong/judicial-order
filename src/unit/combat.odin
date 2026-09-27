@@ -79,7 +79,11 @@ Combat_Attack_Result :: struct {
 }
 
 combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result) {
-	if defender == nil || !result.hit {
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
+	if !result.hit {
 		return
 	}
 
@@ -89,6 +93,14 @@ combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result
 // A blind attacker uses only the 1/2 roll. A miss ends the attack. A hit skips
 // sleep, quick versus slow, and the normal 1/16 miss roll.
 combat_attack_misses :: proc(attacker, defender: ^Unit) -> bool {
+	if attacker == nil {
+		log.panic("attacker is nil.")
+	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
 	if has_status(attacker, defs.Status_Effect.Blind) {
 		if combat_chance(2) {
 			log.info("   Attack missed!")
@@ -116,6 +128,14 @@ combat_attack_misses :: proc(attacker, defender: ^Unit) -> bool {
 
 // crit is the crit roll. Poison and the damage floor ignore it for the amount.
 combat_roll_attack_damage :: proc(attacker, defender: ^Unit, crit: bool) -> int {
+	if attacker == nil {
+		log.panic("attacker is nil.")
+	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
 	boost_amount :=
 		has_status(attacker, defs.Status_Effect.Boost) ? defs.COMBAT_AMOUNTS.boost_bonus : 0
 	base := (total_offense(attacker) + boost_amount) - defender.defense
@@ -144,11 +164,15 @@ combat_roll_attack_damage :: proc(attacker, defender: ^Unit, crit: bool) -> int 
 }
 
 combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Attack_Result {
-	result: Combat_Attack_Result
-	if attacker == nil || defender == nil {
-		log.errorf("combat_calculate_attack_outcome: attacker or defender is nil.")
-		return result
+	if attacker == nil {
+		log.panic("attacker is nil.")
 	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
+	result: Combat_Attack_Result
 
 	if combat_attack_misses(attacker, defender) {
 		return result
@@ -167,10 +191,14 @@ combat_magic_attack :: proc(
 	base_damage: int,
 	magic_type: defs.Magic_Type,
 ) {
-	if attacker == nil || defender == nil {
-		log.errorf("combat_magic_attack: attacker or defender is nil.")
-		return
+	if attacker == nil {
+		log.panic("attacker is nil.")
 	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
 
 	if has_status(defender, defs.Status_Effect.Shield) {
 		log.infof(
@@ -201,6 +229,10 @@ combat_attack_effect_for :: proc(unit: ^Unit) -> defs.Attack_Effect {
 }
 
 take_damage :: proc(unit: ^Unit, amount: int) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	log.debugf("Unit::TakeDamage(%d)", amount)
 	log.infof("Unit [%s] has been damaged for %d.", defs.name_display(unit.name), amount)
 
@@ -213,6 +245,10 @@ take_damage :: proc(unit: ^Unit, amount: int) {
 }
 
 heal :: proc(unit: ^Unit, amount: int) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	requested := max(amount, 0)
 	missing := unit.hp.max - unit.hp.current
 	actual := min(requested, missing)
@@ -230,5 +266,9 @@ heal :: proc(unit: ^Unit, amount: int) -> int {
 }
 
 is_dead :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return unit.hp.current == 0
 }

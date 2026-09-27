@@ -1,5 +1,7 @@
 package sprites
 
+import "core:log"
+
 import "../catalog"
 import "../defs"
 import unit_pkg "../unit"
@@ -15,25 +17,45 @@ Item_UI :: struct {
 }
 
 item_ui_reset :: proc(ui: ^Item_UI) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	ui.selected_index = -1
 	ui.selected_name = .NoItem
 }
 
 item_ui_set_layout_center :: proc(ui: ^Item_UI, center: rl.Vector2) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	ui.center = center
 	ui.info_box = radial_info_box_position(center)
 }
 
 item_ui_reset_layout_center :: proc(ui: ^Item_UI, window: defs.Window_View) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	item_ui_set_layout_center(ui, radial_center(window))
 }
 
-item_ui_giveable_filter :: proc(slot: unit_pkg.Item_Slot, _: ^unit_pkg.Unit) -> bool {
+item_ui_giveable_filter :: proc(slot: unit_pkg.Item_Slot, unit: ^unit_pkg.Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return !unit_pkg.item_slot_is_empty(slot) && slot.name != .Unarmed
 }
 
 item_ui_usable_filter :: proc(slot: unit_pkg.Item_Slot, caster: ^unit_pkg.Unit) -> bool {
-	if caster == nil || unit_pkg.item_slot_is_empty(slot) {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if unit_pkg.item_slot_is_empty(slot) {
 		return false
 	}
 
@@ -41,6 +63,10 @@ item_ui_usable_filter :: proc(slot: unit_pkg.Item_Slot, caster: ^unit_pkg.Unit) 
 }
 
 item_ui_has_selection :: proc(ui: ^Item_UI) -> bool {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	return ui.selected_index >= 0
 }
 
@@ -49,7 +75,15 @@ item_ui_has_valid_selection :: proc(
 	caster: ^unit_pkg.Unit,
 	can_select: Item_Slot_Filter,
 ) -> bool {
-	if caster == nil || ui.selected_index < 0 || ui.selected_index >= defs.MAX_BUCKET_SIZE {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
+	if ui.selected_index < 0 || ui.selected_index >= defs.MAX_BUCKET_SIZE {
 		return false
 	}
 
@@ -63,8 +97,13 @@ item_ui_set_selected :: proc(
 	can_select: Item_Slot_Filter,
 ) {
 	if caster == nil {
-		return
+		log.panic("caster is nil.")
 	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 
 	index := radial_index_for_direction(direction)
 	if index < 0 {
@@ -86,9 +125,13 @@ item_ui_set_selected :: proc(
 
 item_ui_select_first :: proc(ui: ^Item_UI, caster: ^unit_pkg.Unit, can_select: Item_Slot_Filter) {
 	if caster == nil {
-		item_ui_reset(ui)
-		return
+		log.panic("caster is nil.")
 	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 
 	directions := [4]defs.Direction{.Up, .Left, .Right, .Down}
 	for direction in directions {
@@ -109,5 +152,9 @@ item_ui_select_first :: proc(ui: ^Item_UI, caster: ^unit_pkg.Unit, can_select: I
 }
 
 item_ui_selected_data :: proc(ui: ^Item_UI) -> catalog.Item_Data {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	return catalog.item_get(ui.selected_name)
 }

@@ -150,7 +150,7 @@ test_move_first_to_end :: proc(test: ^testing.T) {
 }
 
 @(test)
-test_add_unit_nil_and_oob :: proc(test: ^testing.T) {
+test_add_unit_oob :: proc(test: ^testing.T) {
 	data.init()
 	game := test_game_full()
 	defer game_destroy(&game)
@@ -159,8 +159,6 @@ test_add_unit_nil_and_oob :: proc(test: ^testing.T) {
 
 	old_logger := context.logger
 	context.logger = {}
-	testing.expect(test, !game_add_unit(&game, nil, 0, 0))
-	testing.expect_value(test, len(game.units), 0)
 	testing.expect(test, !game_add_unit(&game, hale, -1, 0))
 	context.logger = old_logger
 	testing.expect(test, !hale.on_map)

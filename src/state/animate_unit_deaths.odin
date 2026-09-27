@@ -24,6 +24,10 @@ DEATH_DIRECTION_CYCLE := [12]defs.Direction {
 }
 
 animate_unit_deaths_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	dead_units := game_pkg.game_remove_all_dead_units(game)
 	defer delete(dead_units)
 
@@ -48,10 +52,22 @@ animate_unit_deaths_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.death_delay = 0
 }
 
-animate_unit_deaths_exit :: proc(_: ^game_pkg.Game) {}
-animate_unit_deaths_handle_input :: proc(_: ^game_pkg.Game) {}
+animate_unit_deaths_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+animate_unit_deaths_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 animate_unit_deaths_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game.state_scratch.death_delay > 0 {
 		game.state_scratch.death_delay -= 1
 		return
@@ -70,6 +86,10 @@ animate_unit_deaths_update :: proc(game: ^game_pkg.Game) {
 }
 
 animate_unit_deaths_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, false, false)
 	if game.state_scratch.death_phase_done {
 		return

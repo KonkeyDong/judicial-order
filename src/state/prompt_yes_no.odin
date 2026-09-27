@@ -11,13 +11,25 @@ import unit_pkg "../unit"
 
 
 prompt_yes_no_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	game.state_scratch.yes_selected = true
 	sprites.command_icons_set_selected(.Yes)
 }
 
-prompt_yes_no_exit :: proc(_: ^game_pkg.Game) {}
+prompt_yes_no_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 prompt_yes_no_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_key_pressed(.LEFT) {
 		game.state_scratch.yes_selected = true
 		sprites.command_icons_set_selected(.Yes)
@@ -42,6 +54,10 @@ prompt_yes_no_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 prompt_yes_no_on_yes :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	switch game.contexts.prompt.action {
 	case .DropItem:
@@ -75,21 +91,37 @@ prompt_yes_no_on_yes :: proc(game: ^game_pkg.Game) {
 }
 
 prompt_yes_no_on_no :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	next := game.contexts.prompt.return_state_on_no
 	game_pkg.prompt_reset(&game.contexts.prompt)
 	state_change(game, next)
 }
 
 prompt_yes_no_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.command_icons_tick()
 }
 
 prompt_yes_no_is_give_or_trade :: proc(game: ^game_pkg.Game) -> bool {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	return game.contexts.prompt.action == .GiveItem || game.contexts.prompt.action == .TradeItem
 }
 
 prompt_yes_no_draw_trade_summary :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	recipient := game.contexts.give.recipient
 	if current == nil || recipient == nil {
@@ -129,6 +161,10 @@ prompt_yes_no_draw_trade_summary :: proc(game: ^game_pkg.Game, scale: f32) {
 }
 
 prompt_yes_no_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, false, false)
 	if prompt_yes_no_is_give_or_trade(game) {
 		prompt_yes_no_draw_trade_summary(game, scale)

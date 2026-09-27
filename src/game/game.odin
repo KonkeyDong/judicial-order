@@ -89,12 +89,20 @@ State_Scratch :: struct {
 }
 
 give_reset :: proc(give: ^Give_Context) {
+	if give == nil {
+		log.panic("give is nil.")
+	}
+
 	give.giver_slot_index = -1
 	give.recipient = nil
 	give.recipient_slot_index = -1
 }
 
 prompt_reset :: proc(prompt: ^Prompt_Context) {
+	if prompt == nil {
+		log.panic("prompt is nil.")
+	}
+
 	prompt.action = .None
 	prompt.item_slot_index = -1
 	prompt.return_state_on_no = .BattleActionMenu
@@ -102,6 +110,10 @@ prompt_reset :: proc(prompt: ^Prompt_Context) {
 }
 
 message_notice_reset :: proc(notice: ^Message_Notice_Context) {
+	if notice == nil {
+		log.panic("notice is nil.")
+	}
+
 	notice.message = ""
 	notice.return_state = .BattleActionMenu
 }
@@ -111,17 +123,29 @@ message_notice_set :: proc(
 	message: string,
 	return_state: defs.State_Kind,
 ) {
+	if notice == nil {
+		log.panic("notice is nil.")
+	}
+
 	notice.message = message
 	notice.return_state = return_state
 }
 
 highlight_reset :: proc(highlight: ^Highlight) {
+	if highlight == nil {
+		log.panic("highlight is nil.")
+	}
+
 	highlight.current_position = {}
 	highlight.target_position = {}
 	highlight.animation_complete = false
 }
 
 state_contexts_reset :: proc(contexts: ^State_Contexts) {
+	if contexts == nil {
+		log.panic("contexts is nil.")
+	}
+
 	give_reset(&contexts.give)
 	prompt_reset(&contexts.prompt)
 	message_notice_reset(&contexts.message_notice)
@@ -131,6 +155,10 @@ state_contexts_reset :: proc(contexts: ^State_Contexts) {
 }
 
 game_init :: proc(game: ^Game, width, height: int) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	grid_init(&game.grid, width, height)
 	sprites.renderer_init(&game.renderer)
 	timers.flip_flop_init(&game.overworld_idle_flip_flop, defs.ANIMATIONS.flip_flop_delay)
@@ -153,6 +181,10 @@ game_init :: proc(game: ^Game, width, height: int) {
 }
 
 state_scratch_init :: proc(scratch: ^State_Scratch) {
+	if scratch == nil {
+		log.panic("scratch is nil.")
+	}
+
 	timers.countdown_timer_init(&scratch.countdown, defs.ANIMATIONS.switch_state_countdown)
 	timers.flip_flop_init(&scratch.blinker, defs.ANIMATIONS.blink_delay)
 	timers.delay_init(&scratch.delay, defs.ANIMATIONS.idle_delay)
@@ -164,6 +196,10 @@ state_scratch_init :: proc(scratch: ^State_Scratch) {
 }
 
 game_destroy :: proc(game: ^Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	grid_destroy(&game.grid)
 	sprites.renderer_destroy(&game.renderer)
 
@@ -178,9 +214,13 @@ game_destroy :: proc(game: ^Game) {
 
 game_add_unit :: proc(game: ^Game, unit: ^unit_pkg.Unit, x, y: int) -> bool {
 	if unit == nil {
-		log.errorf("game_add_unit: unit parameter is nil; aborting.")
-		return false
+		log.panic("unit is nil.")
 	}
+
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 
 	if !grid_place_unit(&game.grid, unit, x, y) {
 		return false
@@ -191,6 +231,10 @@ game_add_unit :: proc(game: ^Game, unit: ^unit_pkg.Unit, x, y: int) -> bool {
 }
 
 game_current_unit :: proc(game: ^Game) -> ^unit_pkg.Unit {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if len(game.units) == 0 {
 		log.errorf("game_current_unit: list of units is empty! Aborting...")
 		return nil
@@ -200,6 +244,10 @@ game_current_unit :: proc(game: ^Game) -> ^unit_pkg.Unit {
 }
 
 game_next_unit :: proc(game: ^Game) -> ^unit_pkg.Unit {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if len(game.units) == 0 {
 		log.errorf("List of units is empty. Aborting...")
 		return nil
@@ -214,6 +262,10 @@ game_next_unit :: proc(game: ^Game) -> ^unit_pkg.Unit {
 }
 
 game_move_first_unit_to_end :: proc(game: ^Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if len(game.units) <= 1 {
 		log.warnf("game_move_first_unit_to_end: Units list is empty.")
 		return
@@ -225,18 +277,34 @@ game_move_first_unit_to_end :: proc(game: ^Game) {
 }
 
 game_set_first_unit_died_from_poison :: proc(game: ^Game, unit: ^unit_pkg.Unit) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	log.info("About to set poison flag to true.")
 	game.first_unit_died_from_poison = true
 	game.unit_that_died_from_poison = unit
 }
 
 game_reset_first_unit_died_from_poison :: proc(game: ^Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	log.info("About to set poison flag to false.")
 	game.first_unit_died_from_poison = false
 	game.unit_that_died_from_poison = nil
 }
 
 game_reset_units_in_range :: proc(game: ^Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	clear(&game.friendly_units_in_range)
 	clear(&game.unfriendly_units_in_range)
 }
@@ -247,9 +315,13 @@ game_separate_units_in_range :: proc(
 	units_in_range: []^unit_pkg.Unit,
 ) {
 	if current_unit == nil {
-		log.errorf("game_separate_units_in_range: current unit is nil.")
-		return
+		log.panic("current_unit is nil.")
 	}
+
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 
 	log.debug(
 		"Game::SeparateListOfUnitsInRange(): resetting FriendlyUnitsInRange and UnfriendlyUnitsInRange lists.",
@@ -275,6 +347,10 @@ game_separate_units_in_range :: proc(
 }
 
 game_find_all_dead_units :: proc(game: ^Game, allocator := context.allocator) -> []^unit_pkg.Unit {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	log.debug("Game::FindAllDeadUnits(): removing all units that have 0 (current) HP.")
 	dead := make([dynamic]^unit_pkg.Unit, allocator)
 	for unit in game.units {
@@ -294,6 +370,10 @@ game_remove_all_dead_units :: proc(
 	game: ^Game,
 	allocator := context.allocator,
 ) -> []^unit_pkg.Unit {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	log.debug("Game::RemoveAllDeadUnits(): removing all units that have 0 (current) HP.")
 	dead := game_find_all_dead_units(game, allocator)
 	kept := 0
@@ -315,6 +395,10 @@ game_remove_all_dead_units :: proc(
 }
 
 game_initialize_highlight :: proc(game: ^Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_current_unit(game)
 	if current == nil || !current.on_map {
 		log.errorf("game_initialize_highlight: current unit is not on the map.")
@@ -328,7 +412,15 @@ game_initialize_highlight :: proc(game: ^Game) {
 }
 
 game_set_highlight_target :: proc(game: ^Game, target_unit: ^unit_pkg.Unit) {
-	if target_unit == nil || !target_unit.on_map {
+	if target_unit == nil {
+		log.panic("target_unit is nil.")
+	}
+
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if !target_unit.on_map {
 		log.errorf("game_set_highlight_target: target unit is not on the map.")
 		return
 	}
@@ -338,6 +430,10 @@ game_set_highlight_target :: proc(game: ^Game, target_unit: ^unit_pkg.Unit) {
 }
 
 game_update_highlight :: proc(game: ^Game, delta_time: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	h := &game.highlight
 	delta := h.target_position - h.current_position
 	distance := math.sqrt(delta.x * delta.x + delta.y * delta.y)

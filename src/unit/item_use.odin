@@ -6,9 +6,14 @@ import "../catalog"
 import "../defs"
 
 item_apply_consumable_to_target :: proc(data: catalog.Item_Data, caster, target: ^Unit) {
-	if caster == nil || target == nil {
-		return
+	if caster == nil {
+		log.panic("caster is nil.")
 	}
+
+	if target == nil {
+		log.panic("target is nil.")
+	}
+
 
 	if caster.friendly != target.friendly {
 		return
@@ -39,9 +44,9 @@ item_apply_consumable_to_target :: proc(data: catalog.Item_Data, caster, target:
 
 item_consume_item :: proc(caster: ^Unit, item_slot_index: int) {
 	if caster == nil {
-		log.errorf("ConsumeItem: caster is nil.")
-		return
+		log.panic("caster is nil.")
 	}
+
 
 	remove_item_at(caster, item_slot_index)
 }
@@ -52,6 +57,10 @@ item_use_data :: proc(
 	targets: []^Unit,
 	item_slot_index: int,
 ) {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
 	if data.type == .Consumable {
 		for target in targets {
 			item_apply_consumable_to_target(data, caster, target)
@@ -74,14 +83,18 @@ item_use_item :: proc(
 	targets: []^Unit,
 	item_slot_index: int,
 ) {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
 	item_use_data(catalog.item_get(name), caster, targets, item_slot_index)
 }
 
 item_apply_spell_item_durability :: proc(caster: ^Unit, item_slot_index: int) {
 	if caster == nil {
-		log.errorf("ApplySpellItemDurability: caster is nil.")
-		return
+		log.panic("caster is nil.")
 	}
+
 
 	slot := item_at(caster, item_slot_index)
 	if item_slot_is_empty(slot) {

@@ -7,6 +7,10 @@ import "../defs"
 walk_loader: proc(unit: ^Unit)
 
 load_walk_animations :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if walk_loader == nil {
 		unit.walk_frames_loaded = 0
 		return
@@ -16,6 +20,10 @@ load_walk_animations :: proc(unit: ^Unit) {
 }
 
 facing_sprite :: proc(unit: ^Unit, direction: defs.Direction) -> defs.Sprite {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if unit.walk_frames_loaded == 0 {
 		log.error("No walk animations loaded.")
 		return {}
@@ -25,6 +33,10 @@ facing_sprite :: proc(unit: ^Unit, direction: defs.Direction) -> defs.Sprite {
 }
 
 walk_sprite :: proc(unit: ^Unit, global_flip_flop_on: bool) -> defs.Sprite {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if unit.walk_frames_loaded == 0 {
 		log.error("No walk animations loaded.")
 		return {}

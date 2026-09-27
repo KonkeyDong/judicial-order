@@ -1,5 +1,7 @@
 package sprites
 
+import "core:log"
+
 import "core:fmt"
 import "core:strings"
 
@@ -177,6 +179,10 @@ renderer_draw_unit_info_box :: proc(
 	position: rl.Vector2,
 	alpha := 255,
 ) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	// C# accepts alpha; the body never tints the box.
 	_ = alpha
 

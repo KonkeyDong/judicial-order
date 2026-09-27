@@ -11,6 +11,10 @@ Delay :: struct {
 }
 
 delay_init :: proc(delay: ^Delay, tick_delay: int, start_delay_frames := 0) {
+	if delay == nil {
+		log.panic("delay is nil.")
+	}
+
 	if start_delay_frames < 0 {
 		log.errorf("Delay timer cannot have its StartDelayFrames amount be less than zero.")
 		delay.tick_delay = tick_delay
@@ -25,6 +29,10 @@ delay_init :: proc(delay: ^Delay, tick_delay: int, start_delay_frames := 0) {
 }
 
 delay_tick :: proc(delay: ^Delay) {
+	if delay == nil {
+		log.panic("delay is nil.")
+	}
+
 	if delay.start_delay_frames > 0 {
 		delay.start_delay_frames -= 1
 		return
@@ -38,12 +46,20 @@ delay_tick :: proc(delay: ^Delay) {
 }
 
 delay_reset :: proc(delay: ^Delay) {
+	if delay == nil {
+		log.panic("delay is nil.")
+	}
+
 	delay.current_tick = 0
 	delay.current_index = 0
 	delay.start_delay_frames = delay.original_start_delay_frames
 }
 
 delay_reset_timer_only :: proc(delay: ^Delay) {
+	if delay == nil {
+		log.panic("delay is nil.")
+	}
+
 	delay.current_tick = 0
 	delay.start_delay_frames = delay.original_start_delay_frames
 }

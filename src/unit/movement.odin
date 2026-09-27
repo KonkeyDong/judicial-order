@@ -7,10 +7,18 @@ import "../timers"
 import rl "vendor:raylib"
 
 tile_pixel :: proc(unit: ^Unit) -> rl.Vector2 {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return {f32(unit.grid_x * defs.TILE_SIZE), f32(unit.grid_y * defs.TILE_SIZE)}
 }
 
 reset_starting_world_position :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if !unit.on_map {
 		log.error("reset_starting_world_position: unit is not on the map.")
 		return
@@ -20,6 +28,10 @@ reset_starting_world_position :: proc(unit: ^Unit) {
 }
 
 start_moving_to :: proc(unit: ^Unit, target_world: rl.Vector2) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.start_world_position = unit.world_position
 	unit.target_world_position = target_world
 	unit.movement_timer = 0
@@ -27,12 +39,20 @@ start_moving_to :: proc(unit: ^Unit, target_world: rl.Vector2) {
 }
 
 snap_to_pixel :: proc(unit: ^Unit, pos: rl.Vector2) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.world_position = pos
 	unit.target_world_position = pos
 	unit.start_world_position = pos
 }
 
 snap_to_current_tile :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if !unit.on_map {
 		log.error("Cannot snap unit — not on the map.")
 		return
@@ -42,6 +62,10 @@ snap_to_current_tile :: proc(unit: ^Unit) {
 }
 
 update_movement :: proc(unit: ^Unit, delta_time: f32) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if !unit.is_animating {
 		return
 	}
@@ -59,11 +83,19 @@ update_movement :: proc(unit: ^Unit, delta_time: f32) {
 }
 
 stop_movement :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.world_position = unit.target_world_position
 	unit.is_animating = false
 	unit.movement_timer = 0
 }
 
 reset_facing_direction :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.facing_direction = .Down
 }

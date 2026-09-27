@@ -18,6 +18,10 @@ sequence_timer_init :: proc(
 	frames_per_step: int,
 	start_delay_frames := 0,
 ) {
+	if timer == nil {
+		log.panic("timer is nil.")
+	}
+
 	if frame_count <= 0 {
 		log.errorf("SequenceTimer: frameCount must be greater than zero.")
 	}
@@ -49,6 +53,10 @@ sequence_timer_total_duration_frames :: proc(timer: Sequence_Timer) -> int {
 }
 
 sequence_timer_tick :: proc(timer: ^Sequence_Timer) {
+	if timer == nil {
+		log.panic("timer is nil.")
+	}
+
 	if timer.is_complete || timer.frame_count <= 0 || timer.frames_per_step <= 0 {
 		return
 	}
@@ -72,6 +80,10 @@ sequence_timer_tick :: proc(timer: ^Sequence_Timer) {
 }
 
 sequence_timer_reset :: proc(timer: ^Sequence_Timer) {
+	if timer == nil {
+		log.panic("timer is nil.")
+	}
+
 	timer.current_tick = 0
 	timer.current_index = 0
 	timer.start_delay_frames_remaining = timer.original_start_delay_frames
@@ -79,12 +91,20 @@ sequence_timer_reset :: proc(timer: ^Sequence_Timer) {
 }
 
 sequence_timer_reset_timer_only :: proc(timer: ^Sequence_Timer) {
+	if timer == nil {
+		log.panic("timer is nil.")
+	}
+
 	timer.current_tick = 0
 	timer.start_delay_frames_remaining = timer.original_start_delay_frames
 	timer.is_complete = false
 }
 
 sequence_timer_seek :: proc(timer: ^Sequence_Timer, absolute_frame: int) {
+	if timer == nil {
+		log.panic("timer is nil.")
+	}
+
 	sequence_timer_reset(timer)
 	frames := max(absolute_frame, 0)
 	for _ in 0 ..< frames {

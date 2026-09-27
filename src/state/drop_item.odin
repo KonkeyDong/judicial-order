@@ -1,11 +1,17 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../sprites"
 import "../timers"
 
 drop_item_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current != nil {
 		game_pkg.grid_calculate_unit_movement_range(&game.grid, current)
@@ -15,9 +21,17 @@ drop_item_enter :: proc(game: ^game_pkg.Game) {
 	sprites.item_ui_set_selected(&game.item_ui, .Up, current, sprites.item_ui_giveable_filter)
 }
 
-drop_item_exit :: proc(_: ^game_pkg.Game) {}
+drop_item_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 drop_item_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	state_item_handle_slot_keys(game, current, sprites.item_ui_giveable_filter)
 	if game_pkg.input_confirm_press() {
@@ -35,12 +49,20 @@ drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 drop_item_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
 drop_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	state_draw_item_radial(game, scale, game_pkg.game_current_unit(game))
 }

@@ -7,9 +7,9 @@ import rl "vendor:raylib"
 
 window_apply_scale :: proc(game: ^Game, scale: f32, apply_os_window := true) {
 	if game == nil {
-		log.errorf("window_apply_scale: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	game.window = defs.window_view_from_scale(scale)
 	game.grid.block_size = int(f32(defs.TILE_SIZE) * game.window.scale)
@@ -29,9 +29,9 @@ window_apply_scale :: proc(game: ^Game, scale: f32, apply_os_window := true) {
 
 window_handle_resize_input :: proc(game: ^Game, apply_os_window := true) {
 	if game == nil {
-		log.errorf("window_handle_resize_input: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	ctrl_down := input_key_down(.LEFT_CONTROL) || input_key_down(.RIGHT_CONTROL)
 	if !ctrl_down {

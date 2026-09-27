@@ -10,6 +10,10 @@ import unit_pkg "../unit"
 import rl "vendor:raylib"
 
 unit_moving_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	log.debug("UnitMoving::Enter() called.")
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
@@ -27,10 +31,18 @@ unit_moving_enter :: proc(game: ^game_pkg.Game) {
 }
 
 unit_moving_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	log.debug("UnitMoving::Exit() called.")
 }
 
 unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil || current.is_animating {
 		return
@@ -61,6 +73,10 @@ unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 unit_moving_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
@@ -72,5 +88,9 @@ unit_moving_update :: proc(game: ^game_pkg.Game) {
 }
 
 unit_moving_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, game.state_scratch.countdown.is_active)
 }

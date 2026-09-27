@@ -1,5 +1,7 @@
 package sprites
 
+import "core:log"
+
 import "../catalog"
 import "../defs"
 import unit_pkg "../unit"
@@ -15,6 +17,10 @@ Magic_UI :: struct {
 }
 
 magic_ui_reset :: proc(ui: ^Magic_UI) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	ui.selected_index = -1
 	ui.selected_family = .NoSpell
 	ui.selected_name = .NoSpell
@@ -22,18 +28,31 @@ magic_ui_reset :: proc(ui: ^Magic_UI) {
 }
 
 magic_ui_set_layout_center :: proc(ui: ^Magic_UI, center: rl.Vector2) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	ui.center = center
 	ui.info_box = radial_info_box_position(center)
 }
 
 magic_ui_reset_layout_center :: proc(ui: ^Magic_UI, window: defs.Window_View) {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	magic_ui_set_layout_center(ui, radial_center(window))
 }
 
 magic_ui_set_selected :: proc(ui: ^Magic_UI, direction: defs.Direction, caster: ^unit_pkg.Unit) {
 	if caster == nil {
-		return
+		log.panic("caster is nil.")
 	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 
 	index := radial_index_for_direction(direction)
 	if index < 0 {
@@ -63,15 +82,31 @@ magic_ui_set_selected :: proc(ui: ^Magic_UI, direction: defs.Direction, caster: 
 }
 
 magic_ui_selected_data :: proc(ui: ^Magic_UI) -> catalog.Magic_Data {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	return catalog.magic_get(ui.selected_name)
 }
 
 magic_ui_is_offensive :: proc(ui: ^Magic_UI) -> bool {
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
 	return magic_ui_selected_data(ui).offensive
 }
 
 magic_ui_next_level :: proc(ui: ^Magic_UI, caster: ^unit_pkg.Unit) {
-	if caster == nil || ui.selected_family == .NoSpell {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
+	if ui.selected_family == .NoSpell {
 		return
 	}
 
@@ -89,7 +124,15 @@ magic_ui_next_level :: proc(ui: ^Magic_UI, caster: ^unit_pkg.Unit) {
 }
 
 magic_ui_previous_level :: proc(ui: ^Magic_UI, caster: ^unit_pkg.Unit) {
-	if caster == nil || ui.selected_family == .NoSpell {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if ui == nil {
+		log.panic("ui is nil.")
+	}
+
+	if ui.selected_family == .NoSpell {
 		return
 	}
 

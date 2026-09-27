@@ -41,8 +41,9 @@ program_set_log_level :: proc(level: log.Level) {
 
 program_apply_debug_draw :: proc(session: ^game.Game) {
 	if session == nil {
-		return
+		log.panic("session is nil.")
 	}
+
 
 	session.renderer.debug_draw = program_log_in_debug_mode()
 }
@@ -113,6 +114,10 @@ program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: boo
 }
 
 program_handle_logging_toggle :: proc(session: ^game.Game) {
+	if session == nil {
+		log.panic("session is nil.")
+	}
+
 	if !game.input_key_pressed(.F1) {
 		return
 	}
@@ -128,6 +133,10 @@ program_handle_logging_toggle :: proc(session: ^game.Game) {
 }
 
 program_handle_global_input :: proc(session: ^game.Game, apply_os_window := true) {
+	if session == nil {
+		log.panic("session is nil.")
+	}
+
 	game.window_handle_resize_input(session, apply_os_window)
 	program_handle_logging_toggle(session)
 	state.state_handle_input(session)
@@ -147,6 +156,10 @@ program_load_graphics :: proc() {
 }
 
 program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
+	if session == nil {
+		log.panic("session is nil.")
+	}
+
 	catalog.init()
 	data.init()
 	hale = data.make_unit(.Hale)
@@ -167,10 +180,18 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 }
 
 program_update :: proc(session: ^game.Game) {
+	if session == nil {
+		log.panic("session is nil.")
+	}
+
 	state.state_update(session)
 }
 
 program_draw :: proc(session: ^game.Game) {
+	if session == nil {
+		log.panic("session is nil.")
+	}
+
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RAYWHITE)
 	state.state_draw(session)

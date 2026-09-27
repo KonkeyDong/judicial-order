@@ -113,6 +113,10 @@ Unit :: struct {
 }
 
 init :: proc(unit: ^Unit, data: Unit_Data) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.name = data.name
 	unit.movement_type = data.movement_type
 	unit.movement = data.movement
@@ -173,10 +177,18 @@ destroy :: proc(unit: ^Unit, allocator := context.allocator) {
 }
 
 is_promoted :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return unit.friendly && unit.promoted
 }
 
 promote :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	log.warn("Promotion still needs to change job class! Expect crashes until implemented.")
 	if !unit.friendly {
 		unit.promoted = false
@@ -188,6 +200,10 @@ promote :: proc(unit: ^Unit) {
 }
 
 to_string :: proc(unit: ^Unit) -> string {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	coords := "[null]"
 	if unit.on_map {
 		coords = fmt.tprintf("[%d, %d]", unit.grid_x, unit.grid_y)

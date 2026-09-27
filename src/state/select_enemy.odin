@@ -1,11 +1,17 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../timers"
 import rl "vendor:raylib"
 
 select_enemy_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -19,9 +25,17 @@ select_enemy_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-select_enemy_exit :: proc(_: ^game_pkg.Game) {}
+select_enemy_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 select_enemy_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_try_cycle_index(
 		&game.state_scratch.list_index,
 		len(game.unfriendly_units_in_range),
@@ -42,6 +56,10 @@ select_enemy_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 select_enemy_confirm :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil || len(game.unfriendly_units_in_range) == 0 {
 		return
@@ -62,11 +80,19 @@ select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 }
 
 select_enemy_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
 select_enemy_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, true)
 }

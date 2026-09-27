@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../defs"
@@ -7,6 +9,10 @@ import "../sprites"
 import "../timers"
 
 use_which_item_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	sprites.item_ui_reset(&game.item_ui)
 	sprites.item_ui_reset_layout_center(&game.item_ui, game.window)
@@ -30,9 +36,17 @@ use_which_item_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-use_which_item_exit :: proc(_: ^game_pkg.Game) {}
+use_which_item_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	state_item_handle_slot_keys(game, current, sprites.item_ui_usable_filter)
 	if sprites.item_ui_has_valid_selection(
@@ -72,12 +86,20 @@ use_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 use_which_item_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
 use_which_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	state_draw_item_icons(
 		scale,

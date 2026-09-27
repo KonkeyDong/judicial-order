@@ -44,6 +44,10 @@ grid_movement_cost := [defs.Movement_Type][defs.Terrain]int {
 }
 
 grid_init :: proc(grid: ^Grid, width, height: int) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	if width <= 0 || height <= 0 {
 		log.errorf("grid_init: invalid size %dx%d.", width, height)
 		return
@@ -99,6 +103,10 @@ grid_init :: proc(grid: ^Grid, width, height: int) {
 }
 
 grid_destroy :: proc(grid: ^Grid) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	delete(grid.blocks)
 	delete(grid.range_mask)
 	delete(grid.range_coords)
@@ -109,14 +117,26 @@ grid_destroy :: proc(grid: ^Grid) {
 }
 
 grid_in_bounds :: proc(grid: ^Grid, x, y: int) -> bool {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	return x >= 0 && x < grid.width && y >= 0 && y < grid.height
 }
 
 grid_index :: proc(grid: ^Grid, x, y: int) -> int {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	return x * grid.height + y
 }
 
 grid_block_at :: proc(grid: ^Grid, x, y: int) -> ^Block {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	if !grid_in_bounds(grid, x, y) {
 		log.errorf("grid_block_at: (%d, %d) out of bounds.", x, y)
 		return nil
@@ -126,7 +146,15 @@ grid_block_at :: proc(grid: ^Grid, x, y: int) -> ^Block {
 }
 
 grid_unit_block :: proc(grid: ^Grid, unit: ^units.Unit) -> ^Block {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return nil
 	}
 
@@ -134,6 +162,10 @@ grid_unit_block :: proc(grid: ^Grid, unit: ^units.Unit) -> ^Block {
 }
 
 grid_clear_range_set :: proc(grid: ^Grid) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	for index in 0 ..< len(grid.range_mask) {
 		grid.range_mask[index] = false
 	}
@@ -142,6 +174,10 @@ grid_clear_range_set :: proc(grid: ^Grid) {
 }
 
 grid_in_range :: proc(grid: ^Grid, x, y: int) -> bool {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	if !grid_in_bounds(grid, x, y) {
 		return false
 	}
@@ -150,6 +186,10 @@ grid_in_range :: proc(grid: ^Grid, x, y: int) -> bool {
 }
 
 grid_range_add :: proc(grid: ^Grid, x, y: int) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	if !grid_in_bounds(grid, x, y) {
 		return
 	}
@@ -165,8 +205,13 @@ grid_range_add :: proc(grid: ^Grid, x, y: int) {
 
 grid_adjacent_blocks :: proc(grid: ^Grid, block: ^Block, out_blocks: []^Block) -> int {
 	if block == nil {
-		return 0
+		log.panic("block is nil.")
 	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 
 	count := 0
 	for offset in GRID_ADJACENT_OFFSETS {
@@ -220,9 +265,13 @@ grid_terrain_cost :: proc(
 
 grid_place_unit :: proc(grid: ^Grid, unit: ^units.Unit, x, y: int) -> bool {
 	if unit == nil {
-		log.errorf("grid_place_unit: unit is nil.")
-		return false
+		log.panic("unit is nil.")
 	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 
 	if !grid_in_bounds(grid, x, y) {
 		log.errorf("Target position (%d, %d) is outside grid bounds.", x, y)
@@ -271,6 +320,10 @@ grid_place_unit :: proc(grid: ^Grid, unit: ^units.Unit, x, y: int) -> bool {
 }
 
 grid_remove_dead_units :: proc(grid: ^Grid, dead_units: []^units.Unit) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	if len(dead_units) == 0 {
 		return
 	}
@@ -303,7 +356,15 @@ grid_move_unit_in_direction :: proc(
 	unit: ^units.Unit,
 	direction: defs.Direction,
 ) -> bool {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		log.warn("MoveUnitInDirection called with null unit or block.")
 		return false
 	}
@@ -333,9 +394,13 @@ grid_move_unit_in_direction :: proc(
 
 grid_calculate_unit_movement_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 	if unit == nil {
-		log.errorf("CalculateUnitMovementRange() unit is null.")
-		return
+		log.panic("unit is nil.")
 	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 
 	if !unit.on_map {
 		log.errorf("Unit %s does not contain a block.", defs.name_display(unit.name))
@@ -415,8 +480,16 @@ grid_fill_effect_distance_range :: proc(
 	unit: ^units.Unit,
 	tile_range: defs.Tile_Range,
 ) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	grid_clear_range_set(grid)
-	if unit == nil || !unit.on_map {
+	if !unit.on_map {
 		log.errorf("FillEffectDistanceRange: unit is not on a block.")
 		return
 	}
@@ -457,7 +530,15 @@ grid_fill_effect_distance_range :: proc(
 }
 
 grid_calculate_weapon_attack_range :: proc(grid: ^Grid, unit: ^units.Unit) {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return
 	}
 
@@ -465,7 +546,15 @@ grid_calculate_weapon_attack_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 }
 
 grid_calculate_give_range :: proc(grid: ^Grid, unit: ^units.Unit) {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return
 	}
 
@@ -477,7 +566,15 @@ grid_calculate_magic_attack_range :: proc(
 	unit: ^units.Unit,
 	magic: catalog.Magic_Data,
 ) {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return
 	}
 
@@ -485,7 +582,15 @@ grid_calculate_magic_attack_range :: proc(
 }
 
 grid_calculate_item_use_range :: proc(grid: ^Grid, unit: ^units.Unit, item: catalog.Item_Data) {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return
 	}
 
@@ -497,7 +602,15 @@ grid_calculate_spell_effect_range :: proc(
 	unit: ^units.Unit,
 	magic: catalog.Magic_Data,
 ) {
-	if unit == nil || !unit.on_map {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if !unit.on_map {
 		return
 	}
 
@@ -505,6 +618,10 @@ grid_calculate_spell_effect_range :: proc(
 }
 
 grid_blocks_from_range_set :: proc(grid: ^Grid, allocator := context.allocator) -> []^Block {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	blocks := make([]^Block, len(grid.range_coords), allocator)
 	for coord, index in grid.range_coords {
 		blocks[index] = grid_block_at(grid, coord.x, coord.y)
@@ -514,6 +631,10 @@ grid_blocks_from_range_set :: proc(grid: ^Grid, allocator := context.allocator) 
 }
 
 grid_units_in_range :: proc(grid: ^Grid, allocator := context.allocator) -> []^units.Unit {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	log.debug("Grid::BuildListOfUnitsInRange() building list of units in RangeSet.")
 	found := make([dynamic]^units.Unit, allocator)
 

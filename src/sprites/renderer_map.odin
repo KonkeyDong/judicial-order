@@ -17,6 +17,10 @@ renderer_draw_background :: proc(
 	alpha := 255,
 	debug_draw := false,
 ) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	tint := rl.Color{255, 255, 255, renderer_alpha_u8(alpha)}
 	for x in 0 ..< grid.width {
 		for y in 0 ..< grid.height {
@@ -36,6 +40,10 @@ renderer_draw_background :: proc(
 }
 
 renderer_draw_range :: proc(scale: f32, grid: ^grid_pkg.Grid, debug_draw := false) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	tint := timers.oscillator_value(grid.range_tint)
 	for coord in grid.range_coords {
 		if coord.x < 0 || coord.x >= grid.width || coord.y < 0 || coord.y >= grid.height {
@@ -60,6 +68,14 @@ renderer_draw_block :: proc(
 	tint: rl.Color,
 	debug_draw: bool,
 ) {
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
+	if block == nil {
+		log.panic("block is nil.")
+	}
+
 	position := rl.Vector2 {
 		f32(block.grid_x * grid.block_size),
 		f32(block.grid_y * grid.block_size),

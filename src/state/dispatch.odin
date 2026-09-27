@@ -15,8 +15,16 @@ State_Procs :: struct {
 	draw:         proc(game: ^game_pkg.Game, scale: f32),
 }
 
-state_noop :: proc(_: ^game_pkg.Game) {}
-state_noop_draw :: proc(_: ^game_pkg.Game, _: f32) {}
+state_noop :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
+state_noop_draw :: proc(game: ^game_pkg.Game, _: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 STATE_NOOP := State_Procs {
 	enter        = state_noop,
@@ -220,6 +228,10 @@ STATE_TABLE := [defs.State_Kind]State_Procs {
 }
 
 state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highlight: bool) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	debug_draw := game.renderer.debug_draw
 	sprites.renderer_draw_background(scale, &game.grid, 255, debug_draw)
 	if draw_range {
@@ -240,9 +252,9 @@ state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highli
 
 state_change :: proc(game: ^game_pkg.Game, kind: defs.State_Kind) {
 	if game == nil {
-		log.errorf("state_change: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	log.infof("ChangeGameState() updating game state from [%v] to [%v].", game.state, kind)
 	state_exit(game)
@@ -256,9 +268,9 @@ state_show_message_notice :: proc(
 	return_state: defs.State_Kind,
 ) {
 	if game == nil {
-		log.errorf("state_show_message_notice: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	game_pkg.message_notice_set(&game.contexts.message_notice, message, return_state)
 	state_change(game, .MessageNotice)
@@ -266,45 +278,45 @@ state_show_message_notice :: proc(
 
 state_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
-		log.errorf("state_enter: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	STATE_TABLE[game.state].enter(game)
 }
 
 state_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
-		log.errorf("state_exit: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	STATE_TABLE[game.state].exit(game)
 }
 
 state_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
-		log.errorf("state_handle_input: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	STATE_TABLE[game.state].handle_input(game)
 }
 
 state_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
-		log.errorf("state_update: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	STATE_TABLE[game.state].update(game)
 }
 
 state_draw :: proc(game: ^game_pkg.Game) {
 	if game == nil {
-		log.errorf("state_draw: game is nil.")
-		return
+		log.panic("game is nil.")
 	}
+
 
 	STATE_TABLE[game.state].draw(game, game.window.scale)
 }

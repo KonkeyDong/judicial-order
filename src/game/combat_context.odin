@@ -62,6 +62,10 @@ context_clear_targets :: proc(targets: []^unit_pkg.Unit, dest_count: ^int) {
 }
 
 attack_context_reset :: proc(ctx: ^Attack_Context) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	ctx.attacker = nil
 	ctx.defender = nil
 	ctx.effect = .NormalAttack
@@ -73,6 +77,18 @@ attack_context_reset :: proc(ctx: ^Attack_Context) {
 }
 
 attack_context_init :: proc(ctx: ^Attack_Context, attacker, defender: ^unit_pkg.Unit) {
+	if attacker == nil {
+		log.panic("attacker is nil.")
+	}
+
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
 	attack_context_reset(ctx)
 	ctx.attacker = attacker
 	ctx.defender = defender
@@ -86,6 +102,10 @@ attack_context_init :: proc(ctx: ^Attack_Context, attacker, defender: ^unit_pkg.
 }
 
 attack_context_monster :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if ctx.defender == nil {
 		return ctx.attacker
 	}
@@ -98,6 +118,10 @@ attack_context_monster :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
 }
 
 attack_context_force_member :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if ctx.defender == nil {
 		return nil
 	}
@@ -110,6 +134,10 @@ attack_context_force_member :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
 }
 
 item_context_reset :: proc(ctx: ^Item_Context) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	ctx.caster = nil
 	context_clear_targets(ctx.targets[:], &ctx.target_count)
 	ctx.grid = nil
@@ -124,6 +152,18 @@ item_context_init :: proc(
 	grid: ^Grid,
 	item_slot_index: int,
 ) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	item_context_reset(ctx)
 	ctx.caster = caster
 	context_copy_targets(ctx.targets[:], &ctx.target_count, targets)
@@ -133,6 +173,10 @@ item_context_init :: proc(
 }
 
 item_context_target :: proc(ctx: ^Item_Context) -> ^unit_pkg.Unit {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if ctx.target_count > 0 {
 		return ctx.targets[0]
 	}
@@ -141,14 +185,26 @@ item_context_target :: proc(ctx: ^Item_Context) -> ^unit_pkg.Unit {
 }
 
 item_context_is_self_target :: proc(ctx: ^Item_Context) -> bool {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	return ctx.target_count == 1 && ctx.targets[0] == ctx.caster
 }
 
 item_context_is_party_wide :: proc(ctx: ^Item_Context) -> bool {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	return ctx.target_count > 1
 }
 
 item_context_use_item :: proc(ctx: ^Item_Context) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if !ctx.active || ctx.caster == nil {
 		log.errorf("item_context_use_item: inactive context or nil caster.")
 		return
@@ -169,6 +225,10 @@ item_context_use_item :: proc(ctx: ^Item_Context) {
 }
 
 magic_context_reset :: proc(ctx: ^Magic_Context) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	ctx.caster = nil
 	context_clear_targets(ctx.targets[:], &ctx.target_count)
 	ctx.grid = nil
@@ -181,6 +241,18 @@ magic_context_init :: proc(
 	targets: []^unit_pkg.Unit,
 	grid: ^Grid,
 ) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if grid == nil {
+		log.panic("grid is nil.")
+	}
+
 	magic_context_reset(ctx)
 	ctx.caster = caster
 	context_copy_targets(ctx.targets[:], &ctx.target_count, targets)
@@ -189,6 +261,10 @@ magic_context_init :: proc(
 }
 
 magic_context_cast :: proc(ctx: ^Magic_Context, name: defs.Magic_Name, from_item := false) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if !ctx.active || ctx.caster == nil {
 		log.errorf("magic_context_cast: inactive context or nil caster.")
 		return
@@ -202,6 +278,10 @@ magic_context_cast_data :: proc(
 	data: catalog.Magic_Data,
 	from_item := false,
 ) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
 	if !ctx.active || ctx.caster == nil {
 		log.errorf("magic_context_cast_data: inactive context or nil caster.")
 		return

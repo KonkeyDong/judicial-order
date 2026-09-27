@@ -34,6 +34,10 @@ status_create :: proc(type: defs.Status_Effect) -> Status_Effect_Slot {
 }
 
 apply_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if has_status(unit, type) {
 		log.infof("Unit [%s] already has [%v]. Ignoring.", defs.name_display(unit.name), type)
 		return
@@ -60,10 +64,18 @@ apply_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
 }
 
 has_status :: proc(unit: ^Unit, type: defs.Status_Effect) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return find_status_index(unit, type) >= 0
 }
 
 find_status_index :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< unit.status_count {
 		if unit.status_effects[i].type == type {
 			return i
@@ -74,6 +86,10 @@ find_status_index :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
 }
 
 remove_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	index := find_status_index(unit, type)
 	if index < 0 {
 		return
@@ -87,10 +103,18 @@ remove_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
 }
 
 remove_all_status :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.status_count = 0
 }
 
-status_duration :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
+status_duration_remaining :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	index := find_status_index(unit, type)
 	if index < 0 {
 		return -1
@@ -99,18 +123,23 @@ status_duration :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
 	return unit.status_effects[index].duration
 }
 
-process_all_statuses :: proc(unit: ^Unit) {
-	process_poison(unit)
-	process_sleep(unit)
-	process_shield(unit)
-	process_blind(unit)
-	process_boost(unit)
-	process_quick(unit)
-	process_slow(unit)
-	process_muddle(unit)
-}
+// process_all_statuses :: proc(unit: ^Unit) {
+// 	process_poison(unit)
+// 	process_sleep(unit)
+// 	process_shield(unit)
+// 	process_blind(unit)
+// 	process_boost(unit)
+// 	process_quick(unit)
+// 	process_slow(unit)
+// 	process_muddle(unit)
+// }
 
 process_poison :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [poison] for unit %s", defs.name_display(unit.name))
 	if !has_status(unit, .Poison) {
 		return
 	}
@@ -122,38 +151,81 @@ process_poison :: proc(unit: ^Unit) {
 		defs.name_display(unit.name),
 		final_damage,
 	)
+
 	take_damage(unit, final_damage)
 }
 
 process_sleep :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [sleep] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Sleep)
 }
 
 process_shield :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [shield] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Shield)
 }
 
 process_blind :: proc(unit: ^Unit) {
-	// no op
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
 }
 
 process_boost :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [boost] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Boost)
 }
 
 process_quick :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [quick] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Quick)
 }
 
 process_slow :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [slow] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Slow)
 }
 
 process_muddle :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	log.debugf("Processing [muddle] for unit %s", defs.name_display(unit.name))
 	process_duration_status_effect(unit, .Muddle)
 }
 
+@(private = "file")
 process_duration_status_effect :: proc(unit: ^Unit, status: defs.Status_Effect) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if status == .Poison || status == .Blind {
+		log.debug("Poison/Blind do not have a set duration; returning early.")
+		return
+	}
+
 	index := find_status_index(unit, status)
 	if index < 0 {
 		return

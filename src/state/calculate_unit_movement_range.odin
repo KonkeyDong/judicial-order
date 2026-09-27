@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "core:fmt"
@@ -10,6 +12,10 @@ import "../timers"
 import unit_pkg "../unit"
 
 calculate_unit_movement_range_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -31,15 +37,27 @@ calculate_unit_movement_range_enter :: proc(game: ^game_pkg.Game) {
 }
 
 calculate_unit_movement_range_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 }
 
 calculate_unit_movement_range_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_confirm_press() {
 		timers.countdown_timer_stop(&game.state_scratch.countdown)
 	}
 }
 
 calculate_unit_movement_range_proceed :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
 		return
@@ -50,6 +68,10 @@ calculate_unit_movement_range_proceed :: proc(game: ^game_pkg.Game) {
 }
 
 calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.countdown_timer_tick(&game.state_scratch.countdown)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 
@@ -94,6 +116,10 @@ calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 }
 
 calculate_unit_movement_range_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, false)
 	current := game_pkg.game_current_unit(game)
 	if current == nil {
@@ -111,7 +137,7 @@ calculate_unit_movement_range_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 
 	if game.state_scratch.is_sleeping {
 		message := fmt.tprintf("%s is sleeping.", defs.name_display(current.name))
-		if unit_pkg.status_duration(current, .Sleep) <= 0 {
+		if unit_pkg.status_duration_remaining(current, .Sleep) <= 0 {
 			message = fmt.tprintf("%s has awoken.", defs.name_display(current.name))
 		}
 

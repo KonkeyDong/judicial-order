@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../defs"
@@ -10,6 +12,10 @@ import rl "vendor:raylib"
 
 
 give_item_to_whom_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if current != nil {
 		game_pkg.grid_calculate_give_range(&game.grid, current)
@@ -28,9 +34,17 @@ give_item_to_whom_enter :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_set_highlight_target(game, game.friendly_units_in_range[0])
 }
 
-give_item_to_whom_exit :: proc(_: ^game_pkg.Game) {}
+give_item_to_whom_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	if game_pkg.input_try_cycle_index(
 		&game.state_scratch.list_index,
 		len(game.friendly_units_in_range),
@@ -65,6 +79,10 @@ give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 give_item_to_whom_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.oscillator_tick(&game.grid.range_tint)
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
@@ -72,6 +90,10 @@ give_item_to_whom_update :: proc(game: ^game_pkg.Game) {
 }
 
 give_item_to_whom_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, true, true)
 	if len(game.friendly_units_in_range) == 0 {
 		return

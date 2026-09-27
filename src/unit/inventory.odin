@@ -37,6 +37,10 @@ add_item :: proc(
 	damaged := false,
 	auto_equip_weapon := false,
 ) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if item_name == .Unarmed {
 		log.warnf(
 			"Unit [%s] cannot add unarmed to item list because being unarmed is without an item.",
@@ -66,6 +70,10 @@ add_item :: proc(
 }
 
 remove_item_at :: proc(unit: ^Unit, index: int) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if index < 0 || index >= defs.MAX_BUCKET_SIZE {
 		log.errorf("RemoveItemAtIndex(): index [%d] out of range.", index)
 		return false
@@ -91,6 +99,10 @@ remove_item_at :: proc(unit: ^Unit, index: int) -> bool {
 }
 
 set_item_damaged :: proc(unit: ^Unit, index: int, damaged := true) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if index < 0 || index >= defs.MAX_BUCKET_SIZE || item_slot_is_empty(unit.items[index]) {
 		log.errorf("SetItemDamaged(): invalid slot [%d].", index)
 		return false
@@ -106,6 +118,10 @@ set_item_damaged :: proc(unit: ^Unit, index: int, damaged := true) -> bool {
 }
 
 item_at :: proc(unit: ^Unit, index: int) -> Item_Slot {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if index < 0 || index >= defs.MAX_BUCKET_SIZE {
 		return ITEM_SLOT_EMPTY
 	}
@@ -114,10 +130,18 @@ item_at :: proc(unit: ^Unit, index: int) -> Item_Slot {
 }
 
 has_empty_item_slot :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return find_first_empty_item_slot(unit) >= 0
 }
 
 find_first_empty_item_slot :: proc(unit: ^Unit) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if item_slot_is_empty(unit.items[i]) {
 			return i
@@ -128,6 +152,10 @@ find_first_empty_item_slot :: proc(unit: ^Unit) -> int {
 }
 
 find_first_giveable_item_slot :: proc(unit: ^Unit) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if item_slot_is_giveable(unit.items[i]) {
 			return i
@@ -138,10 +166,18 @@ find_first_giveable_item_slot :: proc(unit: ^Unit) -> int {
 }
 
 has_giveable_item :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return find_first_giveable_item_slot(unit) >= 0
 }
 
 has_usable_item :: proc(unit: ^Unit) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	for i in 0 ..< defs.MAX_BUCKET_SIZE {
 		if item_is_usable(unit.items[i].name, unit.job) {
 			return true
@@ -152,10 +188,14 @@ has_usable_item :: proc(unit: ^Unit) -> bool {
 }
 
 give_item_to :: proc(giver, recipient: ^Unit, giver_slot_index: int) -> bool {
-	if recipient == nil {
-		log.error("GiveItemTo(): recipient is null.")
-		return false
+	if giver == nil {
+		log.panic("giver is nil.")
 	}
+
+	if recipient == nil {
+		log.panic("recipient is nil.")
+	}
+
 
 	if giver_slot_index < 0 || giver_slot_index >= defs.MAX_BUCKET_SIZE {
 		log.errorf("GiveItemTo(): giver slot [%d] out of range.", giver_slot_index)
@@ -193,10 +233,14 @@ give_item_to :: proc(giver, recipient: ^Unit, giver_slot_index: int) -> bool {
 }
 
 swap_item_with :: proc(unit, other: ^Unit, my_index, other_index: int) -> bool {
-	if other == nil {
-		log.error("SwapItemWith(): other unit is null.")
-		return false
+	if unit == nil {
+		log.panic("unit is nil.")
 	}
+
+	if other == nil {
+		log.panic("other is nil.")
+	}
+
 
 	if my_index < 0 ||
 	   my_index >= defs.MAX_BUCKET_SIZE ||
@@ -242,10 +286,18 @@ swap_item_with :: proc(unit, other: ^Unit, my_index, other_index: int) -> bool {
 }
 
 unequip_weapon :: proc(unit: ^Unit) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	unit.equipped_weapon_index = defs.UNARMED_INDEX
 }
 
 can_equip_weapon :: proc(unit: ^Unit, data: catalog.Item_Data) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if !unit.friendly {
 		return false
 	}
@@ -258,6 +310,10 @@ can_equip_weapon :: proc(unit: ^Unit, data: catalog.Item_Data) -> bool {
 }
 
 equip_weapon_at :: proc(unit: ^Unit, index: int) -> bool {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if index < 0 || index >= defs.MAX_BUCKET_SIZE {
 		log.errorf("EquipWeaponAtIndex(): index [%d] out of range.", index)
 		return false
@@ -287,6 +343,10 @@ equip_weapon_at :: proc(unit: ^Unit, index: int) -> bool {
 }
 
 equipped_weapon_name :: proc(unit: ^Unit) -> defs.Item_Name {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if unit.equipped_weapon_index < 0 || unit.equipped_weapon_index >= defs.MAX_BUCKET_SIZE {
 		return .Unarmed
 	}
@@ -300,6 +360,10 @@ equipped_weapon_name :: proc(unit: ^Unit) -> defs.Item_Name {
 }
 
 equipped_weapon_slot :: proc(unit: ^Unit) -> Item_Slot {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	if unit.equipped_weapon_index < 0 || unit.equipped_weapon_index >= defs.MAX_BUCKET_SIZE {
 		return Item_Slot{name = .Unarmed, damaged = false}
 	}
@@ -308,10 +372,18 @@ equipped_weapon_slot :: proc(unit: ^Unit) -> Item_Slot {
 }
 
 equipped_weapon_data :: proc(unit: ^Unit) -> catalog.Item_Data {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return catalog.item_get(equipped_weapon_name(unit))
 }
 
 total_offense :: proc(unit: ^Unit) -> int {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	return unit.attack + equipped_weapon_data(unit).attack
 }
 
@@ -325,6 +397,10 @@ can_use_weapon_as_item :: proc(item_name: defs.Item_Name, job: defs.Job) -> bool
 }
 
 combat_string :: proc(unit: ^Unit) -> string {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
 	weapon_data := equipped_weapon_data(unit)
 	weapon_slot := equipped_weapon_slot(unit)
 	return fmt.tprintf(

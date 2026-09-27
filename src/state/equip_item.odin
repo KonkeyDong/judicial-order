@@ -1,5 +1,7 @@
 package state
 
+import "core:log"
+
 import game_pkg "../game"
 
 import "../catalog"
@@ -9,7 +11,11 @@ import "../timers"
 import unit_pkg "../unit"
 
 equip_item_slot_equippable :: proc(caster: ^unit_pkg.Unit, index: int) -> bool {
-	if caster == nil || index < 0 || index > 2 {
+	if caster == nil {
+		log.panic("caster is nil.")
+	}
+
+	if index < 0 || index > 2 {
 		return false
 	}
 
@@ -22,6 +28,10 @@ equip_item_slot_equippable :: proc(caster: ^unit_pkg.Unit, index: int) -> bool {
 }
 
 equip_item_enter :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	game.state_scratch.list_index = 3
 	game.state_scratch.equip_unarmed = true
@@ -34,9 +44,17 @@ equip_item_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
-equip_item_exit :: proc(_: ^game_pkg.Game) {}
+equip_item_exit :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+}
 
 equip_item_handle_input :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	current := game_pkg.game_current_unit(game)
 	if game_pkg.input_key_pressed(.UP) && equip_item_slot_equippable(current, 0) {
 		game.state_scratch.list_index = 0
@@ -78,11 +96,19 @@ equip_item_handle_input :: proc(game: ^game_pkg.Game) {
 }
 
 equip_item_update :: proc(game: ^game_pkg.Game) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 	sprites.item_icons_tick()
 }
 
 equip_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
 	state_draw_map(game, scale, false, false)
 	current := game_pkg.game_current_unit(game)
 	if current == nil {

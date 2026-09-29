@@ -7,6 +7,7 @@ import "../defs"
 
 Combat_Random_Inclusive :: #type proc(lo, hi: int) -> int
 
+@(private = "file")
 combat_random_inclusive_default :: proc(lo, hi: int) -> int {
 	if hi < lo {
 		log.errorf("combat_random_inclusive: hi (%d) < lo (%d).", hi, lo)
@@ -20,6 +21,7 @@ combat_random_inclusive_default :: proc(lo, hi: int) -> int {
 @(thread_local)
 combat_random_override: Combat_Random_Inclusive
 
+@(private = "file")
 combat_random_inclusive :: proc(lo, hi: int) -> int {
 	if combat_random_override != nil {
 		return combat_random_override(lo, hi)
@@ -32,6 +34,7 @@ combat_set_random :: proc(random_proc: Combat_Random_Inclusive) {
 	combat_random_override = random_proc
 }
 
+@(private)
 combat_chance :: proc(denominator: int) -> bool {
 	if denominator <= 1 {
 		log.errorf("CombatSystem::Chance(): denominator must be greater than 1.")
@@ -43,14 +46,17 @@ combat_chance :: proc(denominator: int) -> bool {
 	return result == 0
 }
 
+@(private = "file")
 combat_miss :: proc() -> bool {
 	return combat_chance(defs.COMBAT_AMOUNTS.base_chance)
 }
 
+@(private = "file")
 combat_crit :: proc() -> bool {
 	return combat_chance(defs.COMBAT_AMOUNTS.base_chance)
 }
 
+@(private)
 combat_apply_amount_variance :: proc(base_amount: int) -> int {
 	log.infof("  Base amount: [%d].", base_amount)
 
@@ -65,10 +71,12 @@ combat_apply_amount_variance :: proc(base_amount: int) -> int {
 	return variant_amount
 }
 
+@(private = "file")
 combat_apply_minimum_variance :: proc(base_amount: int) -> int {
 	return (base_amount * defs.COMBAT_AMOUNTS.min_variance) / 100
 }
 
+@(private = "file")
 combat_apply_maximum_variance :: proc(base_amount: int) -> int {
 	return (base_amount * defs.COMBAT_AMOUNTS.max_variance) / 100
 }
@@ -78,6 +86,7 @@ Combat_Attack_Result :: struct {
 	damage:    int,
 }
 
+@(private = "file")
 combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result) {
 	if defender == nil {
 		log.panic("defender is nil.")
@@ -92,6 +101,7 @@ combat_apply_attack_damage :: proc(defender: ^Unit, result: Combat_Attack_Result
 
 // A blind attacker uses only the 1/2 roll. A miss ends the attack. A hit skips
 // sleep, quick versus slow, and the normal 1/16 miss roll.
+@(private = "file")
 combat_attack_misses :: proc(attacker, defender: ^Unit) -> bool {
 	if attacker == nil {
 		log.panic("attacker is nil.")
@@ -127,6 +137,7 @@ combat_attack_misses :: proc(attacker, defender: ^Unit) -> bool {
 }
 
 // crit is the crit roll. Poison and the damage floor ignore it for the amount.
+@(private = "file")
 combat_roll_attack_damage :: proc(attacker, defender: ^Unit, crit: bool) -> int {
 	if attacker == nil {
 		log.panic("attacker is nil.")
@@ -186,6 +197,7 @@ combat_calculate_attack_outcome :: proc(attacker, defender: ^Unit) -> Combat_Att
 	return result
 }
 
+@(private)
 combat_magic_attack :: proc(
 	attacker, defender: ^Unit,
 	base_damage: int,
@@ -228,6 +240,7 @@ combat_attack_effect_for :: proc(unit: ^Unit) -> defs.Attack_Effect {
 	return unit.attack_effect
 }
 
+@(private)
 take_damage :: proc(unit: ^Unit, amount: int) {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -244,6 +257,7 @@ take_damage :: proc(unit: ^Unit, amount: int) {
 	log.infof("\tUnit's current health: %d / %d.", unit.hp.current, unit.hp.max)
 }
 
+@(private)
 heal :: proc(unit: ^Unit, amount: int) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")

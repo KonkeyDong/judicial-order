@@ -7,6 +7,7 @@ import game_pkg "../game"
 import "../sprites"
 import "../timers"
 
+@(private)
 drop_item_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -21,12 +22,14 @@ drop_item_enter :: proc(game: ^game_pkg.Game) {
 	sprites.item_ui_set_selected(&game.item_ui, .Up, current, sprites.item_ui_giveable_filter)
 }
 
+@(private)
 drop_item_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -48,6 +51,7 @@ drop_item_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 drop_item_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -58,6 +62,7 @@ drop_item_update :: proc(game: ^game_pkg.Game) {
 	sprites.item_icons_tick()
 }
 
+@(private)
 drop_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

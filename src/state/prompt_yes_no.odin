@@ -10,6 +10,7 @@ import "../timers"
 import unit_pkg "../unit"
 
 
+@(private)
 prompt_yes_no_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -19,12 +20,14 @@ prompt_yes_no_enter :: proc(game: ^game_pkg.Game) {
 	sprites.command_icons_set_selected(.Yes)
 }
 
+@(private)
 prompt_yes_no_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 prompt_yes_no_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -53,6 +56,7 @@ prompt_yes_no_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 prompt_yes_no_on_yes :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -90,6 +94,7 @@ prompt_yes_no_on_yes :: proc(game: ^game_pkg.Game) {
 	state_change(game, next)
 }
 
+@(private = "file")
 prompt_yes_no_on_no :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -100,6 +105,7 @@ prompt_yes_no_on_no :: proc(game: ^game_pkg.Game) {
 	state_change(game, next)
 }
 
+@(private)
 prompt_yes_no_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -109,6 +115,7 @@ prompt_yes_no_update :: proc(game: ^game_pkg.Game) {
 	sprites.command_icons_tick()
 }
 
+@(private = "file")
 prompt_yes_no_is_give_or_trade :: proc(game: ^game_pkg.Game) -> bool {
 	if game == nil {
 		log.panic("game is nil.")
@@ -117,6 +124,7 @@ prompt_yes_no_is_give_or_trade :: proc(game: ^game_pkg.Game) -> bool {
 	return game.contexts.prompt.action == .GiveItem || game.contexts.prompt.action == .TradeItem
 }
 
+@(private = "file")
 prompt_yes_no_draw_trade_summary :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -160,6 +168,7 @@ prompt_yes_no_draw_trade_summary :: proc(game: ^game_pkg.Game, scale: f32) {
 	)
 }
 
+@(private)
 prompt_yes_no_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

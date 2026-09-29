@@ -23,6 +23,7 @@ battle_planes_destroy :: proc() {
 	battle_planes_init()
 }
 
+@(private)
 battle_plane_png_path :: proc(root, name, placeholder_file: string) -> string {
 	named := strings.concatenate({root, "/", name, ".png"}, context.temp_allocator)
 	if os.exists(named) {
@@ -32,6 +33,7 @@ battle_plane_png_path :: proc(root, name, placeholder_file: string) -> string {
 	return strings.concatenate({root, "/", placeholder_file}, context.temp_allocator)
 }
 
+@(private = "file")
 battle_plane_load :: proc(sprites: ^[$Key]Sprite, root, placeholder_file, label: string) -> bool {
 	if sprites == nil {
 		log.panic("sprites is nil.")
@@ -90,6 +92,7 @@ battle_planes_load :: proc() {
 	}
 }
 
+@(private)
 battle_background_get :: proc(name: defs.Background) -> Sprite {
 	if !backgrounds_loaded {
 		return {}
@@ -98,6 +101,7 @@ battle_background_get :: proc(name: defs.Background) -> Sprite {
 	return backgrounds[name]
 }
 
+@(private)
 battle_foreground_get :: proc(name: defs.Foreground) -> Sprite {
 	if !foregrounds_loaded {
 		return {}

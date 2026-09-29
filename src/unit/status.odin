@@ -5,6 +5,7 @@ import "core:math/rand"
 
 import "../defs"
 
+@(private = "file")
 status_create :: proc(type: defs.Status_Effect) -> Status_Effect_Slot {
 	base_duration := defs.STATUS_EFFECTS.base_duration
 	permanent_duration := defs.STATUS_EFFECTS.permanent_duration
@@ -71,6 +72,7 @@ has_status :: proc(unit: ^Unit, type: defs.Status_Effect) -> bool {
 	return find_status_index(unit, type) >= 0
 }
 
+@(private = "file")
 find_status_index :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -85,6 +87,7 @@ find_status_index :: proc(unit: ^Unit, type: defs.Status_Effect) -> int {
 	return -1
 }
 
+@(private)
 remove_status :: proc(unit: ^Unit, type: defs.Status_Effect) {
 	if unit == nil {
 		log.panic("unit is nil.")

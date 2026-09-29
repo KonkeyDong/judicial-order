@@ -11,11 +11,13 @@ import "../timers"
 import unit_pkg "../unit"
 import rl "vendor:raylib"
 
+@(private = "file")
 battle_friendly_start :: proc() -> rl.Vector2 {
 	base := defs.BATTLE.positions.friendly_standin
 	return {base.x + defs.BATTLE.slide_pixels, base.y}
 }
 
+@(private = "file")
 battle_unfriendly_start :: proc() -> rl.Vector2 {
 	base := defs.BATTLE.positions.unfriendly_standin
 	return {base.x - defs.BATTLE.slide_pixels, base.y}
@@ -31,12 +33,14 @@ battle_slide_amount :: proc(progress: f32) -> f32 {
 }
 
 // Somber-Inertia lerps the foreground with the full eased progress, not the unit slide.
+@(private)
 battle_foreground_position :: proc(eased: f32) -> rl.Vector2 {
 	start := defs.BATTLE.positions.foreground
 	start.x += defs.BATTLE.foreground_slide
 	return sprites.renderer_vector_lerp(start, defs.BATTLE.positions.foreground, eased)
 }
 
+@(private)
 enter_battle_screen_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -51,17 +55,20 @@ enter_battle_screen_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 enter_battle_screen_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 enter_battle_screen_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 enter_battle_screen_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -86,6 +93,7 @@ enter_battle_screen_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -171,6 +179,7 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 }
 
+@(private)
 battle_resolution_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -180,17 +189,20 @@ battle_resolution_enter :: proc(game: ^game_pkg.Game) {
 	timers.delay_init(&game.state_scratch.delay, defs.ANIMATIONS.idle_delay)
 }
 
+@(private)
 battle_resolution_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 battle_resolution_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 battle_resolution_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -203,6 +215,7 @@ battle_resolution_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 battle_resolution_jitter :: proc(game: ^game_pkg.Game) -> int {
 	if game == nil {
 		log.panic("game is nil.")
@@ -223,6 +236,7 @@ battle_resolution_jitter :: proc(game: ^game_pkg.Game) -> int {
 	return -defs.ANIMATIONS.jitter_offset
 }
 
+@(private)
 battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -256,6 +270,7 @@ battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	}
 }
 
+@(private)
 battle_resolution_debug_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -264,12 +279,14 @@ battle_resolution_debug_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.resolution_frame = 0
 }
 
+@(private)
 battle_resolution_debug_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 battle_resolution_debug_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -288,11 +305,13 @@ battle_resolution_debug_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 battle_resolution_debug_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 battle_resolution_debug_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -301,6 +320,7 @@ battle_resolution_debug_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	battle_resolution_draw(game, scale)
 }
 
+@(private)
 exit_battle_screen_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -310,17 +330,20 @@ exit_battle_screen_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.battle_item_mode = game.battle_screen_mode == .ItemConsumable
 }
 
+@(private)
 exit_battle_screen_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 exit_battle_screen_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 exit_battle_screen_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -343,6 +366,7 @@ exit_battle_screen_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -400,6 +424,7 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	)
 }
 
+@(private)
 use_consumable_battle_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -432,17 +457,20 @@ use_consumable_battle_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.resolution_frame = 0
 }
 
+@(private)
 use_consumable_battle_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 use_consumable_battle_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 use_consumable_battle_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -455,6 +483,7 @@ use_consumable_battle_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 use_consumable_battle_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

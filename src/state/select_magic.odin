@@ -9,6 +9,7 @@ import "../sprites"
 import "../timers"
 import unit_pkg "../unit"
 
+@(private)
 select_magic_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -26,12 +27,14 @@ select_magic_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private = "file")
 select_magic_set :: proc(game: ^game_pkg.Game, direction: defs.Direction) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -48,6 +51,7 @@ select_magic_set :: proc(game: ^game_pkg.Game, direction: defs.Direction) {
 	}
 }
 
+@(private)
 select_magic_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -78,6 +82,7 @@ select_magic_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -88,6 +93,7 @@ select_magic_update :: proc(game: ^game_pkg.Game) {
 	sprites.magic_icons_tick()
 }
 
+@(private)
 select_magic_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -117,6 +123,7 @@ select_magic_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	)
 }
 
+@(private)
 select_magic_level_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -133,12 +140,14 @@ select_magic_level_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_level_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 select_magic_level_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -176,6 +185,7 @@ select_magic_level_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_level_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -187,6 +197,7 @@ select_magic_level_update :: proc(game: ^game_pkg.Game) {
 	sprites.magic_icons_tick()
 }
 
+@(private)
 select_magic_level_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -217,6 +228,7 @@ select_magic_level_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	)
 }
 
+@(private)
 prepare_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -245,27 +257,32 @@ prepare_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 prepare_magic_targets_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 prepare_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 prepare_magic_targets_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 prepare_magic_targets_draw :: proc(game: ^game_pkg.Game, _: f32) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private = "file")
 select_magic_targets_list :: proc(game: ^game_pkg.Game) -> [dynamic]^unit_pkg.Unit {
 	if game == nil {
 		log.panic("game is nil.")
@@ -278,6 +295,7 @@ select_magic_targets_list :: proc(game: ^game_pkg.Game) -> [dynamic]^unit_pkg.Un
 	return game.friendly_units_in_range
 }
 
+@(private)
 select_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -292,12 +310,14 @@ select_magic_targets_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_targets_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private = "file")
 select_magic_targets_set_context :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -318,6 +338,7 @@ select_magic_targets_set_context :: proc(game: ^game_pkg.Game) {
 	game_pkg.magic_context_init(&game.contexts.magic_context, current, aoe, &game.grid)
 }
 
+@(private)
 select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -342,6 +363,7 @@ select_magic_targets_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_magic_targets_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -352,6 +374,7 @@ select_magic_targets_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, 1.0 / 60)
 }
 
+@(private)
 select_magic_targets_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

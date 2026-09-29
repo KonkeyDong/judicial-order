@@ -35,6 +35,7 @@ item_name_display :: proc(name: Item_Name) -> string {
 	return spaced_camel(reflect.enum_string(name))
 }
 
+@(private = "file")
 spaced_camel :: proc(raw: string) -> string {
 	if len(raw) == 0 {
 		return raw

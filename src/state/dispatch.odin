@@ -15,11 +15,13 @@ State_Procs :: struct {
 	draw:         proc(game: ^game_pkg.Game, scale: f32),
 }
 
+@(private = "file")
 state_noop :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private = "file")
 state_noop_draw :: proc(game: ^game_pkg.Game, _: f32) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -227,6 +229,7 @@ STATE_TABLE := [defs.State_Kind]State_Procs {
 	},
 }
 
+@(private)
 state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highlight: bool) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -250,6 +253,7 @@ state_draw_map :: proc(game: ^game_pkg.Game, scale: f32, draw_range, draw_highli
 	}
 }
 
+@(private)
 state_change :: proc(game: ^game_pkg.Game, kind: defs.State_Kind) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -262,6 +266,7 @@ state_change :: proc(game: ^game_pkg.Game, kind: defs.State_Kind) {
 	state_enter(game)
 }
 
+@(private)
 state_show_message_notice :: proc(
 	game: ^game_pkg.Game,
 	message: string,
@@ -285,6 +290,7 @@ state_enter :: proc(game: ^game_pkg.Game) {
 	STATE_TABLE[game.state].enter(game)
 }
 
+@(private = "file")
 state_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")

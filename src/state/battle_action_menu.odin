@@ -9,6 +9,7 @@ import "../sprites"
 import "../timers"
 import unit_pkg "../unit"
 
+@(private)
 battle_action_menu_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -25,12 +26,14 @@ battle_action_menu_enter :: proc(game: ^game_pkg.Game) {
 	sprites.magic_ui_reset_layout_center(&game.magic_ui, game.window)
 }
 
+@(private)
 battle_action_menu_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private = "file")
 battle_action_menu_set_command :: proc(game: ^game_pkg.Game, command: defs.Command_Icon) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -44,6 +47,7 @@ battle_action_menu_set_command :: proc(game: ^game_pkg.Game, command: defs.Comma
 	sprites.command_icons_set_selected(command)
 }
 
+@(private)
 battle_action_menu_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -74,6 +78,7 @@ battle_action_menu_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 battle_action_menu_confirm :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -125,6 +130,7 @@ battle_action_menu_confirm :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 battle_action_menu_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -135,6 +141,7 @@ battle_action_menu_update :: proc(game: ^game_pkg.Game) {
 	sprites.command_icons_tick()
 }
 
+@(private)
 battle_action_menu_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

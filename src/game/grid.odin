@@ -116,6 +116,7 @@ grid_destroy :: proc(grid: ^Grid) {
 	grid.range_coords = nil
 }
 
+@(private)
 grid_in_bounds :: proc(grid: ^Grid, x, y: int) -> bool {
 	if grid == nil {
 		log.panic("grid is nil.")
@@ -124,6 +125,7 @@ grid_in_bounds :: proc(grid: ^Grid, x, y: int) -> bool {
 	return x >= 0 && x < grid.width && y >= 0 && y < grid.height
 }
 
+@(private = "file")
 grid_index :: proc(grid: ^Grid, x, y: int) -> int {
 	if grid == nil {
 		log.panic("grid is nil.")
@@ -185,6 +187,7 @@ grid_in_range :: proc(grid: ^Grid, x, y: int) -> bool {
 	return grid.range_mask[grid_index(grid, x, y)]
 }
 
+@(private)
 grid_range_add :: proc(grid: ^Grid, x, y: int) {
 	if grid == nil {
 		log.panic("grid is nil.")
@@ -203,6 +206,7 @@ grid_range_add :: proc(grid: ^Grid, x, y: int) {
 	append(&grid.range_coords, Grid_Coord{x = x, y = y})
 }
 
+@(private = "file")
 grid_adjacent_blocks :: proc(grid: ^Grid, block: ^Block, out_blocks: []^Block) -> int {
 	if block == nil {
 		log.panic("block is nil.")
@@ -226,6 +230,7 @@ grid_adjacent_blocks :: proc(grid: ^Grid, block: ^Block, out_blocks: []^Block) -
 	return count
 }
 
+@(private = "file")
 grid_coord_in_direction :: proc(x, y: int, direction: defs.Direction) -> (new_x, new_y: int) {
 	new_x = x
 	new_y = y
@@ -243,6 +248,7 @@ grid_coord_in_direction :: proc(x, y: int, direction: defs.Direction) -> (new_x,
 	return
 }
 
+@(private = "file")
 grid_terrain_cost :: proc(
 	movement_type: defs.Movement_Type,
 	terrain: defs.Terrain,
@@ -263,6 +269,7 @@ grid_terrain_cost :: proc(
 	return cost, true
 }
 
+@(private)
 grid_place_unit :: proc(grid: ^Grid, unit: ^units.Unit, x, y: int) -> bool {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -319,6 +326,7 @@ grid_place_unit :: proc(grid: ^Grid, unit: ^units.Unit, x, y: int) -> bool {
 	return true
 }
 
+@(private)
 grid_remove_dead_units :: proc(grid: ^Grid, dead_units: []^units.Unit) {
 	if grid == nil {
 		log.panic("grid is nil.")
@@ -475,6 +483,7 @@ grid_calculate_unit_movement_range :: proc(grid: ^Grid, unit: ^units.Unit) {
 	}
 }
 
+@(private)
 grid_fill_effect_distance_range :: proc(
 	grid: ^Grid,
 	unit: ^units.Unit,
@@ -617,6 +626,7 @@ grid_calculate_spell_effect_range :: proc(
 	grid_fill_effect_distance_range(grid, unit, magic.target_range)
 }
 
+@(private = "file")
 grid_blocks_from_range_set :: proc(grid: ^Grid, allocator := context.allocator) -> []^Block {
 	if grid == nil {
 		log.panic("grid is nil.")

@@ -6,6 +6,7 @@ import game_pkg "../game"
 
 import "../defs"
 
+@(private)
 calculate_weapon_attack_range_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -27,21 +28,25 @@ calculate_weapon_attack_range_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 calculate_weapon_attack_range_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 calculate_weapon_attack_range_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 calculate_weapon_attack_range_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 calculate_weapon_attack_range_draw :: proc(game: ^game_pkg.Game, _: f32) {
 	if game == nil {
 		log.panic("game is nil.")

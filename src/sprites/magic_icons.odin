@@ -21,14 +21,17 @@ magic_icons_tick :: proc() {
 	icon_set_tick(&magic_icons)
 }
 
+@(private = "file")
 magic_icons_set_selected :: proc(family: defs.Magic_Family) {
 	icon_set_set_selected(&magic_icons, family)
 }
 
+@(private)
 magic_icons_get :: proc(family: defs.Magic_Family) -> Sprite {
 	return icon_set_get(&magic_icons, family)
 }
 
+@(private = "file")
 magic_icons_reset :: proc() {
 	icon_set_reset(&magic_icons)
 }

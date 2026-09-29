@@ -8,6 +8,7 @@ import "../defs"
 import "../sprites"
 import "../timers"
 
+@(private)
 message_notice_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -30,6 +31,7 @@ message_notice_enter :: proc(game: ^game_pkg.Game) {
 	)
 }
 
+@(private)
 message_notice_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -38,6 +40,7 @@ message_notice_exit :: proc(game: ^game_pkg.Game) {
 	game_pkg.message_notice_reset(&game.contexts.message_notice)
 }
 
+@(private)
 message_notice_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -48,6 +51,7 @@ message_notice_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 message_notice_dismiss :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -57,6 +61,7 @@ message_notice_dismiss :: proc(game: ^game_pkg.Game) {
 	state_change(game, return_state)
 }
 
+@(private)
 message_notice_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -72,6 +77,7 @@ message_notice_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 message_notice_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

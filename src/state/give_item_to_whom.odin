@@ -11,6 +11,7 @@ import unit_pkg "../unit"
 import rl "vendor:raylib"
 
 
+@(private)
 give_item_to_whom_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -34,12 +35,14 @@ give_item_to_whom_enter :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_set_highlight_target(game, game.friendly_units_in_range[0])
 }
 
+@(private)
 give_item_to_whom_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -78,6 +81,7 @@ give_item_to_whom_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 give_item_to_whom_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -89,6 +93,7 @@ give_item_to_whom_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
+@(private)
 give_item_to_whom_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

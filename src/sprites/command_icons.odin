@@ -24,10 +24,12 @@ command_icons_set_selected :: proc(icon: defs.Command_Icon) {
 	icon_set_set_selected(&command_icons, icon)
 }
 
+@(private)
 command_icons_get :: proc(icon: defs.Command_Icon) -> Sprite {
 	return icon_set_get(&command_icons, icon)
 }
 
+@(private = "file")
 command_icons_reset :: proc() {
 	icon_set_reset(&command_icons)
 }

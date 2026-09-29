@@ -9,6 +9,7 @@ import "../sprites"
 import "../timers"
 import rl "vendor:raylib"
 
+@(private)
 trade_which_item_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -35,12 +36,14 @@ trade_which_item_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 trade_which_item_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 trade_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -71,6 +74,7 @@ trade_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 trade_which_item_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -82,6 +86,7 @@ trade_which_item_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
+@(private)
 trade_which_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

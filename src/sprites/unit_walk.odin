@@ -7,11 +7,13 @@ import "core:path/filepath"
 import "../defs"
 import "../unit"
 
+@(private = "file")
 join_path :: proc(elems: []string) -> string {
 	path, _ := filepath.join(elems, context.temp_allocator)
 	return path
 }
 
+@(private = "file")
 asset_root :: proc(target: ^unit.Unit) -> string {
 	if target == nil {
 		log.panic("target is nil.")
@@ -26,6 +28,7 @@ asset_root :: proc(target: ^unit.Unit) -> string {
 	return join_path({defs.PATHS.monsters, base})
 }
 
+@(private = "file")
 structured_walk_complete :: proc(overworld_dir: string) -> bool {
 	json_path := join_path({overworld_dir, defs.PATHS.frame_data})
 	if !os.exists(json_path) {
@@ -42,6 +45,7 @@ structured_walk_complete :: proc(overworld_dir: string) -> bool {
 	return true
 }
 
+@(private)
 load_unit_walk :: proc(target: ^unit.Unit) {
 	if target == nil {
 		log.panic("target is nil.")

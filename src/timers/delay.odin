@@ -45,6 +45,7 @@ delay_tick :: proc(delay: ^Delay) {
 	}
 }
 
+@(private)
 delay_reset :: proc(delay: ^Delay) {
 	if delay == nil {
 		log.panic("delay is nil.")
@@ -55,6 +56,7 @@ delay_reset :: proc(delay: ^Delay) {
 	delay.start_delay_frames = delay.original_start_delay_frames
 }
 
+@(private)
 delay_reset_timer_only :: proc(delay: ^Delay) {
 	if delay == nil {
 		log.panic("delay is nil.")

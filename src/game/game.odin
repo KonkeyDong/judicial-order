@@ -88,6 +88,7 @@ State_Scratch :: struct {
 	equip_unarmed:         bool,
 }
 
+@(private)
 give_reset :: proc(give: ^Give_Context) {
 	if give == nil {
 		log.panic("give is nil.")
@@ -131,6 +132,7 @@ message_notice_set :: proc(
 	notice.return_state = return_state
 }
 
+@(private = "file")
 highlight_reset :: proc(highlight: ^Highlight) {
 	if highlight == nil {
 		log.panic("highlight is nil.")
@@ -346,6 +348,7 @@ game_separate_units_in_range :: proc(
 	)
 }
 
+@(private)
 game_find_all_dead_units :: proc(game: ^Game, allocator := context.allocator) -> []^unit_pkg.Unit {
 	if game == nil {
 		log.panic("game is nil.")

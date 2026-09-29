@@ -51,6 +51,7 @@ item_consume_item :: proc(caster: ^Unit, item_slot_index: int) {
 	remove_item_at(caster, item_slot_index)
 }
 
+@(private)
 item_use_data :: proc(
 	data: catalog.Item_Data,
 	caster: ^Unit,

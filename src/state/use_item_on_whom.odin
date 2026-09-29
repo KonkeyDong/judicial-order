@@ -12,6 +12,7 @@ import "../sprites"
 import "../timers"
 
 
+@(private)
 use_item_on_whom_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -60,6 +61,7 @@ use_item_on_whom_enter :: proc(game: ^game_pkg.Game) {
 	state_change(game, .UseWhichItem)
 }
 
+@(private = "file")
 use_item_on_whom_push_target :: proc(game: ^game_pkg.Game, target: ^unit_pkg.Unit) {
 	if target == nil {
 		log.panic("target is nil.")
@@ -83,6 +85,7 @@ use_item_on_whom_push_target :: proc(game: ^game_pkg.Game, target: ^unit_pkg.Uni
 	game.state_scratch.target_count += 1
 }
 
+@(private = "file")
 use_item_on_whom_enter_heal_all :: proc(game: ^game_pkg.Game, current: ^unit_pkg.Unit) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -106,6 +109,7 @@ use_item_on_whom_enter_heal_all :: proc(game: ^game_pkg.Game, current: ^unit_pkg
 	use_item_on_whom_confirm_consumable_targets(game)
 }
 
+@(private = "file")
 use_item_on_whom_enter_consumable :: proc(
 	game: ^game_pkg.Game,
 	current: ^unit_pkg.Unit,
@@ -148,6 +152,7 @@ use_item_on_whom_enter_consumable :: proc(
 	game_pkg.game_set_highlight_target(game, game.state_scratch.targets[0])
 }
 
+@(private = "file")
 use_item_on_whom_enter_spell :: proc(
 	game: ^game_pkg.Game,
 	current: ^unit_pkg.Unit,
@@ -194,12 +199,14 @@ use_item_on_whom_enter_spell :: proc(
 	game_pkg.game_set_highlight_target(game, game.state_scratch.targets[0])
 }
 
+@(private)
 use_item_on_whom_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -232,6 +239,7 @@ use_item_on_whom_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -254,6 +262,7 @@ use_item_on_whom_confirm_consumable_targets :: proc(game: ^game_pkg.Game) {
 	state_change(game, .EnterBattleScreen)
 }
 
+@(private = "file")
 use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -306,6 +315,7 @@ use_item_on_whom_confirm_spell :: proc(game: ^game_pkg.Game) {
 	state_change(game, .AnimateUnitDeaths)
 }
 
+@(private)
 use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -317,6 +327,7 @@ use_item_on_whom_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
+@(private)
 use_item_on_whom_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

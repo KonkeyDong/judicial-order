@@ -9,6 +9,7 @@ import "../sprites"
 import "../timers"
 import unit_pkg "../unit"
 
+@(private)
 end_turn_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -49,6 +50,7 @@ end_turn_enter :: proc(game: ^game_pkg.Game) {
 	state_change(game, .CalculateUnitMovementRange)
 }
 
+@(private)
 end_turn_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -62,16 +64,19 @@ end_turn_exit :: proc(game: ^game_pkg.Game) {
 	log.infof("%s's turn begins.", defs.name_display(current.name))
 }
 
+@(private)
 end_turn_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 end_turn_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 end_turn_draw :: proc(game: ^game_pkg.Game, _: f32) {
 	if game == nil {
 		log.panic("game is nil.")

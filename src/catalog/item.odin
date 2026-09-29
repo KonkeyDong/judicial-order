@@ -30,6 +30,7 @@ NO_ITEM_DATA :: Item_Data {
 	spell_name     = .NoSpell,
 }
 
+@(private = "file")
 item_make_weapon :: proc(
 	name: defs.Item_Name,
 	attack: int,
@@ -54,6 +55,7 @@ item_make_weapon :: proc(
 	}
 }
 
+@(private = "file")
 item_make_consumable :: proc(
 	name: defs.Item_Name,
 	distance: defs.Tile_Range,
@@ -75,6 +77,7 @@ item_make_consumable :: proc(
 	}
 }
 
+@(private = "file")
 item_unregistered :: proc(name: defs.Item_Name, item_type: defs.Item_Type) -> Item_Data {
 	return Item_Data {
 		name = name,
@@ -220,6 +223,7 @@ item_get :: proc(name: defs.Item_Name) -> Item_Data {
 	return NO_ITEM_DATA
 }
 
+@(private = "file")
 item_sell_price :: proc(data: Item_Data) -> int {
 	return int(f32(data.price) * 0.75)
 }

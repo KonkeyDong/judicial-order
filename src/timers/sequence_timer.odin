@@ -40,6 +40,7 @@ sequence_timer_init :: proc(
 	sequence_timer_reset(timer)
 }
 
+@(private)
 sequence_timer_has_started :: proc(timer: Sequence_Timer) -> bool {
 	return timer.start_delay_frames_remaining <= 0
 }
@@ -48,10 +49,12 @@ sequence_timer_is_playing :: proc(timer: Sequence_Timer) -> bool {
 	return sequence_timer_has_started(timer) && !timer.is_complete
 }
 
+@(private)
 sequence_timer_total_duration_frames :: proc(timer: Sequence_Timer) -> int {
 	return timer.original_start_delay_frames + timer.frame_count * timer.frames_per_step
 }
 
+@(private)
 sequence_timer_tick :: proc(timer: ^Sequence_Timer) {
 	if timer == nil {
 		log.panic("timer is nil.")
@@ -79,6 +82,7 @@ sequence_timer_tick :: proc(timer: ^Sequence_Timer) {
 	}
 }
 
+@(private)
 sequence_timer_reset :: proc(timer: ^Sequence_Timer) {
 	if timer == nil {
 		log.panic("timer is nil.")
@@ -90,6 +94,7 @@ sequence_timer_reset :: proc(timer: ^Sequence_Timer) {
 	timer.is_complete = false
 }
 
+@(private)
 sequence_timer_reset_timer_only :: proc(timer: ^Sequence_Timer) {
 	if timer == nil {
 		log.panic("timer is nil.")
@@ -100,6 +105,7 @@ sequence_timer_reset_timer_only :: proc(timer: ^Sequence_Timer) {
 	timer.is_complete = false
 }
 
+@(private)
 sequence_timer_seek :: proc(timer: ^Sequence_Timer, absolute_frame: int) {
 	if timer == nil {
 		log.panic("timer is nil.")

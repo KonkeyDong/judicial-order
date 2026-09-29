@@ -11,6 +11,7 @@ import "../sprites"
 import "../timers"
 import unit_pkg "../unit"
 
+@(private)
 calculate_unit_movement_range_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -36,6 +37,7 @@ calculate_unit_movement_range_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 calculate_unit_movement_range_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -43,6 +45,7 @@ calculate_unit_movement_range_exit :: proc(game: ^game_pkg.Game) {
 
 }
 
+@(private)
 calculate_unit_movement_range_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -53,6 +56,7 @@ calculate_unit_movement_range_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 calculate_unit_movement_range_proceed :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -67,6 +71,7 @@ calculate_unit_movement_range_proceed :: proc(game: ^game_pkg.Game) {
 	state_change(game, .UnitMoving)
 }
 
+@(private)
 calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -115,6 +120,7 @@ calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 	calculate_unit_movement_range_proceed(game)
 }
 
+@(private)
 calculate_unit_movement_range_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

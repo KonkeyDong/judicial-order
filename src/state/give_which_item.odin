@@ -8,6 +8,7 @@ import "../defs"
 import "../sprites"
 import "../timers"
 
+@(private)
 give_which_item_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -31,12 +32,14 @@ give_which_item_enter :: proc(game: ^game_pkg.Game) {
 	sprites.item_ui_select_first(&game.item_ui, current, sprites.item_ui_giveable_filter)
 }
 
+@(private)
 give_which_item_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 give_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -66,6 +69,7 @@ give_which_item_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 give_which_item_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -76,6 +80,7 @@ give_which_item_update :: proc(game: ^game_pkg.Game) {
 	sprites.item_icons_tick()
 }
 
+@(private)
 give_which_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

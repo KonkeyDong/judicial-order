@@ -68,6 +68,7 @@ load :: proc(path: string) -> rl.Texture2D {
 	return tex
 }
 
+@(private = "file")
 json_object_int :: proc(obj: json.Object, keys: []string) -> (int, bool) {
 	for key in keys {
 		if value, ok := obj[key]; ok {
@@ -83,6 +84,7 @@ json_object_int :: proc(obj: json.Object, keys: []string) -> (int, bool) {
 	return 0, false
 }
 
+@(private = "file")
 frame_rect_from_json_object :: proc(obj: json.Object) -> (Frame_Rect, bool) {
 	src := obj
 	if nested, ok := obj["frame"]; ok {
@@ -102,6 +104,7 @@ frame_rect_from_json_object :: proc(obj: json.Object) -> (Frame_Rect, bool) {
 	return Frame_Rect{x = x, y = y, w = w, h = h}, true
 }
 
+@(private = "file")
 extract_frames_from_value :: proc(root: json.Value) -> []Frame_Rect {
 	obj, is_obj := root.(json.Object)
 	if !is_obj {
@@ -149,6 +152,7 @@ extract_frames_from_value :: proc(root: json.Value) -> []Frame_Rect {
 	return out[:]
 }
 
+@(private)
 extract_frames :: proc(json_path: string) -> []Frame_Rect {
 	if json_path == "" {
 		log.error("ExtractFrameData: jsonFilePath is empty")

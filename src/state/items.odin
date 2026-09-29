@@ -9,6 +9,7 @@ import "../sprites"
 import unit_pkg "../unit"
 import rl "vendor:raylib"
 
+@(private)
 state_item_handle_slot_keys :: proc(
 	game: ^game_pkg.Game,
 	caster: ^unit_pkg.Unit,
@@ -39,6 +40,7 @@ state_item_handle_slot_keys :: proc(
 	}
 }
 
+@(private)
 state_draw_item_icons :: proc(
 	scale: f32,
 	center: rl.Vector2,
@@ -70,6 +72,7 @@ state_draw_item_icons :: proc(
 	}
 }
 
+@(private)
 state_draw_item_radial :: proc(game: ^game_pkg.Game, scale: f32, owner: ^unit_pkg.Unit) {
 	if game == nil {
 		log.panic("game is nil.")

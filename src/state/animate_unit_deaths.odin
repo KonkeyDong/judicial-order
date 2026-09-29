@@ -23,6 +23,7 @@ DEATH_DIRECTION_CYCLE := [12]defs.Direction {
 	.Left,
 }
 
+@(private)
 animate_unit_deaths_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -52,17 +53,20 @@ animate_unit_deaths_enter :: proc(game: ^game_pkg.Game) {
 	game.state_scratch.death_delay = 0
 }
 
+@(private)
 animate_unit_deaths_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
+@(private)
 animate_unit_deaths_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 animate_unit_deaths_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -85,6 +89,7 @@ animate_unit_deaths_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 animate_unit_deaths_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

@@ -46,6 +46,7 @@ icon_set_destroy :: proc(set: ^Icon_Set($Key)) {
 	set.loaded = false
 }
 
+@(private)
 icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := false) {
 	if set == nil {
 		log.panic("set is nil.")
@@ -125,6 +126,7 @@ icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := f
 	log.infof("IconSet<%v>.Load() completed. Loaded %d frames.", typeid_of(Key), total_frames)
 }
 
+@(private)
 icon_set_tick :: proc(set: ^Icon_Set($Key)) {
 	if set == nil {
 		log.panic("set is nil.")
@@ -133,6 +135,7 @@ icon_set_tick :: proc(set: ^Icon_Set($Key)) {
 	timers.flip_flop_tick(&set.flip_flop)
 }
 
+@(private)
 icon_set_reset :: proc(set: ^Icon_Set($Key)) {
 	if set == nil {
 		log.panic("set is nil.")
@@ -141,6 +144,7 @@ icon_set_reset :: proc(set: ^Icon_Set($Key)) {
 	timers.flip_flop_reset(&set.flip_flop)
 }
 
+@(private)
 icon_set_set_selected :: proc(set: ^Icon_Set($Key), key: Key) {
 	if set == nil {
 		log.panic("set is nil.")
@@ -150,6 +154,7 @@ icon_set_set_selected :: proc(set: ^Icon_Set($Key), key: Key) {
 	icon_set_reset(set)
 }
 
+@(private)
 icon_set_get :: proc(set: ^Icon_Set($Key), key: Key) -> Sprite {
 	if set == nil {
 		log.panic("set is nil.")
@@ -158,6 +163,7 @@ icon_set_get :: proc(set: ^Icon_Set($Key), key: Key) -> Sprite {
 	return icon_set_get_selected(set, key, key == set.selected)
 }
 
+@(private)
 icon_set_get_selected :: proc(set: ^Icon_Set($Key), key: Key, is_selected: bool) -> Sprite {
 	if set == nil {
 		log.panic("set is nil.")

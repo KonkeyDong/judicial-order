@@ -16,6 +16,7 @@ Info_Box_Metrics :: struct {
 	font_size, line_spacing, left_margin: int,
 }
 
+@(private = "file")
 renderer_draw_info_box_frame :: proc(
 	scale: f32,
 	position: rl.Vector2,
@@ -73,6 +74,7 @@ renderer_draw_info_box_frame :: proc(
 	}
 }
 
+@(private = "file")
 renderer_measure_text :: proc(text: string, font_size: int) -> rl.Vector2 {
 	return rl.MeasureTextEx(
 		rl.GetFontDefault(),
@@ -82,10 +84,12 @@ renderer_measure_text :: proc(text: string, font_size: int) -> rl.Vector2 {
 	)
 }
 
+@(private)
 renderer_info_box_content_height :: proc(line0_h, line1_h, line2_h, line_spacing: int) -> int {
 	return line0_h + line1_h + line2_h + (line_spacing * 2)
 }
 
+@(private)
 renderer_split_display_name :: proc(display: string) -> (line1, line2: string) {
 	last_space := -1
 	for i in 0 ..< len(display) {
@@ -101,6 +105,7 @@ renderer_split_display_name :: proc(display: string) -> (line1, line2: string) {
 	return display[:last_space], display[last_space + 1:]
 }
 
+@(private = "file")
 renderer_draw_info_box_text :: proc(text: string, pos: rl.Vector2, font_size: int) {
 	rl.DrawTextEx(
 		rl.GetFontDefault(),
@@ -254,6 +259,7 @@ renderer_draw_item_info_box :: proc(
 	}
 }
 
+@(private = "file")
 renderer_draw_equip_weapon_info_box :: proc(
 	scale: f32,
 	item: catalog.Item_Data,
@@ -295,6 +301,7 @@ renderer_draw_equip_weapon_info_box :: proc(
 	}
 }
 
+@(private = "file")
 renderer_draw_equip_stats_box :: proc(
 	scale: f32,
 	attack, defense, move, agility: int,

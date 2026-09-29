@@ -7,6 +7,7 @@ import game_pkg "../game"
 import "../timers"
 import rl "vendor:raylib"
 
+@(private)
 select_enemy_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -25,12 +26,14 @@ select_enemy_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 select_enemy_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 select_enemy_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -55,6 +58,7 @@ select_enemy_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private = "file")
 select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -79,6 +83,7 @@ select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 	state_change(game, .EnterBattleScreen)
 }
 
+@(private)
 select_enemy_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -89,6 +94,7 @@ select_enemy_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
+@(private)
 select_enemy_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

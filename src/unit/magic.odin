@@ -59,6 +59,7 @@ learn_spell :: proc(unit: ^Unit, spell_name: defs.Magic_Name) {
 	unit.known_spell_counts[index] = count + 1
 }
 
+@(private)
 find_family_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -73,6 +74,7 @@ find_family_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
 	return -1
 }
 
+@(private = "file")
 fill_first_available_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -106,6 +108,7 @@ magic_list_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> []defs.M
 	return unit.known_spells[index][:unit.known_spell_counts[index]]
 }
 
+@(private)
 highest_magic_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> defs.Magic_Name {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -119,6 +122,7 @@ highest_magic_in_bucket :: proc(unit: ^Unit, family: defs.Magic_Family) -> defs.
 	return list[len(list) - 1]
 }
 
+@(private = "file")
 highest_magic_data_in_bucket :: proc(
 	unit: ^Unit,
 	family: defs.Magic_Family,
@@ -130,6 +134,7 @@ highest_magic_data_in_bucket :: proc(
 	return catalog.magic_get(highest_magic_in_bucket(unit, family))
 }
 
+@(private = "file")
 magic_mp_cost :: proc(name: defs.Magic_Name, from_item := false) -> int {
 	if from_item {
 		return 0
@@ -138,6 +143,7 @@ magic_mp_cost :: proc(name: defs.Magic_Name, from_item := false) -> int {
 	return catalog.magic_get(name).mp_cost
 }
 
+@(private = "file")
 magic_execute_effect :: proc(data: catalog.Magic_Data, caster: ^Unit, targets: []^Unit) {
 	if caster == nil {
 		log.panic("caster is nil.")

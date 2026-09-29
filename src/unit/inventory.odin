@@ -6,10 +6,12 @@ import "core:log"
 import "../catalog"
 import "../defs"
 
+@(private = "file")
 item_is_giveable :: proc(name: defs.Item_Name) -> bool {
 	return name != .NoItem && name != .Unarmed
 }
 
+@(private = "file")
 item_slot_is_giveable :: proc(slot: Item_Slot) -> bool {
 	return item_is_giveable(slot.name)
 }
@@ -98,6 +100,7 @@ remove_item_at :: proc(unit: ^Unit, index: int) -> bool {
 	return true
 }
 
+@(private)
 set_item_damaged :: proc(unit: ^Unit, index: int, damaged := true) -> bool {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -137,6 +140,7 @@ has_empty_item_slot :: proc(unit: ^Unit) -> bool {
 	return find_first_empty_item_slot(unit) >= 0
 }
 
+@(private = "file")
 find_first_empty_item_slot :: proc(unit: ^Unit) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -151,6 +155,7 @@ find_first_empty_item_slot :: proc(unit: ^Unit) -> int {
 	return -1
 }
 
+@(private = "file")
 find_first_giveable_item_slot :: proc(unit: ^Unit) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -342,6 +347,7 @@ equip_weapon_at :: proc(unit: ^Unit, index: int) -> bool {
 	return true
 }
 
+@(private = "file")
 equipped_weapon_name :: proc(unit: ^Unit) -> defs.Item_Name {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -359,6 +365,7 @@ equipped_weapon_name :: proc(unit: ^Unit) -> defs.Item_Name {
 	return slot.name
 }
 
+@(private = "file")
 equipped_weapon_slot :: proc(unit: ^Unit) -> Item_Slot {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -379,6 +386,7 @@ equipped_weapon_data :: proc(unit: ^Unit) -> catalog.Item_Data {
 	return catalog.item_get(equipped_weapon_name(unit))
 }
 
+@(private)
 total_offense :: proc(unit: ^Unit) -> int {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -387,6 +395,7 @@ total_offense :: proc(unit: ^Unit) -> int {
 	return unit.attack + equipped_weapon_data(unit).attack
 }
 
+@(private = "file")
 can_use_weapon_as_item :: proc(item_name: defs.Item_Name, job: defs.Job) -> bool {
 	data := catalog.item_get(item_name)
 	if data.spell_name == .NoSpell {
@@ -396,6 +405,7 @@ can_use_weapon_as_item :: proc(item_name: defs.Item_Name, job: defs.Job) -> bool
 	return defs.job_is_allowed_by(job, data.allowed_jobs)
 }
 
+@(private = "file")
 combat_string :: proc(unit: ^Unit) -> string {
 	if unit == nil {
 		log.panic("unit is nil.")

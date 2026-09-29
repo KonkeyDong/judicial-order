@@ -16,6 +16,7 @@ item_icons_load :: proc() {
 	icon_set_load(&item_icons, skip_missing = true)
 }
 
+@(private)
 item_icons_resolve :: proc(name: defs.Item_Name) -> defs.Item_Name {
 	if name == .NoItem {
 		return .NoItem
@@ -32,22 +33,27 @@ item_icons_tick :: proc() {
 	icon_set_tick(&item_icons)
 }
 
+@(private)
 item_icons_set_selected :: proc(name: defs.Item_Name) {
 	icon_set_set_selected(&item_icons, name)
 }
 
+@(private = "file")
 item_icons_clear_selection :: proc() {
 	icon_set_set_selected(&item_icons, defs.Item_Name.NoItem)
 }
 
+@(private)
 item_icons_get :: proc(name: defs.Item_Name) -> Sprite {
 	return icon_set_get(&item_icons, item_icons_resolve(name))
 }
 
+@(private)
 item_icons_get_selected :: proc(name: defs.Item_Name, is_selected: bool) -> Sprite {
 	return icon_set_get_selected(&item_icons, item_icons_resolve(name), is_selected)
 }
 
+@(private = "file")
 item_icons_reset :: proc() {
 	icon_set_reset(&item_icons)
 }

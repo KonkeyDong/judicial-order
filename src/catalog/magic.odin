@@ -28,6 +28,7 @@ NO_SPELL_DATA :: Magic_Data {
 	effect_value   = 0,
 }
 
+@(private = "file")
 magic_make :: proc(
 	name: defs.Magic_Name,
 	level: int,

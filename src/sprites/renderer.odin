@@ -30,6 +30,7 @@ renderer_destroy :: proc(renderer: ^Renderer) {
 
 // C# passes `alpha` straight into Color (byte wrap). Clamp 0..255 is a labeled delta.
 // Shared so background and sprite draws cannot drift.
+@(private)
 renderer_alpha_u8 :: proc(alpha: int) -> u8 {
 	if alpha < 0 {
 		return 0
@@ -105,12 +106,14 @@ renderer_draw_highlight_rectangle :: proc(scale: f32, position: rl.Vector2) {
 	rl.DrawRectangleLinesEx(rect, scale, rl.WHITE)
 }
 
+@(private = "file")
 renderer_draw_highlight_rectangles :: proc(scale: f32, positions: []rl.Vector2) {
 	for position in positions {
 		renderer_draw_highlight_rectangle(scale, position)
 	}
 }
 
+@(private)
 renderer_draw_unit :: proc(
 	scale: f32,
 	unit: ^unit_pkg.Unit,
@@ -145,6 +148,7 @@ renderer_draw_units :: proc(
 	}
 }
 
+@(private = "file")
 renderer_draw_debug_logical_grid :: proc(
 	scale: f32,
 	logical_spacing: int,

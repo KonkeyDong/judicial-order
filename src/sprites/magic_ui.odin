@@ -27,6 +27,7 @@ magic_ui_reset :: proc(ui: ^Magic_UI) {
 	ui.selected_level = 0
 }
 
+@(private = "file")
 magic_ui_set_layout_center :: proc(ui: ^Magic_UI, center: rl.Vector2) {
 	if ui == nil {
 		log.panic("ui is nil.")

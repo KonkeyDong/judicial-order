@@ -21,6 +21,7 @@ program_log_level: log.Level
 @(thread_local)
 program_log_ready: bool
 
+@(private)
 program_log_level_get :: proc() -> log.Level {
 	if program_log_ready {
 		return program_log_level
@@ -29,16 +30,19 @@ program_log_level_get :: proc() -> log.Level {
 	return .Info
 }
 
+@(private)
 program_log_in_debug_mode :: proc() -> bool {
 	return program_log_level_get() == .Debug
 }
 
+@(private)
 program_set_log_level :: proc(level: log.Level) {
 	program_log_level = level
 	program_log_ready = true
 	context.logger.lowest_level = level
 }
 
+@(private)
 program_apply_debug_draw :: proc(session: ^game.Game) {
 	if session == nil {
 		log.panic("session is nil.")
@@ -48,6 +52,7 @@ program_apply_debug_draw :: proc(session: ^game.Game) {
 	session.renderer.debug_draw = program_log_in_debug_mode()
 }
 
+@(private = "file")
 program_parse_log_level :: proc(text: string) -> (level: log.Level, ok: bool) {
 	if strings.equal_fold(text, "debug") {
 		return .Debug, true
@@ -72,6 +77,7 @@ program_parse_log_level :: proc(text: string) -> (level: log.Level, ok: bool) {
 	return .Info, false
 }
 
+@(private)
 program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: bool) {
 	options.log_level = .Info
 	ok = true
@@ -113,6 +119,7 @@ program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: boo
 	return options, true
 }
 
+@(private)
 program_handle_logging_toggle :: proc(session: ^game.Game) {
 	if session == nil {
 		log.panic("session is nil.")
@@ -132,6 +139,7 @@ program_handle_logging_toggle :: proc(session: ^game.Game) {
 	log.infof("Logging level changed to: %v", program_log_level_get())
 }
 
+@(private)
 program_handle_global_input :: proc(session: ^game.Game, apply_os_window := true) {
 	if session == nil {
 		log.panic("session is nil.")
@@ -147,6 +155,7 @@ program_init_databases :: proc() {
 	data.init()
 }
 
+@(private)
 program_load_graphics :: proc() {
 	sprites.init()
 	sprites.item_icons_load()
@@ -155,6 +164,7 @@ program_load_graphics :: proc() {
 	sprites.battle_planes_load()
 }
 
+@(private)
 program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
 	if session == nil {
 		log.panic("session is nil.")
@@ -179,6 +189,7 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 	return hale, judy, bellweather
 }
 
+@(private)
 program_update :: proc(session: ^game.Game) {
 	if session == nil {
 		log.panic("session is nil.")
@@ -187,6 +198,7 @@ program_update :: proc(session: ^game.Game) {
 	state.state_update(session)
 }
 
+@(private)
 program_draw :: proc(session: ^game.Game) {
 	if session == nil {
 		log.panic("session is nil.")

@@ -38,6 +38,7 @@ start_moving_to :: proc(unit: ^Unit, target_world: rl.Vector2) {
 	unit.is_animating = true
 }
 
+@(private = "file")
 snap_to_pixel :: proc(unit: ^Unit, pos: rl.Vector2) {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -82,6 +83,7 @@ update_movement :: proc(unit: ^Unit, delta_time: f32) {
 	}
 }
 
+@(private = "file")
 stop_movement :: proc(unit: ^Unit) {
 	if unit == nil {
 		log.panic("unit is nil.")

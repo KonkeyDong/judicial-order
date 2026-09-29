@@ -32,6 +32,7 @@ Magic_Context :: struct {
 	active:       bool,
 }
 
+@(private = "file")
 context_copy_targets :: proc(dest: []^unit_pkg.Unit, dest_count: ^int, src: []^unit_pkg.Unit) {
 	dest_count^ = 0
 	for target in src {
@@ -53,6 +54,7 @@ context_copy_targets :: proc(dest: []^unit_pkg.Unit, dest_count: ^int, src: []^u
 	}
 }
 
+@(private = "file")
 context_clear_targets :: proc(targets: []^unit_pkg.Unit, dest_count: ^int) {
 	for i in 0 ..< len(targets) {
 		targets[i] = nil
@@ -61,6 +63,7 @@ context_clear_targets :: proc(targets: []^unit_pkg.Unit, dest_count: ^int) {
 	dest_count^ = 0
 }
 
+@(private)
 attack_context_reset :: proc(ctx: ^Attack_Context) {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -172,6 +175,7 @@ item_context_init :: proc(
 	ctx.active = true
 }
 
+@(private)
 item_context_target :: proc(ctx: ^Item_Context) -> ^unit_pkg.Unit {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -184,6 +188,7 @@ item_context_target :: proc(ctx: ^Item_Context) -> ^unit_pkg.Unit {
 	return ctx.caster
 }
 
+@(private)
 item_context_is_self_target :: proc(ctx: ^Item_Context) -> bool {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -192,6 +197,7 @@ item_context_is_self_target :: proc(ctx: ^Item_Context) -> bool {
 	return ctx.target_count == 1 && ctx.targets[0] == ctx.caster
 }
 
+@(private)
 item_context_is_party_wide :: proc(ctx: ^Item_Context) -> bool {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -200,6 +206,7 @@ item_context_is_party_wide :: proc(ctx: ^Item_Context) -> bool {
 	return ctx.target_count > 1
 }
 
+@(private)
 item_context_use_item :: proc(ctx: ^Item_Context) {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -224,6 +231,7 @@ item_context_use_item :: proc(ctx: ^Item_Context) {
 	)
 }
 
+@(private)
 magic_context_reset :: proc(ctx: ^Magic_Context) {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -273,6 +281,7 @@ magic_context_cast :: proc(ctx: ^Magic_Context, name: defs.Magic_Name, from_item
 	unit_pkg.magic_cast(name, ctx.caster, ctx.targets[:ctx.target_count], from_item)
 }
 
+@(private = "file")
 magic_context_cast_data :: proc(
 	ctx: ^Magic_Context,
 	data: catalog.Magic_Data,

@@ -184,6 +184,7 @@ is_promoted :: proc(unit: ^Unit) -> bool {
 	return unit.friendly && unit.promoted
 }
 
+@(private = "file")
 promote :: proc(unit: ^Unit) {
 	if unit == nil {
 		log.panic("unit is nil.")
@@ -199,6 +200,7 @@ promote :: proc(unit: ^Unit) {
 	load_walk_animations(unit)
 }
 
+@(private = "file")
 to_string :: proc(unit: ^Unit) -> string {
 	if unit == nil {
 		log.panic("unit is nil.")

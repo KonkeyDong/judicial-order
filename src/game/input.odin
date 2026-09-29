@@ -32,6 +32,7 @@ input_key_pressed :: proc(key: rl.KeyboardKey) -> bool {
 	return rl.IsKeyPressed(key)
 }
 
+@(private)
 input_key_down :: proc(key: rl.KeyboardKey) -> bool {
 	if input_down_override != nil {
 		return input_down_override(key)

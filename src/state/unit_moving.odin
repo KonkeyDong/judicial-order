@@ -9,6 +9,7 @@ import "../timers"
 import unit_pkg "../unit"
 import rl "vendor:raylib"
 
+@(private)
 unit_moving_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -30,6 +31,7 @@ unit_moving_enter :: proc(game: ^game_pkg.Game) {
 	)
 }
 
+@(private)
 unit_moving_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -38,6 +40,7 @@ unit_moving_exit :: proc(game: ^game_pkg.Game) {
 	log.debug("UnitMoving::Exit() called.")
 }
 
+@(private)
 unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -72,6 +75,7 @@ unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 unit_moving_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -87,6 +91,7 @@ unit_moving_update :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 unit_moving_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

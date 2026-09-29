@@ -62,6 +62,7 @@ item_ui_usable_filter :: proc(slot: unit_pkg.Item_Slot, caster: ^unit_pkg.Unit) 
 	return unit_pkg.item_is_usable(slot.name, caster.job)
 }
 
+@(private = "file")
 item_ui_has_selection :: proc(ui: ^Item_UI) -> bool {
 	if ui == nil {
 		log.panic("ui is nil.")

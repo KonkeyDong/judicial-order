@@ -9,6 +9,7 @@ Sequence_Timer_Slot :: struct {
 	position: rl.Vector2,
 }
 
+@(private)
 renderer_artillery_frame_index :: proc(
 	timer: timers.Sequence_Timer,
 	frame_count: int,
@@ -34,6 +35,7 @@ renderer_artillery_frame_index :: proc(
 	return frame_index, true
 }
 
+@(private)
 renderer_artillery_slice_bounds :: proc(
 	start, requested_end, slot_count: int,
 ) -> (
@@ -48,6 +50,7 @@ renderer_artillery_slice_bounds :: proc(
 	return
 }
 
+@(private = "file")
 renderer_draw_artillery_explosions_in_front_of_sprite :: proc(
 	scale: f32,
 	slots: []Sequence_Timer_Slot,
@@ -57,6 +60,7 @@ renderer_draw_artillery_explosions_in_front_of_sprite :: proc(
 	renderer_draw_artillery_explosions_slice(scale, slots, frames, start, end)
 }
 
+@(private = "file")
 renderer_draw_artillery_explosions_behind_sprite :: proc(
 	scale: f32,
 	slots: []Sequence_Timer_Slot,
@@ -66,6 +70,7 @@ renderer_draw_artillery_explosions_behind_sprite :: proc(
 	renderer_draw_artillery_explosions_slice(scale, slots, frames, start, end)
 }
 
+@(private = "file")
 renderer_draw_artillery_explosions_slice :: proc(
 	scale: f32,
 	slots: []Sequence_Timer_Slot,

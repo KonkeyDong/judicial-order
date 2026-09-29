@@ -62,6 +62,7 @@ command_icon_display_name :: proc(icon: defs.Command_Icon) -> string {
 	return "Command"
 }
 
+@(private = "file")
 direction_menu_offset :: proc(direction: defs.Direction) -> rl.Vector2 {
 	switch direction {
 	case .Up:
@@ -105,6 +106,7 @@ radial_icon_position :: proc(center: rl.Vector2, direction: defs.Direction) -> r
 	return center + offset * f32(defs.TILE_SIZE)
 }
 
+@(private)
 radial_info_box_position :: proc(center: rl.Vector2) -> rl.Vector2 {
 	return {center.x + RADIAL_INFO_BOX_OFFSET_X, center.y}
 }

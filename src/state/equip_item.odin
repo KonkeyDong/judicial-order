@@ -10,6 +10,7 @@ import "../sprites"
 import "../timers"
 import unit_pkg "../unit"
 
+@(private = "file")
 equip_item_slot_equippable :: proc(caster: ^unit_pkg.Unit, index: int) -> bool {
 	if caster == nil {
 		log.panic("caster is nil.")
@@ -27,6 +28,7 @@ equip_item_slot_equippable :: proc(caster: ^unit_pkg.Unit, index: int) -> bool {
 	return unit_pkg.can_equip_weapon(caster, catalog.item_get(slot.name))
 }
 
+@(private)
 equip_item_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -44,12 +46,14 @@ equip_item_enter :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 equip_item_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
 	}
 }
 
+@(private)
 equip_item_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -95,6 +99,7 @@ equip_item_handle_input :: proc(game: ^game_pkg.Game) {
 	}
 }
 
+@(private)
 equip_item_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -104,6 +109,7 @@ equip_item_update :: proc(game: ^game_pkg.Game) {
 	sprites.item_icons_tick()
 }
 
+@(private)
 equip_item_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

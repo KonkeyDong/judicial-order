@@ -61,6 +61,7 @@ renderer_draw_range :: proc(scale: f32, grid: ^grid_pkg.Grid, debug_draw := fals
 	}
 }
 
+@(private = "file")
 renderer_draw_block :: proc(
 	scale: f32,
 	grid: ^grid_pkg.Grid,
@@ -91,6 +92,7 @@ renderer_draw_block :: proc(
 	}
 }
 
+@(private = "file")
 renderer_draw_texture :: proc(
 	texture: rl.Texture2D,
 	position: rl.Vector2,
@@ -104,6 +106,7 @@ renderer_draw_texture :: proc(
 	rl.DrawTextureEx(texture, position, defs.TEXTURES.base_rotation, scale, tint)
 }
 
+@(private = "file")
 renderer_draw_text :: proc(text: string, position: rl.Vector2, font_size: int, color: rl.Color) {
 	rl.DrawText(
 		strings.clone_to_cstring(text, context.temp_allocator),
@@ -114,6 +117,7 @@ renderer_draw_text :: proc(text: string, position: rl.Vector2, font_size: int, c
 	)
 }
 
+@(private = "file")
 renderer_draw_map_lines :: proc(scale: f32, columns, rows, block_size: int, color: rl.Color) {
 	line_thickness := 1.0 * scale
 

@@ -7,6 +7,7 @@ import "../defs"
 import units "../unit"
 import rl "vendor:raylib"
 
+@(private)
 block_occupant_count :: proc(block: ^Block) -> int {
 	if block == nil {
 		log.panic("block is nil.")
@@ -32,6 +33,7 @@ block_is_fully_occupied :: proc(block: ^Block) -> bool {
 	return block.occupant != nil && block.visitor != nil
 }
 
+@(private)
 block_enter :: proc(block: ^Block, unit: ^units.Unit) -> bool {
 	if block == nil {
 		log.panic("block is nil.")
@@ -68,6 +70,7 @@ block_enter :: proc(block: ^Block, unit: ^units.Unit) -> bool {
 	return true
 }
 
+@(private)
 block_leave :: proc(block: ^Block, unit: ^units.Unit) {
 	if block == nil {
 		log.panic("block is nil.")
@@ -93,6 +96,7 @@ block_leave :: proc(block: ^Block, unit: ^units.Unit) {
 	}
 }
 
+@(private)
 block_top :: proc(block: ^Block) -> ^units.Unit {
 	if block == nil {
 		log.panic("block is nil.")
@@ -105,6 +109,7 @@ block_top :: proc(block: ^Block) -> ^units.Unit {
 	return block.occupant
 }
 
+@(private)
 block_pixel_coords :: proc(block: ^Block) -> rl.Vector2 {
 	if block == nil {
 		log.panic("block is nil.")
@@ -113,6 +118,7 @@ block_pixel_coords :: proc(block: ^Block) -> rl.Vector2 {
 	return {f32(block.grid_x * defs.TILE_SIZE), f32(block.grid_y * defs.TILE_SIZE)}
 }
 
+@(private)
 block_print_coords :: proc(block: ^Block) -> string {
 	if block == nil {
 		log.panic("block is nil.")

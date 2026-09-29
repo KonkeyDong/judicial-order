@@ -9,6 +9,7 @@ import "../sprites"
 import "../timers"
 import rl "vendor:raylib"
 
+@(private)
 transition_selector_enter :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -18,6 +19,7 @@ transition_selector_enter :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_set_highlight_target(game, game_pkg.game_next_unit(game))
 }
 
+@(private)
 transition_selector_exit :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -25,6 +27,7 @@ transition_selector_exit :: proc(game: ^game_pkg.Game) {
 
 }
 
+@(private)
 transition_selector_handle_input :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -32,6 +35,7 @@ transition_selector_handle_input :: proc(game: ^game_pkg.Game) {
 
 }
 
+@(private)
 transition_selector_update :: proc(game: ^game_pkg.Game) {
 	if game == nil {
 		log.panic("game is nil.")
@@ -45,6 +49,7 @@ transition_selector_update :: proc(game: ^game_pkg.Game) {
 	game_pkg.game_update_highlight(game, rl.GetFrameTime())
 }
 
+@(private)
 transition_selector_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game == nil {
 		log.panic("game is nil.")

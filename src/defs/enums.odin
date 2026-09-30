@@ -169,6 +169,12 @@ Name :: enum {
 	Trudy,
 	Anthony,
 	Bellweather,
+
+	// enemies / monsters
+	LawStudent,
+	LawProfessor,
+	DeanOfLaw,
+	Bailiff,
 }
 
 Item_Type :: enum {

@@ -14,6 +14,14 @@ name_display :: proc(name: Name) -> string {
 		return "Anthony"
 	case .Bellweather:
 		return "Bellweather"
+	case .LawStudent:
+		return "Law Student"
+	case .LawProfessor:
+		return "Law Professor"
+	case .DeanOfLaw:
+		return "Dean of Law"
+	case .Bailiff:
+		return "Bailiff"
 	}
 
 	return "Unknown"

@@ -84,7 +84,8 @@ init :: proc() {
 }
 
 unit_get :: proc(name: defs.Name) -> unit.Unit_Data {
-	switch name {
+	
+	#partial switch name {
 	case .Hale:
 		return HALE_DATA
 	case .Judy:

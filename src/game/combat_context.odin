@@ -4,6 +4,7 @@ import "core:log"
 
 import "../catalog"
 import "../defs"
+import "../sprites"
 import unit_pkg "../unit"
 
 Attack_Context :: struct {
@@ -13,6 +14,8 @@ Attack_Context :: struct {
 	damage:             int,
 	damage_apply_frame: int,
 	active:             bool,
+	force_sprites:      sprites.Battle_Unit_Sprite_Set,
+	monster_sprites:    sprites.Battle_Unit_Sprite_Set,
 }
 
 Item_Context :: struct {
@@ -22,6 +25,7 @@ Item_Context :: struct {
 	grid:            ^Grid,
 	item_slot_index: int,
 	active:          bool,
+	caster_sprites:  sprites.Battle_Unit_Sprite_Set,
 }
 
 Magic_Context :: struct {
@@ -77,9 +81,15 @@ attack_context_reset :: proc(ctx: ^Attack_Context) {
 	ctx.damage = 0
 	ctx.damage_apply_frame = 0
 	ctx.active = false
+	sprites.battle_unit_sprite_set_reset(&ctx.force_sprites)
+	sprites.battle_unit_sprite_set_reset(&ctx.monster_sprites)
 }
 
-attack_context_init :: proc(ctx: ^Attack_Context, attacker, defender: ^unit_pkg.Unit) {
+attack_context_init :: proc(
+	ctx: ^Attack_Context,
+	attacker, defender: ^unit_pkg.Unit,
+	debug_draw := false,
+) {
 	if attacker == nil {
 		log.panic("attacker is nil.")
 	}
@@ -102,6 +112,7 @@ attack_context_init :: proc(ctx: ^Attack_Context, attacker, defender: ^unit_pkg.
 	ctx.hit = result.hit
 	ctx.crit = result.crit
 	ctx.damage = result.damage
+	attack_context_assign_sprites(ctx, attacker, defender, debug_draw)
 }
 
 attack_context_monster :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
@@ -136,6 +147,63 @@ attack_context_force_member :: proc(ctx: ^Attack_Context) -> ^unit_pkg.Unit {
 	return ctx.attacker
 }
 
+@(private)
+attack_context_assign_sprites :: proc(
+	ctx: ^Attack_Context,
+	attacker, defender: ^unit_pkg.Unit,
+	debug_draw: bool,
+) {
+	if ctx == nil {
+		log.panic("ctx is nil.")
+	}
+
+	if attacker == nil {
+		log.panic("attacker is nil.")
+	}
+
+	if defender == nil {
+		log.panic("defender is nil.")
+	}
+
+	attacker_set: sprites.Battle_Unit_Sprite_Set
+	defender_set: sprites.Battle_Unit_Sprite_Set
+	if sprites.battle_sprites_ready() {
+		attacker_set = sprites.battle_unit_sprite_set_load(attacker)
+		defender_set = sprites.battle_unit_sprite_set_load(defender)
+	}
+
+	attacker_set.base_position = sprites.battle_sprite_position(
+		attacker,
+		defs.BATTLE.positions.friendly_standin if attacker.friendly else defs.BATTLE.positions.unfriendly_standin,
+	)
+	defender_set.base_position = sprites.battle_sprite_position(
+		defender,
+		defs.BATTLE.positions.friendly_standin if defender.friendly else defs.BATTLE.positions.unfriendly_standin,
+	)
+	if defender.friendly {
+		ctx.force_sprites = defender_set
+		ctx.monster_sprites = attacker_set
+	} else {
+		ctx.monster_sprites = defender_set
+		ctx.force_sprites = attacker_set
+	}
+
+	if !sprites.battle_sprites_ready() {
+		return
+	}
+
+	attacker_sprites := &ctx.force_sprites if attacker.friendly else &ctx.monster_sprites
+	defender_sprites := &ctx.monster_sprites if attacker.friendly else &ctx.force_sprites
+	killed := ctx.hit && defender.hp.current <= 0
+	ctx.damage_apply_frame = sprites.battle_build_normal_attack_scene(
+		attacker_sprites,
+		defender_sprites,
+		ctx.hit,
+		killed,
+		debug_draw,
+	)
+}
+
 item_context_reset :: proc(ctx: ^Item_Context) {
 	if ctx == nil {
 		log.panic("ctx is nil.")
@@ -146,6 +214,7 @@ item_context_reset :: proc(ctx: ^Item_Context) {
 	ctx.grid = nil
 	ctx.item_slot_index = -1
 	ctx.active = false
+	sprites.battle_unit_sprite_set_reset(&ctx.caster_sprites)
 }
 
 item_context_init :: proc(
@@ -173,6 +242,11 @@ item_context_init :: proc(
 	ctx.grid = grid
 	ctx.item_slot_index = item_slot_index
 	ctx.active = true
+	ctx.caster_sprites = sprites.battle_unit_sprite_set_load(caster)
+	ctx.caster_sprites.base_position = sprites.battle_sprite_position(
+		caster,
+		defs.BATTLE.positions.friendly_standin if caster.friendly else defs.BATTLE.positions.unfriendly_standin,
+	)
 }
 
 @(private)

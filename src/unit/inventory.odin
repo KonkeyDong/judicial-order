@@ -347,7 +347,6 @@ equip_weapon_at :: proc(unit: ^Unit, index: int) -> bool {
 	return true
 }
 
-@(private = "file")
 equipped_weapon_name :: proc(unit: ^Unit) -> defs.Item_Name {
 	if unit == nil {
 		log.panic("unit is nil.")

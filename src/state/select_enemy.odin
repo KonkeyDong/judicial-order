@@ -79,6 +79,7 @@ select_enemy_confirm :: proc(game: ^game_pkg.Game) {
 		&game.contexts.attack_context,
 		current,
 		game.unfriendly_units_in_range[index],
+		game.renderer.debug_draw,
 	)
 	state_change(game, .EnterBattleScreen)
 }

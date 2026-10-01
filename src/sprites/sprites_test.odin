@@ -3,6 +3,7 @@ package sprites
 import "core:testing"
 
 import "../defs"
+import "../unit"
 
 @(test)
 test_extract_frames_weasel_lawyer :: proc(test: ^testing.T) {
@@ -157,4 +158,111 @@ test_icon_set_defaults_and_blink :: proc(test: ^testing.T) {
 	command_icons.flip_flop.is_on = false
 	attack_off := command_icons_get(.Attack)
 	testing.expect_value(test, attack_off.frame.x, 0)
+}
+
+@(test)
+test_extract_frames_law_professor_battle :: proc(test: ^testing.T) {
+	idle := extract_frames("assets/sprites/monsters/law_professor/battle/idle.json")
+	defer delete(idle)
+	testing.expect_value(test, len(idle), 1)
+	if len(idle) > 0 {
+		testing.expect_value(test, idle[0].x, 0)
+		testing.expect_value(test, idle[0].y, 0)
+		testing.expect_value(test, idle[0].w, 72)
+		testing.expect_value(test, idle[0].h, 96)
+	}
+
+	attack := extract_frames("assets/sprites/monsters/law_professor/battle/attack.json")
+	defer delete(attack)
+	testing.expect_value(test, len(attack), 2)
+	if len(attack) > 1 {
+		testing.expect_value(test, attack[0].w, 72)
+		testing.expect_value(test, attack[0].h, 96)
+		testing.expect_value(test, attack[1].x, 72)
+		testing.expect_value(test, attack[1].w, 72)
+		testing.expect_value(test, attack[1].h, 96)
+	}
+}
+
+@(test)
+test_battle_sprite_position_law_professor :: proc(test: ^testing.T) {
+	professor: unit.Unit
+	professor.name = .LawProfessor
+	testing.expect_value(
+		test,
+		battle_sprite_position_key(&professor),
+		"LawProfessor_Unpromoted_Unarmed",
+	)
+	pos := battle_sprite_position(&professor, {0, 0})
+	testing.expect_value(test, pos.x, f32(50))
+	testing.expect_value(test, pos.y, f32(75))
+
+	hale: unit.Unit
+	hale.name = .Hale
+	hale.friendly = true
+	hale.equipped_weapon_index = defs.UNARMED_INDEX
+	testing.expect_value(test, battle_sprite_position_key(&hale), "Hale_Unpromoted_Unarmed")
+	hale.promoted = true
+	testing.expect_value(test, battle_sprite_position_key(&hale), "Hale_Promoted_Unarmed")
+	hale.items[0].name = .SmallBriefcase
+	hale.equipped_weapon_index = 0
+	testing.expect_value(test, battle_sprite_position_key(&hale), "Hale_Promoted_SmallBriefcase")
+
+	fallback := defs.BATTLE.positions.friendly_standin
+	missing := battle_sprite_position(&hale, fallback)
+	testing.expect_value(test, missing.x, fallback.x)
+	testing.expect_value(test, missing.y, fallback.y)
+}
+
+@(test)
+test_battle_unit_dir_snake_case :: proc(test: ^testing.T) {
+	professor: unit.Unit
+	professor.name = .LawProfessor
+	testing.expect_value(
+		test,
+		battle_unit_dir(&professor),
+		"assets/sprites/monsters/law_professor/battle",
+	)
+
+	hale: unit.Unit
+	hale.name = .Hale
+	hale.friendly = true
+	hale.equipped_weapon_index = defs.UNARMED_INDEX
+	testing.expect_value(
+		test,
+		battle_unit_dir(&hale),
+		"assets/sprites/force/hale/unpromoted/battle/unarmed",
+	)
+}
+
+@(test)
+test_battle_sequence_paces_attack_sheet :: proc(test: ^testing.T) {
+	attacker: Battle_Unit_Sprite_Set
+	defender: Battle_Unit_Sprite_Set
+	defer battle_unit_sprite_set_reset(&attacker)
+	defer battle_unit_sprite_set_reset(&defender)
+
+	append(&attacker.attack, Sprite{frame = {w = 72, h = 96}})
+	append(&attacker.attack, Sprite{frame = {x = 72, w = 72, h = 96}})
+	append(&defender.idle, Sprite{frame = {w = 72, h = 96}})
+
+	frame := battle_build_normal_attack_scene(&attacker, &defender, false, false, true)
+	testing.expect_value(test, frame, 1)
+	testing.expect_value(test, len(attacker.battle_sequence), 2)
+	testing.expect_value(test, len(defender.battle_sequence), 2)
+	testing.expect_value(test, attacker.battle_sequence[1].frame.x, 72)
+}
+
+@(test)
+test_battle_sequence_empty_without_attack_sheet :: proc(test: ^testing.T) {
+	attacker: Battle_Unit_Sprite_Set
+	defender: Battle_Unit_Sprite_Set
+	defer battle_unit_sprite_set_reset(&attacker)
+	defer battle_unit_sprite_set_reset(&defender)
+
+	append(&defender.idle, Sprite{frame = {w = 72, h = 96}})
+	frame := battle_build_normal_attack_scene(&attacker, &defender, true, true, true)
+	testing.expect_value(test, frame, 0)
+	testing.expect_value(test, len(attacker.battle_sequence), 0)
+	testing.expect_value(test, len(defender.battle_sequence), 0)
 }

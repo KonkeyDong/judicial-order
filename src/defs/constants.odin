@@ -190,6 +190,11 @@ Paths :: struct {
 	foreground:             string,
 	background_placeholder: string,
 	foreground_placeholder: string,
+	battle:                 string,
+	idle_json:              string,
+	idle_png:               string,
+	attack_json:            string,
+	attack_png:             string,
 }
 
 PATHS :: Paths {
@@ -215,6 +220,11 @@ PATHS :: Paths {
 	foreground             = "assets/foreground",
 	background_placeholder = "law_101.png",
 	foreground_placeholder = "class_room.png",
+	battle                 = "battle",
+	idle_json              = "idle.json",
+	idle_png               = "idle.png",
+	attack_json            = "attack.json",
+	attack_png             = "attack.png",
 }
 
 Give :: struct {

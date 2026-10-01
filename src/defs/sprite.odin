@@ -12,6 +12,7 @@ Frame_Rect :: struct {
 }
 
 Sprite :: struct {
-	texture: rl.Texture2D,
-	frame:   Frame_Rect,
+	texture:      rl.Texture2D,
+	frame:        Frame_Rect,
+	owns_texture: bool,
 }

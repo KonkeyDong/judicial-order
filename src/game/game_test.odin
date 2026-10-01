@@ -477,6 +477,16 @@ test_attack_context_hale_normal_effect :: proc(test: ^testing.T) {
 	testing.expect(test, game.contexts.attack_context.hit)
 	testing.expect_value(test, attack_context_monster(&game.contexts.attack_context), judy)
 	testing.expect_value(test, attack_context_force_member(&game.contexts.attack_context), hale)
+	testing.expect_value(
+		test,
+		game.contexts.attack_context.force_sprites.base_position,
+		defs.BATTLE.positions.friendly_standin,
+	)
+	testing.expect_value(
+		test,
+		game.contexts.attack_context.monster_sprites.base_position,
+		defs.BATTLE.positions.unfriendly_standin,
+	)
 }
 
 @(test)

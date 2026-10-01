@@ -12,14 +12,12 @@ import unit_pkg "../unit"
 import rl "vendor:raylib"
 
 @(private = "file")
-battle_friendly_start :: proc() -> rl.Vector2 {
-	base := defs.BATTLE.positions.friendly_standin
+battle_friendly_start :: proc(base: rl.Vector2) -> rl.Vector2 {
 	return {base.x + defs.BATTLE.slide_pixels, base.y}
 }
 
 @(private = "file")
-battle_unfriendly_start :: proc() -> rl.Vector2 {
-	base := defs.BATTLE.positions.unfriendly_standin
+battle_unfriendly_start :: proc(base: rl.Vector2) -> rl.Vector2 {
 	return {base.x - defs.BATTLE.slide_pixels, base.y}
 }
 
@@ -38,6 +36,62 @@ battle_foreground_position :: proc(eased: f32) -> rl.Vector2 {
 	start := defs.BATTLE.positions.foreground
 	start.x += defs.BATTLE.foreground_slide
 	return sprites.renderer_vector_lerp(start, defs.BATTLE.positions.foreground, eased)
+}
+
+@(private = "file")
+battle_sequence_limit :: proc(game: ^game_pkg.Game) -> int {
+	if game == nil {
+		log.panic("game is nil.")
+	}
+
+	if !game.contexts.attack_context.active {
+		return 0
+	}
+
+	return max(
+		len(game.contexts.attack_context.force_sprites.battle_sequence),
+		len(game.contexts.attack_context.monster_sprites.battle_sequence),
+	)
+}
+
+// Idle sheet when one is loaded. Sequence frames while the shared timeline is playing.
+// A missing sheet keeps the colored stand-in, including its lunge and jitter.
+@(private = "file")
+battle_draw_combatant :: proc(
+	scale: f32,
+	unit: ^unit_pkg.Unit,
+	set: ^sprites.Battle_Unit_Sprite_Set,
+	position: rl.Vector2,
+	alpha: int,
+	idle_index, sequence_index, sequence_limit: int,
+	standin_dx: f32,
+	standin_jitter: int,
+	debug_draw: bool,
+) {
+	if unit == nil {
+		log.panic("unit is nil.")
+	}
+
+	if set == nil {
+		log.panic("set is nil.")
+	}
+
+	playing := sequence_limit > 0 && sequence_index < sequence_limit && len(set.battle_sequence) > 0
+	if playing {
+		if sprite, ok := sprites.battle_sequence_frame(set, sequence_index); ok {
+			sprites.renderer_draw(scale, sprite, position, alpha, debug_draw)
+			return
+		}
+	}
+
+	if sprite, ok := sprites.battle_idle_frame(set, idle_index); ok {
+		sprites.renderer_draw(scale, sprite, position, alpha, debug_draw)
+		return
+	}
+
+	standin := position
+	standin.x += standin_dx
+	sprites.renderer_draw_battle_standin(scale, unit, standin, alpha, standin_jitter)
 }
 
 @(private)
@@ -121,9 +175,10 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	sprites.renderer_draw_battle_background(scale, alpha)
 	if game.state_scratch.battle_item_mode {
 		caster := game.contexts.item_context.caster
+		caster_base := game.contexts.item_context.caster_sprites.base_position
 		pos := sprites.renderer_vector_lerp(
-			battle_friendly_start(),
-			defs.BATTLE.positions.friendly_standin,
+			battle_friendly_start(caster_base),
+			caster_base,
 			slide,
 		)
 		sprites.renderer_draw_unit_info_box(
@@ -133,19 +188,33 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 			alpha,
 		)
 		sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
-		sprites.renderer_draw_battle_standin(scale, caster, pos, alpha)
+		battle_draw_combatant(
+			scale,
+			caster,
+			&game.contexts.item_context.caster_sprites,
+			pos,
+			alpha,
+			game.state_scratch.delay.current_index,
+			0,
+			0,
+			0,
+			0,
+			game.renderer.debug_draw,
+		)
 		return
 	}
 
 	if game.contexts.attack_context.active {
+		monster_base := game.contexts.attack_context.monster_sprites.base_position
+		force_base := game.contexts.attack_context.force_sprites.base_position
 		unfriendly := sprites.renderer_vector_lerp(
-			battle_unfriendly_start(),
-			defs.BATTLE.positions.unfriendly_standin,
+			battle_unfriendly_start(monster_base),
+			monster_base,
 			slide,
 		)
 		friendly := sprites.renderer_vector_lerp(
-			battle_friendly_start(),
-			defs.BATTLE.positions.friendly_standin,
+			battle_friendly_start(force_base),
+			force_base,
 			slide,
 		)
 		sprites.renderer_draw_unit_info_box(
@@ -160,18 +229,34 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 			defs.BATTLE.positions.friendly_stats,
 			alpha,
 		)
-		sprites.renderer_draw_battle_standin(
+		idle_index := game.state_scratch.delay.current_index
+		debug_draw := game.renderer.debug_draw
+		battle_draw_combatant(
 			scale,
 			game_pkg.attack_context_monster(&game.contexts.attack_context),
+			&game.contexts.attack_context.monster_sprites,
 			unfriendly,
 			alpha,
+			idle_index,
+			0,
+			0,
+			0,
+			0,
+			debug_draw,
 		)
 		sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
-		sprites.renderer_draw_battle_standin(
+		battle_draw_combatant(
 			scale,
 			game_pkg.attack_context_force_member(&game.contexts.attack_context),
+			&game.contexts.attack_context.force_sprites,
 			friendly,
 			alpha,
+			idle_index,
+			0,
+			0,
+			0,
+			0,
+			debug_draw,
 		)
 		return
 	}
@@ -210,7 +295,17 @@ battle_resolution_update :: proc(game: ^game_pkg.Game) {
 
 	timers.delay_tick(&game.state_scratch.delay)
 	game.state_scratch.resolution_frame += 1
-	if game.state_scratch.resolution_frame > defs.BATTLE.transition_frames {
+	limit := battle_sequence_limit(game)
+	hold := defs.BATTLE.transition_frames
+	if limit > 0 {
+		if game.state_scratch.resolution_frame > limit + hold {
+			state_change(game, .ExitBattleScreen)
+		}
+
+		return
+	}
+
+	if game.state_scratch.resolution_frame > hold {
 		state_change(game, .ExitBattleScreen)
 	}
 }
@@ -253,20 +348,47 @@ battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	force := game_pkg.attack_context_force_member(&game.contexts.attack_context)
 	sprites.renderer_draw_unit_info_box(scale, monster, defs.BATTLE.positions.unfriendly_stats)
 	sprites.renderer_draw_unit_info_box(scale, force, defs.BATTLE.positions.friendly_stats)
-	jitter := battle_resolution_jitter(game)
-	unfriendly := defs.BATTLE.positions.unfriendly_standin
-	friendly := defs.BATTLE.positions.friendly_standin
-	if game.state_scratch.resolution_frame < defs.BATTLE.attack_pose_frames {
-		friendly.x -= 8
-		unfriendly.x += 8
+	frame := game.state_scratch.resolution_frame
+	standin_dx := f32(0)
+	jitter := 0
+	if frame < defs.BATTLE.attack_pose_frames {
+		standin_dx = 8
+		jitter = battle_resolution_jitter(game)
 	}
 
+	limit := battle_sequence_limit(game)
+	idle_index := game.state_scratch.delay.current_index
+	debug_draw := game.renderer.debug_draw
 	if monster != nil && !unit_pkg.is_dead(monster) {
-		sprites.renderer_draw_battle_standin(scale, monster, unfriendly, 255, jitter)
+		battle_draw_combatant(
+			scale,
+			monster,
+			&game.contexts.attack_context.monster_sprites,
+			game.contexts.attack_context.monster_sprites.base_position,
+			255,
+			idle_index,
+			frame,
+			limit,
+			standin_dx,
+			jitter,
+			debug_draw,
+		)
 	}
 
 	if force != nil && !unit_pkg.is_dead(force) {
-		sprites.renderer_draw_battle_standin(scale, force, friendly, 255)
+		battle_draw_combatant(
+			scale,
+			force,
+			&game.contexts.attack_context.force_sprites,
+			game.contexts.attack_context.force_sprites.base_position,
+			255,
+			idle_index,
+			frame,
+			limit,
+			-standin_dx,
+			0,
+			debug_draw,
+		)
 	}
 }
 
@@ -378,13 +500,22 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 		alpha := int(255 * (1 - eased * 2))
 		foreground := defs.BATTLE.positions.foreground
 		sprites.renderer_draw_battle_background(scale, alpha)
+		idle_index := game.state_scratch.delay.current_index
+		debug_draw := game.renderer.debug_draw
 		if game.state_scratch.battle_item_mode {
 			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
-			sprites.renderer_draw_battle_standin(
+			battle_draw_combatant(
 				scale,
 				game.contexts.item_context.caster,
-				defs.BATTLE.positions.friendly_standin,
+				&game.contexts.item_context.caster_sprites,
+				game.contexts.item_context.caster_sprites.base_position,
 				alpha,
+				idle_index,
+				0,
+				0,
+				0,
+				0,
+				debug_draw,
 			)
 			sprites.renderer_draw_unit_info_box(
 				scale,
@@ -393,18 +524,32 @@ exit_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 				alpha,
 			)
 		} else if game.contexts.attack_context.active {
-			sprites.renderer_draw_battle_standin(
+			battle_draw_combatant(
 				scale,
 				game_pkg.attack_context_monster(&game.contexts.attack_context),
-				defs.BATTLE.positions.unfriendly_standin,
+				&game.contexts.attack_context.monster_sprites,
+				game.contexts.attack_context.monster_sprites.base_position,
 				alpha,
+				idle_index,
+				0,
+				0,
+				0,
+				0,
+				debug_draw,
 			)
 			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
-			sprites.renderer_draw_battle_standin(
+			battle_draw_combatant(
 				scale,
 				game_pkg.attack_context_force_member(&game.contexts.attack_context),
-				defs.BATTLE.positions.friendly_standin,
+				&game.contexts.attack_context.force_sprites,
+				game.contexts.attack_context.force_sprites.base_position,
 				alpha,
+				idle_index,
+				0,
+				0,
+				0,
+				0,
+				debug_draw,
 			)
 		} else {
 			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
@@ -476,6 +621,7 @@ use_consumable_battle_update :: proc(game: ^game_pkg.Game) {
 		log.panic("game is nil.")
 	}
 
+	timers.delay_tick(&game.state_scratch.delay)
 	game.state_scratch.resolution_frame += 1
 	game.state_scratch.battle_progress += 1 / f32(defs.BATTLE.transition_frames)
 	if game.state_scratch.battle_progress >= 1 {
@@ -493,7 +639,21 @@ use_consumable_battle_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	sprites.renderer_draw_battle_background(scale, 255)
 	sprites.renderer_draw_battle_foreground(scale, defs.BATTLE.positions.foreground, 255)
 	caster := game.contexts.item_context.caster
-	sprites.renderer_draw_battle_standin(scale, caster, defs.BATTLE.positions.friendly_standin)
+	idle_index := game.state_scratch.delay.current_index
+	debug_draw := game.renderer.debug_draw
+	battle_draw_combatant(
+		scale,
+		caster,
+		&game.contexts.item_context.caster_sprites,
+		game.contexts.item_context.caster_sprites.base_position,
+		255,
+		idle_index,
+		0,
+		0,
+		0,
+		0,
+		debug_draw,
+	)
 	sprites.renderer_draw_unit_info_box(scale, caster, defs.BATTLE.positions.friendly_stats)
 	if game.contexts.item_context.target_count > 0 {
 		target := game.contexts.item_context.targets[0]
@@ -501,7 +661,7 @@ use_consumable_battle_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 			sprites.renderer_draw_battle_standin(
 				scale,
 				target,
-				defs.BATTLE.positions.unfriendly_standin,
+				sprites.battle_sprite_position(target, defs.BATTLE.positions.unfriendly_standin),
 			)
 			sprites.renderer_draw_unit_info_box(
 				scale,

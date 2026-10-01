@@ -165,7 +165,7 @@ program_load_graphics :: proc() {
 }
 
 @(private)
-program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather: ^unit_pkg.Unit) {
+program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, law_professor: ^unit_pkg.Unit) {
 	if session == nil {
 		log.panic("session is nil.")
 	}
@@ -174,7 +174,7 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 	data.init()
 	hale = data.make_unit(.Hale)
 	judy = data.make_unit(.Judy)
-	bellweather = data.make_unit(.Bellweather)
+	law_professor = data.make_unit(.LawProfessor)
 
 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
 	unit_pkg.add_item(hale, .Hotdog)
@@ -183,10 +183,12 @@ program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, bellweather:
 	unit_pkg.learn_spell(judy, .Heal1)
 	unit_pkg.learn_spell(judy, .Blaze1)
 
+	law_professor.hp.current = 1
+
 	game.game_add_unit(session, hale, 3, 1)
 	game.game_add_unit(session, judy, 2, 1)
-	game.game_add_unit(session, bellweather, 3, 2)
-	return hale, judy, bellweather
+	game.game_add_unit(session, law_professor, 3, 2)
+	return hale, judy, law_professor
 }
 
 @(private)

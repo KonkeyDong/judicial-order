@@ -202,6 +202,7 @@ game_destroy :: proc(game: ^Game) {
 		log.panic("game is nil.")
 	}
 
+	state_contexts_reset(&game.contexts)
 	grid_destroy(&game.grid)
 	sprites.renderer_destroy(&game.renderer)
 

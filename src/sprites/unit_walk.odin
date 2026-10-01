@@ -7,7 +7,6 @@ import "core:path/filepath"
 import "../defs"
 import "../unit"
 
-@(private = "file")
 join_path :: proc(elems: []string) -> string {
 	path, _ := filepath.join(elems, context.temp_allocator)
 	return path

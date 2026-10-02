@@ -194,8 +194,8 @@ test_battle_sprite_position_law_professor :: proc(test: ^testing.T) {
 		"LawProfessor_Unpromoted_Unarmed",
 	)
 	pos := battle_sprite_position(&professor, {0, 0})
-	testing.expect_value(test, pos.x, f32(50))
-	testing.expect_value(test, pos.y, f32(75))
+	testing.expect_value(test, pos.x, f32(40))
+	testing.expect_value(test, pos.y, f32(50))
 
 	hale: unit.Unit
 	hale.name = .Hale
@@ -212,6 +212,32 @@ test_battle_sprite_position_law_professor :: proc(test: ^testing.T) {
 	missing := battle_sprite_position(&hale, fallback)
 	testing.expect_value(test, missing.x, fallback.x)
 	testing.expect_value(test, missing.y, fallback.y)
+}
+
+@(test)
+test_law_professor_overworld_walk_set :: proc(test: ^testing.T) {
+	professor: unit.Unit
+	professor.name = .LawProfessor
+	dir := unit_overworld_dir(&professor)
+	testing.expect_value(test, dir, "assets/sprites/monsters/law_professor/overworld")
+	testing.expect(test, structured_walk_complete(dir))
+
+	frames := extract_frames(join_path({dir, "frame_data.json"}))
+	defer delete(frames)
+	testing.expect_value(test, len(frames), 2)
+	if len(frames) > 1 {
+		testing.expect_value(test, frames[0].w, 24)
+		testing.expect_value(test, frames[0].h, 24)
+		testing.expect_value(test, frames[1].x, 24)
+		testing.expect_value(test, frames[1].w, 24)
+		testing.expect_value(test, frames[1].h, 24)
+	}
+
+	hale: unit.Unit
+	hale.name = .Hale
+	hale.friendly = true
+	hale.equipped_weapon_index = defs.UNARMED_INDEX
+	testing.expect(test, !structured_walk_complete(unit_overworld_dir(&hale)))
 }
 
 @(test)

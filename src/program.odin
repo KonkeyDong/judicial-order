@@ -165,7 +165,11 @@ program_load_graphics :: proc() {
 }
 
 @(private)
-program_add_test_units :: proc(session: ^game.Game) -> (hale, judy, law_professor: ^unit_pkg.Unit) {
+program_add_test_units :: proc(
+	session: ^game.Game,
+) -> (
+	hale, judy, law_professor: ^unit_pkg.Unit,
+) {
 	if session == nil {
 		log.panic("session is nil.")
 	}

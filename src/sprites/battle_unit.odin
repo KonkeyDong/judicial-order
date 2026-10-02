@@ -162,7 +162,8 @@ battle_build_normal_attack_scene :: proc(
 	}
 
 	if hit && defender_killed {
-		hold := defs.ANIMATIONS.dissolve.number_of_frame_copies * defs.ANIMATIONS.dissolve.group_size
+		hold :=
+			defs.ANIMATIONS.dissolve.number_of_frame_copies * defs.ANIMATIONS.dissolve.group_size
 		last_attack, attack_ok := battle_attack_frame(attacker_set, last)
 		if attack_ok {
 			battle_append_copies(attacker_set, last_attack, hold, false)
@@ -238,9 +239,7 @@ battle_load_sheet :: proc(png_path, json_path: string) -> [dynamic]Sprite {
 }
 
 @(private)
-battle_append_attacker_idle_prefix :: proc(
-	attacker_set, defender_set: ^Battle_Unit_Sprite_Set,
-) {
+battle_append_attacker_idle_prefix :: proc(attacker_set, defender_set: ^Battle_Unit_Sprite_Set) {
 	if attacker_set == nil {
 		log.panic("attacker_set is nil.")
 	}
@@ -263,7 +262,12 @@ battle_append_attacker_idle_prefix :: proc(
 }
 
 @(private)
-battle_append_copies :: proc(set: ^Battle_Unit_Sprite_Set, sprite: Sprite, count: int, invert: bool) {
+battle_append_copies :: proc(
+	set: ^Battle_Unit_Sprite_Set,
+	sprite: Sprite,
+	count: int,
+	invert: bool,
+) {
 	if set == nil {
 		log.panic("set is nil.")
 	}

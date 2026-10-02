@@ -76,7 +76,8 @@ battle_draw_combatant :: proc(
 		log.panic("set is nil.")
 	}
 
-	playing := sequence_limit > 0 && sequence_index < sequence_limit && len(set.battle_sequence) > 0
+	playing :=
+		sequence_limit > 0 && sequence_index < sequence_limit && len(set.battle_sequence) > 0
 	if playing {
 		if sprite, ok := sprites.battle_sequence_frame(set, sequence_index); ok {
 			sprites.renderer_draw(scale, sprite, position, alpha, debug_draw)
@@ -176,11 +177,7 @@ enter_battle_screen_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	if game.state_scratch.battle_item_mode {
 		caster := game.contexts.item_context.caster
 		caster_base := game.contexts.item_context.caster_sprites.base_position
-		pos := sprites.renderer_vector_lerp(
-			battle_friendly_start(caster_base),
-			caster_base,
-			slide,
-		)
+		pos := sprites.renderer_vector_lerp(battle_friendly_start(caster_base), caster_base, slide)
 		sprites.renderer_draw_unit_info_box(
 			scale,
 			caster,

@@ -164,36 +164,36 @@ program_load_graphics :: proc() {
 	sprites.battle_planes_load()
 }
 
-@(private)
-program_add_test_units :: proc(
-	session: ^game.Game,
-) -> (
-	hale, judy, law_professor: ^unit_pkg.Unit,
-) {
-	if session == nil {
-		log.panic("session is nil.")
-	}
+// @(private)
+// program_add_test_units :: proc(
+// 	session: ^game.Game,
+// ) -> (
+// 	hale, judy, law_professor: ^unit_pkg.Unit,
+// ) {
+// 	if session == nil {
+// 		log.panic("session is nil.")
+// 	}
 
-	catalog.init()
-	data.init()
-	hale = data.make_unit(.Hale)
-	judy = data.make_unit(.Judy)
-	law_professor = data.make_unit(.LawProfessor)
+// 	catalog.init()
+// 	data.init()
+// 	hale = data.make_unit(.Hale)
+// 	judy = data.make_unit(.Judy)
+// 	law_professor = data.make_unit(.LawProfessor)
 
-	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
-	unit_pkg.add_item(hale, .Hotdog)
-	unit_pkg.add_item(hale, .Caviar)
-	unit_pkg.add_item(hale, .FoisGras)
-	unit_pkg.learn_spell(judy, .Heal1)
-	unit_pkg.learn_spell(judy, .Blaze1)
+// 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
+// 	unit_pkg.add_item(hale, .Hotdog)
+// 	unit_pkg.add_item(hale, .Caviar)
+// 	unit_pkg.add_item(hale, .FoisGras)
+// 	unit_pkg.learn_spell(judy, .Heal1)
+// 	unit_pkg.learn_spell(judy, .Blaze1)
 
-	law_professor.hp.current = 1
+// 	law_professor.hp.current = 1
 
-	game.game_add_unit(session, hale, 3, 1)
-	game.game_add_unit(session, judy, 2, 1)
-	game.game_add_unit(session, law_professor, 3, 2)
-	return hale, judy, law_professor
-}
+// 	game.game_add_unit(session, hale, 3, 1)
+// 	game.game_add_unit(session, judy, 2, 1)
+// 	game.game_add_unit(session, law_professor, 3, 2)
+// 	return hale, judy, law_professor
+// }
 
 @(private)
 program_update :: proc(session: ^game.Game) {

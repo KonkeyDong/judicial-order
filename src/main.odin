@@ -10,6 +10,8 @@ import "sprites"
 import "state"
 import unit_pkg "unit"
 import rl "vendor:raylib"
+import "catalog"
+import "data"
 
 main :: proc() {
 	context.logger = log.create_console_logger()
@@ -37,10 +39,30 @@ main :: proc() {
 	defer game.game_destroy(&session)
 	program_apply_debug_draw(&session)
 
-	hale, judy, bellweather := program_add_test_units(&session)
+	// hale, judy, bellweather := program_add_test_units(&session)
+
+	catalog.init()
+	data.init()
+	hale := data.make_unit(.Hale)
+	judy := data.make_unit(.Judy)
+	monster := data.make_unit(.LawStudent)
+
+	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
+	unit_pkg.add_item(hale, .Hotdog)
+	unit_pkg.add_item(hale, .Caviar)
+	unit_pkg.add_item(hale, .FoisGras)
+	unit_pkg.learn_spell(judy, .Heal1)
+	unit_pkg.learn_spell(judy, .Blaze1)
+
+	monster.hp.current = 1
+
+	game.game_add_unit(&session, hale, 3, 1)
+	// game.game_add_unit(session, judy, 2, 1)
+	game.game_add_unit(&session, monster, 3, 2)
+
 	defer unit_pkg.destroy(hale)
 	defer unit_pkg.destroy(judy)
-	defer unit_pkg.destroy(bellweather)
+	defer unit_pkg.destroy(monster)
 	state.state_enter(&session)
 
 	for !rl.WindowShouldClose() {

@@ -285,6 +285,7 @@ Prompt_Action :: enum {
 	TradeItem,
 }
 
+<<<<<<< Updated upstream
 Command_Icon :: enum {
 	Yes,
 	No,
@@ -317,6 +318,8 @@ Use_Mode :: enum {
 	SpellItem,
 }
 
+=======
+>>>>>>> Stashed changes
 // Battle states only. Mirrors src/state/state.odin Kind.
 State_Kind :: enum {
 	UnitMoving,

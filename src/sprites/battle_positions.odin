@@ -18,7 +18,10 @@ Battle_Sprite_Position :: struct {
 }
 
 // Key is Name_Promoted|Unpromoted_Weapon. battle_sprite_position looks a unit up in this table.
-BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position{{"LawProfessor_Unpromoted_Unarmed", {40, 50}}}
+BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position{
+	{"LawProfessor_Unpromoted_Unarmed", {40, 50}},
+	{"LawStudent_Unpromoted_Unarmed", {30, 55}}
+}
 
 @(private)
 battle_sprite_position_key :: proc(target: ^unit.Unit) -> string {

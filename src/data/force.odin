@@ -17,7 +17,10 @@ HALE_DATA :: unit.Unit_Data {
 	friendly      = true,
 	level         = 1,
 	default_job   = {.Swordsman},
+<<<<<<< Updated upstream
 	attack_effect = .NormalAttack,
+=======
+>>>>>>> Stashed changes
 }
 
 JUDY_DATA :: unit.Unit_Data {
@@ -32,6 +35,7 @@ JUDY_DATA :: unit.Unit_Data {
 	friendly      = true,
 	level         = 1,
 	default_job   = {.Mage},
+<<<<<<< Updated upstream
 	attack_effect = .NormalAttack,
 }
 
@@ -78,24 +82,32 @@ BELLWEATHER_DATA :: unit.Unit_Data {
 	level         = 1,
 	default_job   = {.Monster},
 	attack_effect = .NormalAttack,
+=======
+>>>>>>> Stashed changes
 }
 
 init :: proc() {
 }
 
 unit_get :: proc(name: defs.Name) -> unit.Unit_Data {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	#partial switch name {
 	case .Hale:
 		return HALE_DATA
 	case .Judy:
 		return JUDY_DATA
+<<<<<<< Updated upstream
 	case .Trudy:
 		return TRUDY_DATA
 	case .Anthony:
 		return ANTHONY_DATA
 	case .Bellweather:
 		return BELLWEATHER_DATA
+=======
+>>>>>>> Stashed changes
 	}
 
 	log.warnf("UnitDatabase.Get(): No data for [%v]. Using default template.", name)

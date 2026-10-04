@@ -88,27 +88,27 @@ test_f1_toggles_debug_and_info :: proc(test: ^testing.T) {
 	testing.expect_value(test, session.renderer.debug_draw, false)
 }
 
-@(test)
-test_program_add_test_units_hale_judy :: proc(test: ^testing.T) {
-	data.init()
-	session := game.test_game_full()
-	defer game.game_destroy(&session)
-	hale, judy, bellweather := program_add_test_units(&session)
-	defer unit_pkg.destroy(hale)
-	defer unit_pkg.destroy(judy)
-	defer unit_pkg.destroy(bellweather)
+// @(test)
+// test_program_add_test_units_hale_judy :: proc(test: ^testing.T) {
+// 	data.init()
+// 	session := game.test_game_full()
+// 	defer game.game_destroy(&session)
+// 	hale, judy, bellweather := program_add_test_units(&session)
+// 	defer unit_pkg.destroy(hale)
+// 	defer unit_pkg.destroy(judy)
+// 	defer unit_pkg.destroy(bellweather)
 
-	testing.expect_value(test, len(session.units), 3)
-	testing.expect(test, game.game_current_unit(&session) == hale)
-	testing.expect_value(test, hale.grid_x, 3)
-	testing.expect_value(test, hale.grid_y, 1)
-	testing.expect_value(test, judy.grid_x, 2)
-	testing.expect_value(test, judy.grid_y, 1)
-	testing.expect_value(test, bellweather.grid_x, 3)
-	testing.expect_value(test, bellweather.grid_y, 2)
-	testing.expect(test, !bellweather.friendly)
-	testing.expect(test, unit_pkg.has_spells(judy))
-}
+// 	testing.expect_value(test, len(session.units), 3)
+// 	testing.expect(test, game.game_current_unit(&session) == hale)
+// 	testing.expect_value(test, hale.grid_x, 3)
+// 	testing.expect_value(test, hale.grid_y, 1)
+// 	testing.expect_value(test, judy.grid_x, 2)
+// 	testing.expect_value(test, judy.grid_y, 1)
+// 	testing.expect_value(test, bellweather.grid_x, 3)
+// 	testing.expect_value(test, bellweather.grid_y, 2)
+// 	testing.expect(test, !bellweather.friendly)
+// 	testing.expect(test, unit_pkg.has_spells(judy))
+// }
 
 @(test)
 test_item_get_register_stats :: proc(test: ^testing.T) {

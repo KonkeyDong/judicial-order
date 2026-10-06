@@ -175,6 +175,7 @@ Name :: enum {
 	LawProfessor,
 	DeanOfLaw,
 	Bailiff,
+	Sheriff,
 }
 
 Item_Type :: enum {

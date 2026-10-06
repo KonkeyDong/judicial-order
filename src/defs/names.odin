@@ -22,6 +22,8 @@ name_display :: proc(name: Name) -> string {
 		return "Dean of Law"
 	case .Bailiff:
 		return "Bailiff"
+	case .Sheriff:
+		return "Sheriff"
 	}
 
 	return "Unknown"

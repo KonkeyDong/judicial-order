@@ -4,14 +4,14 @@ import "core:log"
 import "core:mem"
 import "core:os"
 
+import "catalog"
+import "data"
 import "defs"
 import "game"
 import "sprites"
 import "state"
 import unit_pkg "unit"
 import rl "vendor:raylib"
-import "data"
-import "catalog"
 
 main :: proc() {
 	context.logger = log.create_console_logger()
@@ -44,7 +44,7 @@ main :: proc() {
 	data.init()
 	hale := data.make_unit(.Hale)
 	judy := data.make_unit(.Judy)
-	monster := data.make_unit(.LawStudent)
+	monster := data.make_unit(.Sheriff)
 
 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
 	unit_pkg.add_item(hale, .Hotdog)

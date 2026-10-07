@@ -22,6 +22,7 @@ BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position {
 	{"LawProfessor_Unpromoted_Unarmed", {40, 50}},
 	{"LawStudent_Unpromoted_Unarmed", {30, 60}},
 	{"Sheriff_Unpromoted_Unarmed", {30, 45}},
+	{"Bailiff_Unpromoted_Unarmed", {30, 45}},
 }
 
 @(private)

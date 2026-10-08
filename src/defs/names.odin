@@ -24,6 +24,54 @@ name_display :: proc(name: Name) -> string {
 		return "Bailiff"
 	case .Sheriff:
 		return "Sheriff"
+	case .SupremeCourtJustice:
+		return "Supreme Court Justice"
+	case .CircuitJudge:
+		return "Circuit Judge"
+	case .DistrictJudge:
+		return "District Judge"
+	case .MagistrateJudge:
+		return "Magistrate Judge"
+	case .BankruptcyJudge:
+		return "Bankruptcy Judge"
+	case .AppellateJudge:
+		return "Appellate Judge"
+	case .Clerk:
+		return "Clerk"
+	case .CourtReporter:
+		return "Court Reporter"
+	case .Stenographers:
+		return "Stenographers"
+	case .ProbationOfficer:
+		return "Probation Officer"
+	case .Interpreter:
+		return "Interpreter"
+	case .LawLibrarian:
+		return "Law Librarian"
+	case .LegalSecretary:
+		return "Legal Secretary"
+	case .JuryConsultant:
+		return "Jury Consultant"
+	case .DistrictAttorney:
+		return "District Attorney"
+	case .CountyCommissioner:
+		return "County Commissioner"
+	case .Prosecutor:
+		return "Prosecutor"
+	case .Defense:
+		return "Defense"
+	case .CorporateAttorney:
+		return "Corporate Attorney"
+	case .FamilyLawAttorney:
+		return "Family Law Attorney"
+	case .PatentAttorney:
+		return "Patent Attorney"
+	case .ImmigrationAttorney:
+		return "Immigration Attorney"
+	case .PublicDefenseAttorney:
+		return "Public Defense Attorney"
+	case .JudgeAdvocateGeneral:
+		return "Judge Advocate General"
 	}
 
 	return "Unknown"

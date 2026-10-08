@@ -258,7 +258,7 @@ test_animate_deaths_with_dead_hale_reaches_judy_turn :: proc(test: ^testing.T) {
 
 	hale.hp.current = 0
 	state_change(&game, .AnimateUnitDeaths)
-	for _ in 0 ..< 40 {
+	for _ in 0 ..< 90 {
 		if game.state == .AnimateUnitDeaths {
 			state_update(&game)
 		} else {

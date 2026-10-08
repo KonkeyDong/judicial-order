@@ -79,6 +79,7 @@ State_Scratch :: struct {
 	battle_progress:       f32,
 	battle_item_mode:      bool,
 	death_direction_index: int,
+	death_frame_index:     int,
 	death_phase_done:      bool,
 	death_delay:           int,
 	resolution_frame:      int,

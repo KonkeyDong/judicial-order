@@ -195,6 +195,8 @@ Paths :: struct {
 	idle_png:               string,
 	attack_json:            string,
 	attack_png:             string,
+	effect_json:            string,
+	effect_png:             string,
 }
 
 PATHS :: Paths {
@@ -225,6 +227,8 @@ PATHS :: Paths {
 	idle_png               = "idle.png",
 	attack_json            = "attack.json",
 	attack_png             = "attack.png",
+	effect_json            = "effect.json",
+	effect_png             = "effect.png",
 }
 
 Give :: struct {

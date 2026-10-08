@@ -162,6 +162,7 @@ program_load_graphics :: proc() {
 	sprites.magic_icons_load()
 	sprites.command_icons_load()
 	sprites.battle_planes_load()
+	sprites.death_sprites_load()
 }
 
 // @(private)

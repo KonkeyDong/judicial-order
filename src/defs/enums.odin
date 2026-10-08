@@ -176,6 +176,33 @@ Name :: enum {
 	DeanOfLaw,
 	Bailiff,
 	Sheriff,
+
+	SupremeCourtJustice,
+	CircuitJudge,
+	DistrictJudge,
+	MagistrateJudge,
+	BankruptcyJudge,
+	AppellateJudge,
+	Clerk,
+
+	CourtReporter,
+	Stenographers,
+	ProbationOfficer,
+	Interpreter,
+	LawLibrarian,
+	LegalSecretary,
+	JuryConsultant,
+
+	DistrictAttorney,
+	CountyCommissioner,
+	Prosecutor,
+	Defense,
+	CorporateAttorney,
+	FamilyLawAttorney,
+	PatentAttorney,
+	ImmigrationAttorney,
+	PublicDefenseAttorney,
+	JudgeAdvocateGeneral,
 }
 
 Item_Type :: enum {

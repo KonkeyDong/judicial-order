@@ -49,6 +49,7 @@ destroy :: proc() {
 	}
 
 	delete(cache.textures)
+	death_sprites_destroy()
 	log.info("All sprites unloaded.")
 }
 

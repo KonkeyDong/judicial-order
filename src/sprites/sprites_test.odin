@@ -6,6 +6,24 @@ import "../defs"
 import "../unit"
 
 @(test)
+test_battle_field_death_has_eight_frames :: proc(test: ^testing.T) {
+	frames := extract_frames("assets/sprites/shared/effects/battle_field_death/effect.json")
+	defer delete(frames)
+	testing.expect_value(test, len(frames), 8)
+	if len(frames) != 8 {
+		return
+	}
+
+	testing.expect_value(test, frames[0].x, 0)
+	testing.expect_value(test, frames[0].y, 0)
+	testing.expect_value(test, frames[0].w, 24)
+	testing.expect_value(test, frames[0].h, 24)
+	testing.expect_value(test, frames[7].x, 168)
+	testing.expect_value(test, frames[7].w, 24)
+	testing.expect_value(test, frames[7].h, 24)
+}
+
+@(test)
 test_extract_frames_weasel_lawyer :: proc(test: ^testing.T) {
 	frames := extract_frames("assets/sprites/weasel_lawyer.json")
 	defer delete(frames)

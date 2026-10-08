@@ -1,6 +1,7 @@
 package defs
 
 import "core:reflect"
+import "core:log"
 
 name_display :: proc(name: Name) -> string {
 	switch name {
@@ -74,6 +75,7 @@ name_display :: proc(name: Name) -> string {
 		return "Judge Advocate General"
 	}
 
+	log.error("Unknown name found for display; returning 'Unknown'.")	
 	return "Unknown"
 }
 

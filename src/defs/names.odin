@@ -1,12 +1,14 @@
 package defs
 
-import "core:reflect"
 import "core:log"
+import "core:reflect"
 
 name_display :: proc(name: Name) -> string {
 	switch name {
 	case .Hale:
 		return "Hale"
+	case .Dale:
+		return "Dale"
 	case .Judy:
 		return "Judy"
 	case .Trudy:
@@ -15,6 +17,14 @@ name_display :: proc(name: Name) -> string {
 		return "Anthony"
 	case .Bellweather:
 		return "Bellweather"
+	case .Olivia:
+		return "Olivia"
+	case .Lexi:
+		return "Lexi"
+	case .Fanix:
+		return "Fanix"
+	case .Sirena:
+		return "Sirena"
 	case .LawStudent:
 		return "Law Student"
 	case .LawProfessor:
@@ -75,7 +85,7 @@ name_display :: proc(name: Name) -> string {
 		return "Judge Advocate General"
 	}
 
-	log.error("Unknown name found for display; returning 'Unknown'.")	
+	log.error("Unknown name found for display; returning 'Unknown'.")
 	return "Unknown"
 }
 

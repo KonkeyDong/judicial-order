@@ -165,10 +165,15 @@ Status_Effect :: enum {
 
 Name :: enum {
 	Hale,
+	Dale,
 	Judy,
 	Trudy,
 	Anthony,
 	Bellweather,
+	Olivia,
+	Lexi,
+	Fanix,
+	Sirena,
 
 	// enemies / monsters
 	LawStudent,
@@ -176,7 +181,6 @@ Name :: enum {
 	DeanOfLaw,
 	Bailiff,
 	Sheriff,
-
 	SupremeCourtJustice,
 	CircuitJudge,
 	DistrictJudge,
@@ -184,7 +188,6 @@ Name :: enum {
 	BankruptcyJudge,
 	AppellateJudge,
 	Clerk,
-
 	CourtReporter,
 	Stenographers,
 	ProbationOfficer,
@@ -192,7 +195,6 @@ Name :: enum {
 	LawLibrarian,
 	LegalSecretary,
 	JuryConsultant,
-
 	DistrictAttorney,
 	CountyCommissioner,
 	Prosecutor,

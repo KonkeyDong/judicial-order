@@ -39,7 +39,6 @@ main :: proc() {
 	defer game.game_destroy(&session)
 	program_apply_debug_draw(&session)
 
-	// hale, judy, bellweather := program_add_test_units(&session)
 	catalog.init()
 	data.init()
 	hale := data.make_unit(.Hale)

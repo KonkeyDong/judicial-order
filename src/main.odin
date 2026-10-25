@@ -43,7 +43,7 @@ main :: proc() {
 	data.init()
 	hale := data.make_unit(.Hale)
 	judy := data.make_unit(.Judy)
-	monster := data.make_unit(.Bailiff)
+	monster := data.make_unit(.SupremeCourtJustice)
 
 	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
 	unit_pkg.add_item(hale, .Hotdog)

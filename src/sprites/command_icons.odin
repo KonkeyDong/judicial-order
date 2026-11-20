@@ -13,7 +13,7 @@ command_icons_destroy :: proc() {
 }
 
 command_icons_load :: proc() {
-	icon_set_load(&command_icons)
+	icon_set_load(&command_icons, skip_missing = true)
 }
 
 command_icons_tick :: proc() {

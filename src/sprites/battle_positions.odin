@@ -19,6 +19,7 @@ Battle_Sprite_Position :: struct {
 
 // Key is Name_Promoted|Unpromoted_Weapon. battle_sprite_position looks a unit up in this table.
 BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position {
+	{"Sara_Unpromoted_Unarmed", {145, 50}},
 	{"LawProfessor_Unpromoted_Unarmed", {40, 50}},
 	{"LawStudent_Unpromoted_Unarmed", {30, 60}},
 	{"Sheriff_Unpromoted_Unarmed", {30, 45}},

@@ -14,7 +14,7 @@ magic_icons_destroy :: proc() {
 }
 
 magic_icons_load :: proc() {
-	icon_set_load(&magic_icons)
+	icon_set_load(&magic_icons, skip_missing = true)
 }
 
 magic_icons_tick :: proc() {

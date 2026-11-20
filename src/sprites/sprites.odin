@@ -102,7 +102,17 @@ frame_rect_from_json_object :: proc(obj: json.Object) -> (Frame_Rect, bool) {
 		return {}, false
 	}
 
-	return Frame_Rect{x = x, y = y, w = w, h = h}, true
+	// Missing offsetX / offsetY stay 0. json_object_int returns 0 when the key is absent.
+	offset_x, _ := json_object_int(src, {"offsetX", "offset_x"})
+	offset_y, _ := json_object_int(src, {"offsetY", "offset_y"})
+	return Frame_Rect {
+		x = x,
+		y = y,
+		w = w,
+		h = h,
+		offset_x = offset_x,
+		offset_y = offset_y,
+	}, true
 }
 
 @(private = "file")

@@ -11,6 +11,7 @@ test_name_file :: proc(test: ^testing.T) {
 	cases := [?]Case {
 		{"", ""},
 		{"Hale", "hale"},
+		{"Sara", "sara"},
 		{"LawStudent", "law_student"},
 		{"LawProfessor", "law_professor"},
 		{"SupremeCourtJustice", "supreme_court_justice"},
@@ -23,6 +24,7 @@ test_name_file :: proc(test: ^testing.T) {
 	}
 
 	testing.expect_value(test, name_file(name_base(.LawStudent)), "law_student")
+	testing.expect_value(test, name_file(name_base(.Sara)), "sara")
 }
 
 @(test)
@@ -132,6 +134,7 @@ test_name_display_and_base :: proc(test: ^testing.T) {
 		{.Lexi, "Lexi", "Lexi"},
 		{.Fanix, "Fanix", "Fanix"},
 		{.Sirena, "Sirena", "Sirena"},
+		{.Sara, "Sara", "Sara"},
 		{.LawStudent, "Law Student", "LawStudent"},
 		{.LawProfessor, "Law Professor", "LawProfessor"},
 		{.DeanOfLaw, "Dean of Law", "DeanOfLaw"},

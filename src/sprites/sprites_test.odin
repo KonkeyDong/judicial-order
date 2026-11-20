@@ -24,31 +24,6 @@ test_battle_field_death_has_eight_frames :: proc(test: ^testing.T) {
 }
 
 @(test)
-test_extract_frames_weasel_lawyer :: proc(test: ^testing.T) {
-	frames := extract_frames("assets/sprites/weasel_lawyer.json")
-	defer delete(frames)
-
-	testing.expect_value(test, len(frames), 2)
-	if len(frames) < 2 {
-		return
-	}
-
-	testing.expect_value(test, frames[0].x, 0)
-	testing.expect_value(test, frames[0].y, 0)
-	testing.expect_value(test, frames[0].w, 24)
-	testing.expect_value(test, frames[0].h, 24)
-	testing.expect_value(test, frames[0].offset_x, 0)
-	testing.expect_value(test, frames[0].offset_y, 0)
-
-	testing.expect_value(test, frames[1].x, 24)
-	testing.expect_value(test, frames[1].y, 0)
-	testing.expect_value(test, frames[1].w, 24)
-	testing.expect_value(test, frames[1].h, 24)
-	testing.expect_value(test, frames[1].offset_x, 0)
-	testing.expect_value(test, frames[1].offset_y, 0)
-}
-
-@(test)
 test_extract_frames_item_icons :: proc(test: ^testing.T) {
 	frames := extract_frames("assets/sprites/shared/item_icons/FrameData.json")
 	defer delete(frames)
@@ -199,7 +174,25 @@ test_extract_frames_law_professor_battle :: proc(test: ^testing.T) {
 		testing.expect_value(test, attack[1].x, 72)
 		testing.expect_value(test, attack[1].w, 72)
 		testing.expect_value(test, attack[1].h, 96)
+		testing.expect_value(test, attack[0].offset_x, 0)
+		testing.expect_value(test, attack[0].offset_y, 0)
 	}
+}
+
+@(test)
+test_extract_frames_sara_attack_offsets :: proc(test: ^testing.T) {
+	frames := extract_frames("assets/sprites/heroes/sara/battle/attack.json")
+	defer delete(frames)
+	testing.expect(test, len(frames) > 0)
+	if len(frames) == 0 {
+		return
+	}
+
+	testing.expect_value(test, frames[0].x, 0)
+	testing.expect_value(test, frames[0].w, 92)
+	testing.expect_value(test, frames[0].h, 125)
+	testing.expect_value(test, frames[0].offset_x, -27)
+	testing.expect_value(test, frames[0].offset_y, -2)
 }
 
 @(test)
@@ -254,8 +247,16 @@ test_law_professor_overworld_walk_set :: proc(test: ^testing.T) {
 	hale: unit.Unit
 	hale.name = .Hale
 	hale.friendly = true
-	hale.equipped_weapon_index = defs.UNARMED_INDEX
-	testing.expect(test, !structured_walk_complete(unit_overworld_dir(&hale)))
+	hale_dir := unit_overworld_dir(&hale)
+	testing.expect_value(test, hale_dir, "assets/sprites/heroes/hale/overworld")
+	testing.expect(test, !structured_walk_complete(hale_dir))
+
+	sara: unit.Unit
+	sara.name = .Sara
+	sara.friendly = true
+	sara_dir := unit_overworld_dir(&sara)
+	testing.expect_value(test, sara_dir, "assets/sprites/heroes/sara/overworld")
+	testing.expect(test, structured_walk_complete(sara_dir))
 }
 
 @(test)
@@ -271,11 +272,19 @@ test_battle_unit_dir_snake_case :: proc(test: ^testing.T) {
 	hale: unit.Unit
 	hale.name = .Hale
 	hale.friendly = true
-	hale.equipped_weapon_index = defs.UNARMED_INDEX
 	testing.expect_value(
 		test,
 		battle_unit_dir(&hale),
-		"assets/sprites/force/hale/unpromoted/battle/unarmed",
+		"assets/sprites/heroes/hale/battle",
+	)
+
+	sara: unit.Unit
+	sara.name = .Sara
+	sara.friendly = true
+	testing.expect_value(
+		test,
+		battle_unit_dir(&sara),
+		"assets/sprites/heroes/sara/battle",
 	)
 }
 
@@ -295,6 +304,28 @@ test_battle_sequence_paces_attack_sheet :: proc(test: ^testing.T) {
 	testing.expect_value(test, len(attacker.battle_sequence), 2)
 	testing.expect_value(test, len(defender.battle_sequence), 2)
 	testing.expect_value(test, attacker.battle_sequence[1].frame.x, 72)
+}
+
+@(test)
+test_battle_sequence_kill_adds_dissolve :: proc(test: ^testing.T) {
+	attacker: Battle_Unit_Sprite_Set
+	defender: Battle_Unit_Sprite_Set
+	defer battle_unit_sprite_set_reset(&attacker)
+	defer battle_unit_sprite_set_reset(&defender)
+
+	append(&attacker.attack, Sprite{frame = {w = 72, h = 96}})
+	append(&attacker.attack, Sprite{frame = {x = 72, w = 72, h = 96}})
+	append(&defender.idle, Sprite{frame = {w = 72, h = 96}})
+
+	old_logger := context.logger
+	context.logger = {}
+	frame := battle_build_normal_attack_scene(&attacker, &defender, true, true, true)
+	context.logger = old_logger
+	dissolve_steps := defs.ANIMATIONS.dissolve.group_size
+	testing.expect_value(test, frame, 1)
+	testing.expect_value(test, len(attacker.battle_sequence), 2 + dissolve_steps)
+	testing.expect_value(test, len(defender.battle_sequence), 2 + dissolve_steps)
+	testing.expect_value(test, defender.battle_sequence[1].frame.w, 72)
 }
 
 @(test)

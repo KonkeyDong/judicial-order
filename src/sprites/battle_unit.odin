@@ -4,7 +4,6 @@ import "core:c"
 import "core:log"
 import "core:math/rand"
 import "core:os"
-import "core:reflect"
 
 import "../defs"
 import "../unit"
@@ -40,6 +39,10 @@ battle_unit_sprite_set_load :: proc(target: ^unit.Unit) -> Battle_Unit_Sprite_Se
 		join_path({dir, defs.PATHS.attack_png}),
 		join_path({dir, defs.PATHS.attack_json}),
 	)
+	if dir == "" || len(set.idle) == 0 || len(set.attack) == 0 {
+		log.panicf("Battle sprites missing for %s in %s.", defs.name_display(target.name), dir)
+	}
+
 	log.infof(
 		"Battle sprites for %s: idle %d, attack %d (%s).",
 		defs.name_display(target.name),
@@ -161,8 +164,9 @@ battle_build_normal_attack_scene :: proc(
 	}
 
 	if hit && defender_killed {
-		hold :=
-			defs.ANIMATIONS.dissolve.number_of_frame_copies * defs.ANIMATIONS.dissolve.group_size
+		// Debug scrubbing steps one copy per dissolve stage. Live play holds each stage.
+		copies := 1 if debug_draw else defs.ANIMATIONS.dissolve.number_of_frame_copies
+		hold := copies * defs.ANIMATIONS.dissolve.group_size
 		last_attack, attack_ok := battle_attack_frame(attacker_set, last)
 		if attack_ok {
 			battle_append_copies(attacker_set, last_attack, hold, false)
@@ -170,7 +174,6 @@ battle_build_normal_attack_scene :: proc(
 
 		base, idle_ok := battle_idle_frame(defender_set, 0)
 		if idle_ok {
-			copies := defs.ANIMATIONS.dissolve.number_of_frame_copies
 			for step in 1 ..= defs.ANIMATIONS.dissolve.group_size {
 				dissolved := battle_sprite_dissolve(base, step)
 				battle_append_copies(defender_set, dissolved, copies, false)
@@ -193,13 +196,7 @@ battle_unit_dir :: proc(target: ^unit.Unit) -> string {
 	}
 
 	if target.friendly {
-		promo := defs.PATHS.promoted if unit.is_promoted(target) else defs.PATHS.unpromoted
-		weapon := defs.name_file(reflect.enum_string(unit.equipped_weapon_name(target)))
-		if weapon == "" {
-			return ""
-		}
-
-		return join_path({defs.PATHS.force_members, name, promo, defs.PATHS.battle, weapon})
+		return join_path({defs.PATHS.heroes, name, defs.PATHS.battle})
 	}
 
 	return join_path({defs.PATHS.monsters, name, defs.PATHS.battle})

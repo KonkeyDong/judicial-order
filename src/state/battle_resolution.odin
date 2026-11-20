@@ -103,6 +103,9 @@ battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 
 	rl.ClearBackground(rl.BLACK)
 	sprites.renderer_draw_battle_background(scale, 255)
+	if game.state == .BattleResolutionDebug {
+		sprites.renderer_draw_battle_debug_grid(scale)
+	}
 	sprites.renderer_draw_battle_foreground(scale, defs.BATTLE.positions.foreground, 255)
 	if !game.contexts.attack_context.active {
 		return
@@ -123,7 +126,10 @@ battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 	limit := battle_sequence_limit(game)
 	idle_index := game.state_scratch.delay.current_index
 	debug_draw := game.renderer.debug_draw
-	if monster != nil && !unit_pkg.is_dead(monster) {
+	// A killing blow is already applied, so the defender stays visible through
+	// the attack, inverted jitter, and dissolve. Idle is hidden once that ends.
+	sequence_playing := limit > 0 && frame < limit
+	if monster != nil && (sequence_playing || !unit_pkg.is_dead(monster)) {
 		battle_draw_combatant(
 			scale,
 			monster,
@@ -139,7 +145,7 @@ battle_resolution_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 		)
 	}
 
-	if force != nil && !unit_pkg.is_dead(force) {
+	if force != nil && (sequence_playing || !unit_pkg.is_dead(force)) {
 		battle_draw_combatant(
 			scale,
 			force,

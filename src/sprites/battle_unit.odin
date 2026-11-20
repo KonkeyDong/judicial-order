@@ -5,7 +5,6 @@ import "core:log"
 import "core:math/rand"
 import "core:os"
 import "core:reflect"
-import "core:strings"
 
 import "../defs"
 import "../unit"
@@ -188,14 +187,14 @@ battle_unit_dir :: proc(target: ^unit.Unit) -> string {
 		log.panic("target is nil.")
 	}
 
-	name := battle_snake_case(defs.name_base(target.name))
+	name := defs.name_file(defs.name_base(target.name))
 	if name == "" {
 		return ""
 	}
 
 	if target.friendly {
 		promo := defs.PATHS.promoted if unit.is_promoted(target) else defs.PATHS.unpromoted
-		weapon := battle_snake_case(reflect.enum_string(unit.equipped_weapon_name(target)))
+		weapon := defs.name_file(reflect.enum_string(unit.equipped_weapon_name(target)))
 		if weapon == "" {
 			return ""
 		}
@@ -204,17 +203,6 @@ battle_unit_dir :: proc(target: ^unit.Unit) -> string {
 	}
 
 	return join_path({defs.PATHS.monsters, name, defs.PATHS.battle})
-}
-
-@(private)
-battle_snake_case :: proc(raw: string) -> string {
-	snake, err := strings.to_snake_case(raw, context.temp_allocator)
-	if err != nil {
-		log.errorf("battle_snake_case: failed for %q.", raw)
-		return ""
-	}
-
-	return snake
 }
 
 @(private)

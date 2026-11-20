@@ -2,6 +2,7 @@ package defs
 
 import "core:log"
 import "core:reflect"
+import "core:strings"
 
 name_display :: proc(name: Name) -> string {
 	switch name {
@@ -93,6 +94,18 @@ name_base :: proc(name: Name) -> string {
 	return reflect.enum_string(name)
 }
 
+// name_file is the asset-path token for an enum identifier.
+// "LawStudent" becomes "law_student", the folder under assets/sprites/monsters.
+name_file :: proc(raw: string) -> string {
+	file, err := strings.to_snake_case(raw, context.temp_allocator)
+	if err != nil {
+		log.errorf("name_file: failed for %q.", raw)
+		return ""
+	}
+
+	return file
+}
+
 item_name_display :: proc(name: Item_Name) -> string {
 	if name == .NoItem {
 		return "NoItem"
@@ -105,7 +118,7 @@ item_name_display :: proc(name: Item_Name) -> string {
 	return spaced_camel(reflect.enum_string(name))
 }
 
-@(private = "file")
+@(private)
 spaced_camel :: proc(raw: string) -> string {
 	if len(raw) == 0 {
 		return raw
@@ -139,19 +152,4 @@ spaced_camel :: proc(raw: string) -> string {
 
 magic_family_base :: proc(family: Magic_Family) -> string {
 	return reflect.enum_string(family)
-}
-
-direction_walk_image :: proc(direction: Direction) -> string {
-	switch direction {
-	case .Up:
-		return "WalkUp.png"
-	case .Right:
-		return "WalkRight.png"
-	case .Down:
-		return "WalkDown.png"
-	case .Left:
-		return "WalkLeft.png"
-	}
-
-	return "WalkDown.png"
 }

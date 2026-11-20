@@ -20,7 +20,7 @@ asset_root :: proc(target: ^unit.Unit) -> string {
 		log.panic("target is nil.")
 	}
 
-	base := battle_snake_case(defs.name_base(target.name))
+	base := defs.name_file(defs.name_base(target.name))
 	if base == "" {
 		return ""
 	}
@@ -58,8 +58,8 @@ first_existing_path :: proc(paths: []string) -> (string, bool) {
 	return "", false
 }
 
-// Somber-Inertia names the sheet WalkDown.png and FrameData.json.
-// The exported law-professor set uses walk_down.png and frame_data.json.
+// Somber-Inertia names the sheet FrameData.json.
+// The exported sets use frame_data.json.
 @(private = "file")
 walk_json_path :: proc(overworld_dir: string) -> (string, bool) {
 	if overworld_dir == "" {
@@ -80,18 +80,13 @@ walk_png_path :: proc(overworld_dir: string, direction: defs.Direction) -> (stri
 		return "", false
 	}
 
-	snake := battle_snake_case(reflect.enum_string(direction))
-	exported := ""
-	if snake != "" {
-		exported = strings.concatenate({"walk_", snake, ".png"}, context.temp_allocator)
+	snake := defs.name_file(reflect.enum_string(direction))
+	if snake == "" {
+		return "", false
 	}
 
-	return first_existing_path(
-		{
-			join_path({overworld_dir, defs.direction_walk_image(direction)}),
-			join_path({overworld_dir, exported}),
-		},
-	)
+	filename := strings.concatenate({"walk_", snake, ".png"}, context.temp_allocator)
+	return first_existing_path({join_path({overworld_dir, filename})})
 }
 
 @(private)

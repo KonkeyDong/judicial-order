@@ -22,7 +22,7 @@ death_sprites_load :: proc() {
 		return
 	}
 
-	name := battle_snake_case(reflect.enum_string(defs.Attack_Effect.BattleFieldDeath))
+	name := defs.name_file(reflect.enum_string(defs.Attack_Effect.BattleFieldDeath))
 	dir := join_path({defs.PATHS.effects, name})
 	json_path := join_path({dir, defs.PATHS.effect_json})
 	png_path := join_path({dir, defs.PATHS.effect_png})

@@ -148,6 +148,16 @@ renderer_draw_units :: proc(
 	}
 }
 
+renderer_draw_battle_debug_grid :: proc(scale: f32) {
+	renderer_draw_debug_logical_grid(
+		scale,
+		defs.DEBUG.battle_grid_logical_spacing,
+		defs.DEBUG.battle_grid_color,
+		f32(defs.WINDOW.width) * scale,
+		f32(defs.WINDOW.height) * scale,
+	)
+}
+
 @(private = "file")
 renderer_draw_debug_logical_grid :: proc(
 	scale: f32,

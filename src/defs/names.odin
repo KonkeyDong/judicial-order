@@ -26,6 +26,8 @@ name_display :: proc(name: Name) -> string {
 		return "Fanix"
 	case .Sirena:
 		return "Sirena"
+	case .Sara:
+		return "Sara"
 	case .LawStudent:
 		return "Law Student"
 	case .LawProfessor:

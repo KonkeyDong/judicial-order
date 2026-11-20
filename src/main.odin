@@ -41,26 +41,26 @@ main :: proc() {
 
 	catalog.init()
 	data.init()
-	hale := data.make_unit(.Hale)
-	judy := data.make_unit(.Judy)
+	hero := data.make_unit(.Sara)
+	// judy := data.make_unit(.Judy)
 	monster := data.make_unit(.SupremeCourtJustice)
 
-	unit_pkg.add_item(hale, .SmallBriefcase, auto_equip_weapon = true)
-	unit_pkg.add_item(hale, .Hotdog)
-	unit_pkg.add_item(hale, .Caviar)
-	unit_pkg.add_item(hale, .FoisGras)
-	unit_pkg.learn_spell(judy, .Heal1)
-	unit_pkg.learn_spell(judy, .Blaze1)
+	unit_pkg.add_item(hero, .SmallBriefcase, auto_equip_weapon = true)
+	unit_pkg.add_item(hero, .Hotdog)
+	unit_pkg.add_item(hero, .Caviar)
+	unit_pkg.add_item(hero, .FoisGras)
+	// unit_pkg.learn_spell(judy, .Heal1)
+	// unit_pkg.learn_spell(judy, .Blaze1)
 
 	monster.hp.current = 1
 
-	game.game_add_unit(&session, hale, 3, 1)
+	game.game_add_unit(&session, hero, 3, 1)
 	// game.game_add_unit(session, judy, 2, 1)
 	game.game_add_unit(&session, monster, 3, 2)
 
 
-	defer unit_pkg.destroy(hale)
-	defer unit_pkg.destroy(judy)
+	defer unit_pkg.destroy(hero)
+	// defer unit_pkg.destroy(judy)
 	defer unit_pkg.destroy(monster)
 	state.state_enter(&session)
 

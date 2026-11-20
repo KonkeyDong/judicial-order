@@ -26,8 +26,7 @@ asset_root :: proc(target: ^unit.Unit) -> string {
 	}
 
 	if target.friendly {
-		promo := defs.PATHS.promoted if unit.is_promoted(target) else defs.PATHS.unpromoted
-		return join_path({defs.PATHS.force_members, base, promo})
+		return join_path({defs.PATHS.heroes, base})
 	}
 
 	return join_path({defs.PATHS.monsters, base})
@@ -117,29 +116,23 @@ load_unit_walk :: proc(target: ^unit.Unit) {
 
 	overworld_dir := unit_overworld_dir(target)
 	json_path, json_ok := walk_json_path(overworld_dir)
-	png_for_dir: [defs.Direction]string
-	use_placeholder := !json_ok
-	if !use_placeholder {
-		for direction in defs.Direction {
-			png, ok := walk_png_path(overworld_dir, direction)
-			if !ok {
-				use_placeholder = true
-				break
-			}
-
-			png_for_dir[direction] = png
-		}
+	if !json_ok {
+		log.panicf("Walk sprites missing for %s in %s.", defs.name_display(target.name), overworld_dir)
 	}
 
-	if use_placeholder {
-		log.warnf(
-			"load_walk_animations: incomplete walk set for %s; using placeholder.",
-			defs.name_display(target.name),
-		)
-		json_path = defs.PATHS.placeholder_json
-		for direction in defs.Direction {
-			png_for_dir[direction] = defs.PATHS.placeholder_png
+	png_for_dir: [defs.Direction]string
+	for direction in defs.Direction {
+		png, ok := walk_png_path(overworld_dir, direction)
+		if !ok {
+			log.panicf(
+				"Walk sprite missing for %s (%v) in %s.",
+				defs.name_display(target.name),
+				direction,
+				overworld_dir,
+			)
 		}
+
+		png_for_dir[direction] = png
 	}
 
 	frames := extract_frames(json_path)

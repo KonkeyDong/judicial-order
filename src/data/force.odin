@@ -35,6 +35,21 @@ JUDY_DATA :: unit.Unit_Data {
 	attack_effect = .NormalAttack,
 }
 
+SARA_DATA :: unit.Unit_Data {
+	name          = .Sara,
+	movement_type = .Warrior,
+	movement      = 5,
+	base_hp       = 10,
+	base_mp       = 12,
+	base_attack   = 3,
+	base_defense  = 4,
+	base_speed    = 6,
+	friendly      = true,
+	level         = 1,
+	default_job   = {.Mage},
+	attack_effect = .NormalAttack,
+}
+
 TRUDY_DATA :: unit.Unit_Data {
 	name          = .Trudy,
 	movement_type = .Warrior,
@@ -96,6 +111,8 @@ unit_get :: proc(name: defs.Name) -> unit.Unit_Data {
 		return ANTHONY_DATA
 	case .Bellweather:
 		return BELLWEATHER_DATA
+	case .Sara:
+		return SARA_DATA
 	}
 
 	log.warnf("UnitDatabase.Get(): No data for [%v]. Using default template.", name)

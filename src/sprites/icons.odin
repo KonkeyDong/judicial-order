@@ -47,7 +47,7 @@ icon_set_destroy :: proc(set: ^Icon_Set($Key)) {
 }
 
 @(private)
-icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := false) {
+icon_set_load :: proc(set: ^Icon_Set($Key), skip_missing := false) {
 	if set == nil {
 		log.panic("set is nil.")
 	}
@@ -64,7 +64,6 @@ icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := f
 	rects := frames
 	synthesized: [2]Frame_Rect
 	if len(frames) == 0 {
-		// Missing JSON must not panic; placeholder blink needs two weasel-lawyer rects.
 		synthesized[0] = Frame_Rect {
 			x = 0,
 			y = 0,
@@ -80,14 +79,6 @@ icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := f
 		rects = synthesized[:]
 	}
 
-	fallback := defs.PATHS.placeholder_png
-	if missing_png != "" {
-		candidate := strings.concatenate({set.root_path, "/", missing_png}, context.temp_allocator)
-		if os.exists(candidate) {
-			fallback = candidate
-		}
-	}
-
 	total_frames := 0
 	for key in Key {
 		png := strings.concatenate(
@@ -99,8 +90,7 @@ icon_set_load :: proc(set: ^Icon_Set($Key), missing_png := "", skip_missing := f
 				continue
 			}
 
-			log.warnf("icon_set_load: missing %s; using %s.", png, fallback)
-			png = fallback
+			log.panicf("icon_set_load: missing %s.", png)
 		}
 
 		tex := load(png)

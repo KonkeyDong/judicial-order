@@ -7,8 +7,8 @@ Frame_Rect :: struct {
 	y:        int `json:"y"`,
 	w:        int `json:"w"`,
 	h:        int `json:"h"`,
-	offset_x: int,
-	offset_y: int,
+	offset_x: int `json:"offsetX"`,
+	offset_y: int `json:"offsetY"`,
 }
 
 Sprite :: struct {

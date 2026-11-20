@@ -94,33 +94,39 @@ battle_end_draw :: proc(game: ^game_pkg.Game, scale: f32) {
 				alpha,
 			)
 		} else if game.contexts.attack_context.active {
-			battle_draw_combatant(
-				scale,
-				game_pkg.attack_context_monster(&game.contexts.attack_context),
-				&game.contexts.attack_context.monster_sprites,
-				game.contexts.attack_context.monster_sprites.base_position,
-				alpha,
-				idle_index,
-				0,
-				0,
-				0,
-				0,
-				debug_draw,
-			)
+			monster := game_pkg.attack_context_monster(&game.contexts.attack_context)
+			force := game_pkg.attack_context_force_member(&game.contexts.attack_context)
+			if monster != nil && !unit_pkg.is_dead(monster) {
+				battle_draw_combatant(
+					scale,
+					monster,
+					&game.contexts.attack_context.monster_sprites,
+					game.contexts.attack_context.monster_sprites.base_position,
+					alpha,
+					idle_index,
+					0,
+					0,
+					0,
+					0,
+					debug_draw,
+				)
+			}
 			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
-			battle_draw_combatant(
-				scale,
-				game_pkg.attack_context_force_member(&game.contexts.attack_context),
-				&game.contexts.attack_context.force_sprites,
-				game.contexts.attack_context.force_sprites.base_position,
-				alpha,
-				idle_index,
-				0,
-				0,
-				0,
-				0,
-				debug_draw,
-			)
+			if force != nil && !unit_pkg.is_dead(force) {
+				battle_draw_combatant(
+					scale,
+					force,
+					&game.contexts.attack_context.force_sprites,
+					game.contexts.attack_context.force_sprites.base_position,
+					alpha,
+					idle_index,
+					0,
+					0,
+					0,
+					0,
+					debug_draw,
+				)
+			}
 		} else {
 			sprites.renderer_draw_battle_foreground(scale, foreground, alpha)
 		}

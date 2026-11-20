@@ -174,6 +174,7 @@ Name :: enum {
 	Lexi,
 	Fanix,
 	Sirena,
+	Sara,
 
 	// enemies / monsters
 	LawStudent,

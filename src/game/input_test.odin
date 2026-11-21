@@ -2,6 +2,7 @@ package game
 
 import "core:testing"
 
+import "../defs"
 import rl "vendor:raylib"
 
 INPUT_TEST_KEY_CAP :: 8
@@ -112,6 +113,35 @@ test_cycle_nil_index :: proc(test: ^testing.T) {
 	defer {context.logger = old_logger}
 
 	testing.expect_value(test, input_try_cycle_index(nil, 3), false)
+}
+
+@(test)
+test_cardinal_direction_one_axis :: proc(test: ^testing.T) {
+	defer input_set_pressed(nil)
+	defer input_set_down(nil)
+
+	input_test_install_pressed({.UP, .RIGHT})
+	input_test_install_down({.UP, .RIGHT})
+	direction, ok := input_cardinal_direction()
+	testing.expect(test, ok)
+	testing.expect_value(test, direction, defs.Direction.Up)
+
+	input_test_install_pressed({.RIGHT})
+	input_test_install_down({.UP, .RIGHT})
+	direction, ok = input_cardinal_direction()
+	testing.expect(test, ok)
+	testing.expect_value(test, direction, defs.Direction.Right)
+
+	input_test_install_pressed({})
+	input_test_install_down({.UP})
+	direction, ok = input_cardinal_direction()
+	testing.expect(test, ok)
+	testing.expect_value(test, direction, defs.Direction.Up)
+
+	input_test_install_pressed({})
+	input_test_install_down({})
+	_, ok = input_cardinal_direction()
+	testing.expect(test, !ok)
 }
 
 @(test)

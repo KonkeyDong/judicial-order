@@ -2,6 +2,7 @@ package game
 
 import "core:log"
 
+import "../defs"
 import rl "vendor:raylib"
 
 Input_Query :: #type proc(key: rl.KeyboardKey) -> bool
@@ -43,6 +44,33 @@ input_key_down :: proc(key: rl.KeyboardKey) -> bool {
 	}
 
 	return rl.IsKeyDown(key)
+}
+
+// One map step. A key pressed this frame wins over a key that is only held.
+// Up, then Down, then Left, then Right.
+input_cardinal_direction :: proc() -> (direction: defs.Direction, ok: bool) {
+	pressed := [4]struct {
+		key: rl.KeyboardKey,
+		direction: defs.Direction,
+	} {
+		{.UP, .Up},
+		{.DOWN, .Down},
+		{.LEFT, .Left},
+		{.RIGHT, .Right},
+	}
+	for entry in pressed {
+		if input_key_pressed(entry.key) {
+			return entry.direction, true
+		}
+	}
+
+	for entry in pressed {
+		if input_key_down(entry.key) {
+			return entry.direction, true
+		}
+	}
+
+	return {}, false
 }
 
 input_confirm_press :: proc() -> bool {

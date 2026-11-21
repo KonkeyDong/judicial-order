@@ -276,6 +276,9 @@ test_move_in_direction :: proc(test: ^testing.T) {
 	testing.expect(test, hale.is_animating)
 	testing.expect_value(test, hale.start_world_position, origin_pixel)
 	testing.expect(test, !grid_move_unit_in_direction(&grid, hale, .Up))
+	testing.expect_value(test, hale.grid_x, 4)
+	testing.expect_value(test, hale.grid_y, 1)
+	testing.expect_value(test, hale.facing_direction, defs.Direction.Right)
 }
 
 @(test)

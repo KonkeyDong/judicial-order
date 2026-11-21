@@ -377,6 +377,10 @@ grid_move_unit_in_direction :: proc(
 		return false
 	}
 
+	if unit.is_animating {
+		return false
+	}
+
 	unit.facing_direction = direction
 	new_x, new_y := grid_coord_in_direction(unit.grid_x, unit.grid_y, direction)
 	if !grid_in_bounds(grid, new_x, new_y) {

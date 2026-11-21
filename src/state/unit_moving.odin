@@ -51,20 +51,8 @@ unit_moving_handle_input :: proc(game: ^game_pkg.Game) {
 		return
 	}
 
-	if game_pkg.input_key_pressed(.UP) {
-		game_pkg.grid_move_unit_in_direction(&game.grid, current, .Up)
-	}
-
-	if game_pkg.input_key_pressed(.DOWN) {
-		game_pkg.grid_move_unit_in_direction(&game.grid, current, .Down)
-	}
-
-	if game_pkg.input_key_pressed(.LEFT) {
-		game_pkg.grid_move_unit_in_direction(&game.grid, current, .Left)
-	}
-
-	if game_pkg.input_key_pressed(.RIGHT) {
-		game_pkg.grid_move_unit_in_direction(&game.grid, current, .Right)
+	if direction, ok := game_pkg.input_cardinal_direction(); ok {
+		game_pkg.grid_move_unit_in_direction(&game.grid, current, direction)
 	}
 
 	if game_pkg.input_confirm_press() {
@@ -86,8 +74,17 @@ unit_moving_update :: proc(game: ^game_pkg.Game) {
 	timers.flip_flop_tick(&game.overworld_idle_flip_flop)
 
 	current := game_pkg.game_current_unit(game)
-	if current != nil && current.is_animating {
-		unit_pkg.update_movement(current, rl.GetFrameTime())
+	if current == nil || !current.is_animating {
+		return
+	}
+
+	unit_pkg.update_movement(current, rl.GetFrameTime())
+	if current.is_animating {
+		return
+	}
+
+	if direction, ok := game_pkg.input_cardinal_direction(); ok {
+		game_pkg.grid_move_unit_in_direction(&game.grid, current, direction)
 	}
 }
 

@@ -1,15 +1,14 @@
 package state
 
 import "core:log"
+import "core:fmt"
 
 import game_pkg "../game"
-
-import "core:fmt"
+import unit_pkg "../unit"
 
 import "../defs"
 import "../sprites"
 import "../timers"
-import unit_pkg "../unit"
 
 @(private)
 calculate_unit_movement_range_enter :: proc(game: ^game_pkg.Game) {

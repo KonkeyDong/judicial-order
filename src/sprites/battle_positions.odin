@@ -19,12 +19,14 @@ Battle_Sprite_Position :: struct {
 
 // Key is Name_Promoted|Unpromoted_Weapon. battle_sprite_position looks a unit up in this table.
 BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position {
+	// "<name>_<promoted>", { X, Y }
 	{"Sara_Unpromoted_Unarmed", {145, 50}},
 	{"LawProfessor_Unpromoted_Unarmed", {40, 50}},
 	{"LawStudent_Unpromoted_Unarmed", {30, 60}},
 	{"Sheriff_Unpromoted_Unarmed", {30, 45}},
 	{"Bailiff_Unpromoted_Unarmed", {30, 45}},
 	{"SupremeCourtJustice_Unpromoted_Unarmed", {20, 20}},
+	{"HumanResources_Unpromoted_Unarmed", {30, 20}},
 }
 
 @(private)

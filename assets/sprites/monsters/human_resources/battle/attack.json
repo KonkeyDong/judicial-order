@@ -1,0 +1,83 @@
+{ "frames": [
+   {
+    "filename": "Sprite-0007 0.",
+    "frame": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 1.",
+    "frame": { "x": 60, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 2.",
+    "frame": { "x": 120, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 3.",
+    "frame": { "x": 180, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 4.",
+    "frame": { "x": 240, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 5.",
+    "frame": { "x": 300, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 6.",
+    "frame": { "x": 360, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "Sprite-0007 7.",
+    "frame": { "x": 420, "y": 0, "w": 60, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 128 },
+    "sourceSize": { "w": 60, "h": 128 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.17.2-arm64",
+  "image": "attack.png",
+  "format": "RGBA8888",
+  "size": { "w": 480, "h": 128 },
+  "scale": "1"
+ }
+}

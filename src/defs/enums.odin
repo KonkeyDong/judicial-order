@@ -206,6 +206,7 @@ Name :: enum {
 	ImmigrationAttorney,
 	PublicDefenseAttorney,
 	JudgeAdvocateGeneral,
+	HumanResources
 }
 
 Item_Type :: enum {

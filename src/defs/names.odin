@@ -86,6 +86,8 @@ name_display :: proc(name: Name) -> string {
 		return "Public Defense Attorney"
 	case .JudgeAdvocateGeneral:
 		return "Judge Advocate General"
+	case .HumanResources:
+		return "Human Resources"
 	}
 
 	log.error("Unknown name found for display; returning 'Unknown'.")

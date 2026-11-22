@@ -1,12 +1,12 @@
 package state
 
-import game_pkg "../game"
-
 import "core:log"
+
+import game_pkg "../game"
+import unit_pkg "../unit"
 
 import "../defs"
 import "../sprites"
-import unit_pkg "../unit"
 
 DEATH_DIRECTION_CYCLE := [12]defs.Direction {
 	.Up,

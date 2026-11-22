@@ -93,6 +93,7 @@ calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 		return
 	}
 
+	// Poison is always processed, even if unit is sleeping.
 	if game.state_scratch.is_poisoned {
 		game.state_scratch.is_poisoned = false
 		unit_pkg.process_poison(current)
@@ -103,6 +104,7 @@ calculate_unit_movement_range_update :: proc(game: ^game_pkg.Game) {
 		}
 	}
 
+	// if unit is sleeping, do not process any other status effects after (except for poison).
 	if game.state_scratch.is_sleeping {
 		game.state_scratch.is_sleeping = false
 		unit_pkg.process_sleep(current)

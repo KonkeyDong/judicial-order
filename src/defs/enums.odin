@@ -379,4 +379,6 @@ State_Kind :: enum {
 	GiveWhichItem,
 	GiveItemToWhom,
 	TradeWhichItemFromAdjacentNeighbor,
+	// Viewer launched by --sprite-demo. Not part of the battle flow.
+	SpriteDemo,
 }

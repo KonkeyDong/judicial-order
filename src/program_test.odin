@@ -1,6 +1,7 @@
 package main
 
 import "core:log"
+import "core:strings"
 import "core:testing"
 
 import "catalog"
@@ -15,6 +16,21 @@ test_parse_args_default_info :: proc(test: ^testing.T) {
 	options, ok := program_parse_args({"judicial-order"})
 	testing.expect(test, ok)
 	testing.expect_value(test, options.log_level, log.Level.Info)
+	testing.expect(test, !options.sprite_demo)
+	testing.expect(test, !options.help)
+}
+
+@(test)
+test_parse_args_sprite_demo :: proc(test: ^testing.T) {
+	options, ok := program_parse_args({"judicial-order", "--sprite-demo"})
+	testing.expect(test, ok)
+	testing.expect(test, options.sprite_demo)
+	testing.expect_value(test, options.log_level, log.Level.Info)
+
+	options, ok = program_parse_args({"judicial-order", "--logger", "debug", "--sprite-demo"})
+	testing.expect(test, ok)
+	testing.expect(test, options.sprite_demo)
+	testing.expect_value(test, options.log_level, log.Level.Debug)
 }
 
 @(test)
@@ -62,8 +78,36 @@ test_parse_args_unknown_flag :: proc(test: ^testing.T) {
 	context.logger = {}
 	defer {context.logger = old_logger}
 
-	_, ok := program_parse_args({"judicial-order", "--help"})
+	_, ok := program_parse_args({"judicial-order", "--nope"})
 	testing.expect(test, !ok)
+}
+
+@(test)
+test_parse_args_help :: proc(test: ^testing.T) {
+	options, ok := program_parse_args({"judicial-order", "--help"})
+	testing.expect(test, ok)
+	testing.expect(test, options.help)
+	testing.expect(test, !options.sprite_demo)
+	testing.expect_value(test, options.log_level, log.Level.Info)
+
+	options, ok = program_parse_args({"judicial-order", "-h"})
+	testing.expect(test, ok)
+	testing.expect(test, options.help)
+
+	options, ok = program_parse_args({"judicial-order", "--sprite-demo", "--help"})
+	testing.expect(test, ok)
+	testing.expect(test, options.help)
+
+	text := program_help_text("/tmp/judicial-order")
+	defer delete(text)
+	testing.expect(test, strings.contains(text, "Usage:\n  judicial-order [options]"))
+	testing.expect(test, strings.contains(text, "-h, --help"))
+	testing.expect(test, strings.contains(text, "--logger LEVEL"))
+	testing.expect(test, strings.contains(text, "--logger=LEVEL"))
+	testing.expect(test, strings.contains(text, "--sprite-demo"))
+	testing.expect(test, strings.contains(text, "debug, info, warning, error, fatal"))
+	testing.expect(test, strings.contains(text, "Sara"))
+	testing.expect(test, strings.contains(text, "judicial-order --help"))
 }
 
 @(test)

@@ -8,10 +8,16 @@ Made for education, not selling purposes. Gameplay is implemented without Unity,
 
 ```bash
 odin run src
+odin run src -- --help
 odin run src -- --logger debug
+odin run src -- --sprite-demo
 ```
 
-`--logger` / `-l` / `-d` set the log level: `debug`, `info` (default), `warning`, `error`.
+`-h` / `--help` prints the options and exits.
+
+`--logger` / `-l` / `-d` set the log level: `debug`, `info` (default), `warning`, `error`, `fatal`. `--logger=LEVEL` is the same option.
+
+`--sprite-demo` opens a sprite viewer on a gray checker, so transparent pixels stay visible. The Characters menu lists each battle sprite, and the Animation menu chooses Idle or Attack. The chosen sheet loops in the center. Sara’s idle sheet is the default. The flag can be combined with `--logger`.
 
 ## Controls
 

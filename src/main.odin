@@ -18,6 +18,11 @@ main :: proc() {
 	defer log.destroy_console_logger(context.logger)
 
 	options, parsed := program_parse_args(os.args)
+	if options.help {
+		program_print_help(os.args)
+		return
+	}
+
 	if !parsed {
 		return
 	}
@@ -58,6 +63,9 @@ main :: proc() {
 	// game.game_add_unit(session, judy, 2, 1)
 	game.game_add_unit(&session, monster, 3, 2)
 
+	if options.sprite_demo {
+		session.state = .SpriteDemo
+	}
 
 	defer unit_pkg.destroy(hero)
 	// defer unit_pkg.destroy(judy)

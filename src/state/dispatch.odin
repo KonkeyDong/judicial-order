@@ -227,6 +227,13 @@ STATE_TABLE := [defs.State_Kind]State_Procs {
 		update = trade_which_item_update,
 		draw = trade_which_item_draw,
 	},
+	.SpriteDemo = {
+		enter = sprite_demo_enter,
+		exit = sprite_demo_exit,
+		handle_input = sprite_demo_handle_input,
+		update = sprite_demo_update,
+		draw = sprite_demo_draw,
+	},
 }
 
 @(private)

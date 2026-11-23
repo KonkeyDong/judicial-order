@@ -341,3 +341,27 @@ test_battle_sequence_empty_without_attack_sheet :: proc(test: ^testing.T) {
 	testing.expect_value(test, len(attacker.battle_sequence), 0)
 	testing.expect_value(test, len(defender.battle_sequence), 0)
 }
+
+@(test)
+test_sprite_demo_sorts_names_and_animations :: proc(test: ^testing.T) {
+	entries := make([dynamic]Sprite_Demo_Entry)
+	defer delete(entries)
+	append(&entries, Sprite_Demo_Entry{name = .Sara, display = "Sara", hero = true})
+	append(&entries, Sprite_Demo_Entry{name = .Bailiff, display = "Bailiff", hero = false})
+	append(&entries, Sprite_Demo_Entry{name = .LawStudent, display = "Law Student", hero = false})
+	append(&entries, Sprite_Demo_Entry{name = .Sheriff, display = "Sheriff", hero = false})
+
+	sprite_demo_sort(entries[:])
+	testing.expect_value(test, entries[0].display, "Bailiff")
+	testing.expect_value(test, entries[1].display, "Law Student")
+	testing.expect_value(test, entries[2].display, "Sara")
+	testing.expect_value(test, entries[3].display, "Sheriff")
+	testing.expect_value(test, sprite_demo_row_label(entries[0]), "M Bailiff")
+	testing.expect_value(test, sprite_demo_row_label(entries[2]), "H Sara")
+	testing.expect_value(test, sprite_demo_default_character(entries[:]), 2)
+
+	labels := SPRITE_DEMO_ANIMATION_LABELS
+	testing.expect_value(test, labels[SPRITE_DEMO_ANIMATION_ATTACK], "Attack")
+	testing.expect_value(test, labels[SPRITE_DEMO_ANIMATION_IDLE], "Idle")
+	testing.expect(test, labels[0] < labels[1])
+}

@@ -1,6 +1,8 @@
 package main
 
+import "core:fmt"
 import "core:log"
+import "core:path/filepath"
 import "core:strings"
 
 import "catalog"
@@ -12,7 +14,9 @@ import unit_pkg "unit"
 import rl "vendor:raylib"
 
 Program_Options :: struct {
-	log_level: log.Level,
+	log_level:   log.Level,
+	sprite_demo: bool,
+	help:        bool,
 }
 
 @(thread_local)
@@ -78,9 +82,77 @@ program_parse_log_level :: proc(text: string) -> (level: log.Level, ok: bool) {
 }
 
 @(private)
+program_help_text :: proc(program_name: string) -> string {
+	name := filepath.base(program_name)
+	if name == "" || name == "." || name == "/" {
+		name = "judicial-order"
+	}
+
+	return fmt.aprintf(`Usage:
+  %s [options]
+
+Start Judicial Order. With no options, the log level is info and the game opens on the map.
+
+Options:
+  -h, --help
+        Show this help and exit.
+
+  -l, --logger LEVEL
+  -d LEVEL
+  --logger=LEVEL
+        Set the log level. LEVEL is one of: debug, info, warning, error, fatal.
+        The default is info. -l, -d, and --logger are the same option.
+
+  --sprite-demo
+        Start in the sprite viewer instead of the map.
+        Characters lists each battle sprite, with H for a hero and M for a monster.
+        Animation chooses Attack or Idle. The sheet loops in the center of the screen.
+        A gray checker fills the background so transparent pixels stay visible.
+        The default character is Sara in her Idle animation.
+
+Examples:
+  %s
+  %s --logger debug
+  %s --sprite-demo
+  %s --logger debug --sprite-demo
+  %s --help
+`, name, name, name, name, name, name)
+}
+
+@(private)
+program_print_help :: proc(args: []string) {
+	name := "judicial-order"
+	if len(args) > 0 {
+		name = args[0]
+	}
+
+	text := program_help_text(name)
+	defer delete(text)
+	fmt.println(text)
+}
+
+@(private)
+program_args_request_help :: proc(args: []string) -> bool {
+	for arg in args[1:] {
+		if arg == "--help" || arg == "-h" {
+			return true
+		}
+	}
+
+	return false
+}
+
+@(private)
 program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: bool) {
 	options.log_level = .Info
+	options.sprite_demo = false
+	options.help = false
 	ok = true
+
+	if program_args_request_help(args) {
+		options.help = true
+		return options, true
+	}
 
 	i := 1
 	for i < len(args) {
@@ -108,8 +180,10 @@ program_parse_args :: proc(args: []string) -> (options: Program_Options, ok: boo
 			}
 
 			options.log_level = level
+		} else if arg == "--sprite-demo" {
+			options.sprite_demo = true
 		} else {
-			log.errorf("program_parse_args: unknown argument [%s].", arg)
+			log.errorf("program_parse_args: unknown argument [%s]. Use --help to list options.", arg)
 			return options, false
 		}
 

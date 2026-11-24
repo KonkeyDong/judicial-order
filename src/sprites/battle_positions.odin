@@ -28,6 +28,7 @@ BATTLE_SPRITE_POSITIONS :: [?]Battle_Sprite_Position {
 	{"SupremeCourtJustice_Unpromoted_Unarmed", {30, 30}},
 	{"HumanResources_Unpromoted_Unarmed", {30, 20}},
 	{"CircuitJudge_Unpromoted_Unarmed", {30, 30}},
+	{"MagistrateJudge_Unpromoted_Unarmed", {40, 40}},
 }
 
 @(private)
